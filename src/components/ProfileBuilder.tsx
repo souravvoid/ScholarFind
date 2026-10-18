@@ -197,33 +197,45 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
           </div>
 
           {/* 4-Step Visual Progress Bar */}
-          <div className="grid grid-cols-4 gap-2 mb-8">
-            <div className="flex flex-col gap-1.5">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-6 sm:mb-8">
+            <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0">
               <div className={`h-1.5 w-full rounded-full ${step >= 1 ? 'bg-[#047857]' : 'bg-[#e2e2e2]'}`} />
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-caption-strong text-[#1a1a1e]">1. Identity</span>
-                <span className="font-label-sm text-[#047857] uppercase">{step > 1 ? 'Done' : 'Active'}</span>
+              <div className="flex items-center justify-between text-[11px] sm:text-xs">
+                <span className="font-caption-strong text-[#1a1a1e] truncate">
+                  <span className="sm:hidden">1. ID</span>
+                  <span className="hidden sm:inline">1. Identity</span>
+                </span>
+                <span className="font-label-sm text-[#047857] uppercase text-[10px] hidden sm:inline">{step > 1 ? 'Done' : 'Active'}</span>
               </div>
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0">
               <div className={`h-1.5 w-full rounded-full ${step >= 2 ? (step > 2 ? 'bg-[#047857]' : 'bg-[#1d4ed8]') : 'bg-[#e2e2e2]'}`} />
-              <div className="flex items-center justify-between text-xs">
-                <span className={`font-caption-strong ${step === 2 ? 'text-[#1d4ed8]' : 'text-[#1a1a1e]'}`}>2. Academics</span>
-                <span className="font-label-sm uppercase text-[#6b7280]">{step > 2 ? 'Done' : step === 2 ? 'Active' : 'Next'}</span>
+              <div className="flex items-center justify-between text-[11px] sm:text-xs">
+                <span className={`font-caption-strong truncate ${step === 2 ? 'text-[#1d4ed8]' : 'text-[#1a1a1e]'}`}>
+                  <span className="sm:hidden">2. Acad</span>
+                  <span className="hidden sm:inline">2. Academics</span>
+                </span>
+                <span className="font-label-sm uppercase text-[#6b7280] text-[10px] hidden sm:inline">{step > 2 ? 'Done' : step === 2 ? 'Active' : 'Next'}</span>
               </div>
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0">
               <div className={`h-1.5 w-full rounded-full ${step >= 3 ? (step > 3 ? 'bg-[#047857]' : 'bg-[#1d4ed8]') : 'bg-[#e2e2e2]'}`} />
-              <div className="flex items-center justify-between text-xs">
-                <span className={`font-caption-strong ${step === 3 ? 'text-[#1d4ed8]' : 'text-[#6b7280]'}`}>3. Language &amp; Tests</span>
-                <span className="font-label-sm uppercase text-[#6b7280]">{step > 3 ? 'Done' : step === 3 ? 'Active' : 'Next'}</span>
+              <div className="flex items-center justify-between text-[11px] sm:text-xs">
+                <span className={`font-caption-strong truncate ${step === 3 ? 'text-[#1d4ed8]' : 'text-[#6b7280]'}`}>
+                  <span className="sm:hidden">3. Tests</span>
+                  <span className="hidden sm:inline">3. Language &amp; Tests</span>
+                </span>
+                <span className="font-label-sm uppercase text-[#6b7280] text-[10px] hidden sm:inline">{step > 3 ? 'Done' : step === 3 ? 'Active' : 'Next'}</span>
               </div>
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0">
               <div className={`h-1.5 w-full rounded-full ${step >= 4 ? 'bg-[#1d4ed8]' : 'bg-[#e2e2e2]'}`} />
-              <div className="flex items-center justify-between text-xs">
-                <span className={`font-caption-strong ${step === 4 ? 'text-[#1d4ed8]' : 'text-[#6b7280]'}`}>4. Review</span>
-                <span className="font-label-sm uppercase text-[#6b7280]">{step === 4 ? 'Active' : 'Locked'}</span>
+              <div className="flex items-center justify-between text-[11px] sm:text-xs">
+                <span className={`font-caption-strong truncate ${step === 4 ? 'text-[#1d4ed8]' : 'text-[#6b7280]'}`}>
+                  <span className="sm:hidden">4. Review</span>
+                  <span className="hidden sm:inline">4. Review</span>
+                </span>
+                <span className="font-label-sm uppercase text-[#6b7280] text-[10px] hidden sm:inline">{step === 4 ? 'Active' : 'Locked'}</span>
               </div>
             </div>
           </div>

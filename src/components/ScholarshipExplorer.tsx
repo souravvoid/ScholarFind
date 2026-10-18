@@ -29,6 +29,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
   const [deadlineWindow, setDeadlineWindow] = useState<string>('1_3_months');
   const [verifiedRecentOnly, setVerifiedRecentOnly] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
   // Evaluate all scholarships against active profile
   const scholarshipsWithEvaluation = useMemo(() => {
@@ -144,36 +145,36 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
           </div>
 
           {/* Quick Match Meta Stats */}
-          <div className="flex items-center gap-4 p-2 rounded-xl bg-white border border-[#e5e7eb] shadow-xs">
-            <div className="flex items-center gap-1.5 px-3 py-1">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#047857]"></div>
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-2 sm:gap-4 p-2 rounded-xl bg-white border border-[#e5e7eb] shadow-xs w-full sm:w-auto">
+            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#047857] shrink-0"></div>
               <span className="font-caption-strong text-xs text-[#1a1a1e]">
                 {eligibleCount > 0 ? `${eligibleCount * 12} Likely Eligible` : '48 Likely Eligible'}
               </span>
             </div>
-            <div className="w-px h-6 bg-[#e8e8e7]"></div>
-            <div className="flex items-center gap-1.5 px-3 py-1">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#b45309]"></div>
+            <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
+            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#b45309] shrink-0"></div>
               <span className="font-caption-strong text-xs text-[#1a1a1e]">
                 {potentialCount > 0 ? `${potentialCount * 28} Potential` : '112 Potential'}
               </span>
             </div>
-            <div className="w-px h-6 bg-[#e8e8e7]"></div>
+            <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
             <button
               onClick={onOpenProfileBuilder}
-              className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer px-2 sm:px-3 py-1"
             >
-              Update Profile
-              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              <span>Update Profile</span>
+              <span className="material-symbols-outlined text-[15px] sm:text-[16px]">arrow_forward</span>
             </button>
           </div>
         </div>
 
         {/* Quick Search Bar & Controls Surface */}
-        <div className="w-full bg-white rounded-xl p-4 shadow-sm border border-[#e5e7eb] mb-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+        <div className="w-full bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-[#e5e7eb] mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-center">
             {/* Search Input */}
-            <div className="lg:col-span-6 relative flex items-center">
+            <div className="sm:col-span-2 lg:col-span-6 relative flex items-center">
               <span className="material-symbols-outlined absolute left-3.5 text-[#6b7280] text-[20px] pointer-events-none">
                 search
               </span>
@@ -185,12 +186,13 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                   setCurrentPage(1);
                 }}
                 placeholder="Search by scholarship name, university, or keyword..."
-                className="w-full pl-11 pr-4 py-2.5 bg-[#f3f4f3] rounded-lg font-body-default text-sm text-[#1a1a1e] placeholder:text-[#6b7280] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] transition-all"
+                className="w-full pl-11 pr-4 py-2.5 bg-[#f3f4f3] rounded-lg font-body-default text-sm text-[#1a1a1e] placeholder:text-[#6b7280] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] transition-all min-h-[42px]"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 text-[#6b7280] hover:text-[#1a1a1e]"
+                  className="absolute right-3 text-[#6b7280] hover:text-[#1a1a1e] p-1"
+                  aria-label="Clear search query"
                 >
                   <span className="material-symbols-outlined text-[18px]">close</span>
                 </button>
@@ -198,15 +200,15 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
             </div>
 
             {/* Sort Select */}
-            <div className="lg:col-span-3 relative">
-              <div className="flex items-center bg-[#f3f4f3] rounded-lg px-3.5 py-2">
-                <span className="material-symbols-outlined text-[#6b7280] text-[18px] mr-2">sort</span>
+            <div className="sm:col-span-1 lg:col-span-3 relative">
+              <div className="flex items-center bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px]">
+                <span className="material-symbols-outlined text-[#6b7280] text-[18px] mr-2 shrink-0">sort</span>
                 <div className="flex flex-col min-w-0 flex-1">
                   <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Sort by</span>
                   <select
                     value={selectedSort}
                     onChange={(e) => setSelectedSort(e.target.value)}
-                    className="bg-transparent font-caption-strong text-xs text-[#1a1a1e] focus:outline-none cursor-pointer pr-4"
+                    className="bg-transparent font-caption-strong text-xs text-[#1a1a1e] focus:outline-none cursor-pointer pr-4 truncate"
                   >
                     <option value="deadline">Deadline (Soonest first)</option>
                     <option value="funding">Funding Value (Highest)</option>
@@ -217,7 +219,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
             </div>
 
             {/* Match Mode Toggle */}
-            <div className="lg:col-span-3 flex items-center justify-between bg-[#f3f4f3] rounded-lg px-3.5 py-2">
+            <div className="sm:col-span-1 lg:col-span-3 flex items-center justify-between bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px]">
               <div className="flex flex-col min-w-0 pr-2">
                 <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Match Mode</span>
                 <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
@@ -227,7 +229,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
               <button
                 type="button"
                 onClick={() => setMatchMode(matchMode === 'profile' ? 'all' : 'profile')}
-                className="px-2.5 py-1 rounded bg-white shadow-xs font-label-sm text-xs text-[#0037b0] hover:bg-[#dce1ff] transition-colors whitespace-nowrap cursor-pointer font-semibold"
+                className="px-2.5 py-1 rounded bg-white shadow-xs font-label-sm text-xs text-[#0037b0] hover:bg-[#dce1ff] transition-colors whitespace-nowrap cursor-pointer font-semibold shrink-0"
               >
                 {matchMode === 'profile' ? 'View Unmatched' : 'Apply Profile'}
               </button>
@@ -275,10 +277,27 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
           </button>
         </div>
 
+        {/* Mobile Filter Toggle Button */}
+        <div className="lg:hidden w-full mb-4">
+          <button
+            type="button"
+            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white border border-[#e5e7eb] font-caption-strong text-xs text-[#1a1a1e] shadow-xs hover:bg-[#f3f4f3] transition-colors cursor-pointer min-h-[42px]"
+          >
+            <span className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px] text-[#0037b0]">tune</span>
+              <span>Filter Criteria ({selectedCountries.length + selectedLevels.length + (minAwardUSD > 0 ? 1 : 0)} active)</span>
+            </span>
+            <span className="material-symbols-outlined text-[20px] text-[#6b7280]">
+              {mobileFiltersOpen ? 'expand_less' : 'expand_more'}
+            </span>
+          </button>
+        </div>
+
         {/* Two-Column Primary Body */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Filter Sidebar Panel */}
-          <aside className="lg:col-span-4 xl:col-span-3 space-y-4">
+          <aside className={`lg:col-span-4 xl:col-span-3 space-y-4 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-white rounded-xl p-5 shadow-sm border border-[#e5e7eb] space-y-5">
               <div className="flex items-center justify-between pb-2 border-b border-[#e5e7eb]">
                 <h2 className="font-title text-base text-[#1a1a1e] flex items-center gap-2">
@@ -497,20 +516,20 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                   >
                     <div className="flex flex-col space-y-4">
                       {/* Card Top Meta & Status Pill */}
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-[#eeeeed] flex items-center justify-center text-[#0037b0] shrink-0 font-bold">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <div className="w-10 h-10 rounded-lg bg-[#eeeeed] flex items-center justify-center text-[#0037b0] shrink-0 font-bold mt-0.5">
                             <span className="material-symbols-outlined text-[22px]">
                               {scholarship.providerCategory.includes('University') ? 'account_balance' : scholarship.providerCategory.includes('Government') ? 'flag' : 'hub'}
                             </span>
                           </div>
-                          <div>
-                            <span className="font-caption text-xs text-[#6b7280] block">
+                          <div className="min-w-0 flex-1">
+                            <span className="font-caption text-xs text-[#6b7280] block truncate">
                               {scholarship.providerName}
                             </span>
                             <h3 
                               onClick={() => onSelectScholarship(scholarship)}
-                              className="font-title text-base sm:text-lg text-[#1a1a1e] group-hover:text-[#0037b0] transition-colors cursor-pointer"
+                              className="font-title text-base sm:text-lg text-[#1a1a1e] group-hover:text-[#0037b0] transition-colors cursor-pointer break-words leading-snug"
                             >
                               {scholarship.title}
                             </h3>
@@ -518,46 +537,46 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                         </div>
 
                         {/* Status Pill Badge */}
-                        <div>
+                        <div className="shrink-0 self-start sm:self-auto">
                           {evaluation.status === 'likely_eligible' ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-label-sm text-[11px] font-semibold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>
-                              Likely eligible ({evaluation.matchScore}% match)
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-label-sm text-[11px] font-semibold whitespace-nowrap">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#047857] shrink-0"></span>
+                              <span>Likely eligible ({evaluation.matchScore}% match)</span>
                             </div>
                           ) : evaluation.status === 'more_info_needed' ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fffbeb] border border-[#fde68a] text-[#b45309] font-label-sm text-[11px] font-semibold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#b45309]"></span>
-                              Potential match — more info needed
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fffbeb] border border-[#fde68a] text-[#b45309] font-label-sm text-[11px] font-semibold whitespace-nowrap">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#b45309] shrink-0"></span>
+                              <span>Potential match — more info needed</span>
                             </div>
                           ) : (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fff1f2] border border-[#fecdd3] text-[#be123c] font-label-sm text-[11px] font-semibold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#be123c]"></span>
-                              Does not meet mandatory rule
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fff1f2] border border-[#fecdd3] text-[#be123c] font-label-sm text-[11px] font-semibold whitespace-nowrap">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#be123c] shrink-0"></span>
+                              <span>Does not meet mandatory rule</span>
                             </div>
                           )}
                         </div>
                       </div>
 
                       {/* Key Value Proposition Block */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb]">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb]">
                         <div className="space-y-0.5">
                           <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Destination</span>
-                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#1a1a1e]">
-                            <span className="material-symbols-outlined text-[15px] text-[#6b7280]">location_on</span>
-                            <span>{scholarship.destinationCountries.join(', ')}</span>
+                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#1a1a1e] truncate">
+                            <span className="material-symbols-outlined text-[15px] text-[#6b7280] shrink-0">location_on</span>
+                            <span className="truncate">{scholarship.destinationCountries.join(', ')}</span>
                           </div>
                         </div>
                         <div className="space-y-0.5">
                           <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Estimated Value</span>
-                          <div className="font-caption-strong text-xs text-[#1a1a1e]">
+                          <div className="font-caption-strong text-xs text-[#1a1a1e] truncate">
                             {scholarship.totalAwardValue}
                           </div>
                         </div>
                         <div className="space-y-0.5">
                           <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Application Deadline</span>
-                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#ba1a1a]">
-                            <span className="material-symbols-outlined text-[15px]">schedule</span>
-                            <span>{scholarship.applicationDeadline} ({scholarship.daysRemaining} days left)</span>
+                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#ba1a1a] truncate">
+                            <span className="material-symbols-outlined text-[15px] shrink-0">schedule</span>
+                            <span className="truncate">{scholarship.applicationDeadline} ({scholarship.daysRemaining}d left)</span>
                           </div>
                         </div>
                       </div>

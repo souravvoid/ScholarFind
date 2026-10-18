@@ -253,9 +253,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
-                    <div className={`absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border font-label-sm text-[11px] shadow-sm backdrop-blur-sm ${badgeBg}`}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                      {badgeText}
+                    <div className={`absolute top-3 sm:top-4 left-3 sm:left-4 max-w-[calc(100%-1.5rem)] sm:max-w-[calc(100%-2rem)] inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full border font-label-sm text-[10px] sm:text-[11px] shadow-sm backdrop-blur-sm truncate ${badgeBg}`}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0"></span>
+                      <span className="truncate">{badgeText}</span>
                     </div>
                   </div>
 
