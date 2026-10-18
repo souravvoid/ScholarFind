@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0037b0;
+  --color-primary-container: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #cad3ff;
+  --color-secondary: #585f6c;
+  --color-secondary-container: #dce2f3;
+  --color-tertiary: #233f8f;
+  --color-tertiary-container: #3e57a8;
+  --color-background: #f9f9f8;
+  --color-surface: #f9f9f8;
+  --color-surface-dim: #dadad9;
+  --color-surface-bright: #f9f9f8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f4f3;
+  --color-surface-container: #eeeeed;
+  --color-surface-container-high: #e8e8e7;
+  --color-surface-container-highest: #e2e2e2;
+  --color-on-surface: #1a1c1c;
+  --color-on-surface-variant: #434655;
+  --color-ink-primary: #1a1a1e;
+  --color-ink-secondary: #6b7280;
+  --color-canvas-white: #ffffff;
+  --color-canvas-warm: #fbfbfa;
+  --color-border-hairline: #e5e7eb;
+  --color-accent-sapphire-hover: #2563eb;
+
+  --color-status-eligible-surface: #ecfdf5;
+  --color-status-eligible-text: #047857;
+  --color-status-eligible-border: #a7f3d0;
+  --color-status-pending-surface: #fffbeb;
+  --color-status-pending-text: #b45309;
+  --color-status-pending-border: #fde68a;
+  --color-status-missing-surface: #fff1f2;
+  --color-status-missing-text: #be123c;
+  --color-status-missing-border: #fecdd3;
+
+  --color-primary-fixed: #dce1ff;
+  --color-primary-fixed-dim: #b7c4ff;
+  --color-on-primary-fixed: #001551;
+  --color-secondary-fixed: #dce2f3;
+
+  --font-display: "Manrope", sans-serif;
+  --font-headline-lg: "Manrope", sans-serif;
+  --font-headline-md: "Manrope", sans-serif;
+  --font-headline-sm: "Manrope", sans-serif;
+  --font-title: "Inter", sans-serif;
+  --font-body-lead: "Inter", sans-serif;
+  --font-body-default: "Inter", sans-serif;
+  --font-body-strong: "Inter", sans-serif;
+  --font-caption: "Inter", sans-serif;
+  --font-caption-strong: "Inter", sans-serif;
+  --font-label-sm: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body-default), sans-serif;
+    color: var(--color-on-surface);
+    background-color: var(--color-canvas-warm);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.font-display {
+  font-family: "Manrope", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.text-display {
+  font-size: 52px;
+  line-height: 58px;
+}
+
+@media (min-width: 768px) {
+  .text-display {
+    font-size: 56px;
+    line-height: 60px;
+  }
+}
+
+.font-headline-lg {
+  font-family: "Manrope", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.text-headline-lg {
+  font-size: 32px;
+  line-height: 38px;
+}
+
+@media (min-width: 768px) {
+  .text-headline-lg {
+    font-size: 40px;
+    line-height: 46px;
+  }
+}
+
+.font-headline-md {
+  font-family: "Manrope", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.text-headline-md {
+  font-size: 26px;
+  line-height: 32px;
+}
+
+@media (min-width: 768px) {
+  .text-headline-md {
+    font-size: 28px;
+    line-height: 34px;
+  }
+}
+
+.font-headline-sm {
+  font-family: "Manrope", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-size: 20px;
+  line-height: 26px;
+}
+
+@media (min-width: 768px) {
+  .font-headline-sm {
+    font-size: 22px;
+    line-height: 28px;
+  }
+}
+
+.font-body-lead {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 27px;
+  letter-spacing: -0.005em;
+}
+
+@media (min-width: 768px) {
+  .font-body-lead {
+    font-size: 18px;
+    line-height: 28px;
+  }
+}
+
+.font-title {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+}
+
+.font-body-default {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.font-body-strong {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.font-caption {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.font-caption-strong {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.font-label-sm {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.04em;
+}
+
+/* Material Symbols alignment */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  display: inline-block;
+  line-height: 1;
+}
+
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

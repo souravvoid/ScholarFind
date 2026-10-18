@@ -1,0 +1,6 @@
+{
+  "name": "ScholarFind",
+  "description": "Global scholarship discovery, academic credential standardization, and deterministic eligibility-matching platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
