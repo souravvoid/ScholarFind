@@ -1,9 +1,32 @@
 """
-Pydantic Schemas for ScholarFind API & Ingestion Normalization
+Pydantic Schemas for ScholarFind API & Ingestion Normalization with Graceful Fallback
 """
 from datetime import datetime
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field, HttpUrl, EmailStr
+
+try:
+    from pydantic import BaseModel, Field, HttpUrl, EmailStr
+    HAS_PYDANTIC = True
+except ImportError:
+    HAS_PYDANTIC = False
+
+    class BaseModel:
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+        def dict(self) -> Dict[str, Any]:
+            return self.__dict__
+
+        def model_dump(self) -> Dict[str, Any]:
+            return self.__dict__
+
+    def Field(default=None, **kwargs):
+        return default
+
+    HttpUrl = str
+    EmailStr = str
+
 from backend.models import DegreeLevelEnum, RuleTypeEnum, TrackerStatusEnum
 
 

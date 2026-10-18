@@ -283,8 +283,10 @@ class RotaryFellowshipAdapter:
             "required_documents": ["Resume / CV", "Essays on peace", "Two recommendations", "Transcripts"]
         }]
 
+from backend.ingestion.adapters.csc_uk import CSCCommonwealthAdapter
+
 ADAPTER_REGISTRY = {
-    "src_csc_uk": CommonwealthAdapter(),
+    "src_csc_uk": CSCCommonwealthAdapter(),
     "src_daad_de": DAADScholarshipAdapter(),
     "src_fulbright_us": FulbrightAdapter(),
     "src_erasmus_eu": ErasmusMundusAdapter(),

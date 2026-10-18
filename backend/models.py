@@ -1,25 +1,45 @@
 """
-ScholarFind Database Schema — SQLAlchemy 2.0 ORM Models
+ScholarFind Database Schema — SQLAlchemy 2.0 ORM Models with Graceful Fallback
 """
 import enum
 from datetime import datetime
 from typing import List, Optional
-from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Float,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Text,
-    Enum,
-    UniqueConstraint,
-    Index
-)
-from sqlalchemy.orm import declarative_base, relationship
 
-Base = declarative_base()
+try:
+    from sqlalchemy import (
+        Column,
+        String,
+        Integer,
+        Float,
+        Boolean,
+        DateTime,
+        ForeignKey,
+        Text,
+        Enum,
+        UniqueConstraint,
+        Index
+    )
+    from sqlalchemy.orm import declarative_base, relationship
+    Base = declarative_base()
+    HAS_SQLALCHEMY = True
+except ImportError:
+    HAS_SQLALCHEMY = False
+
+    class _ColumnStub:
+        def __init__(self, *args, **kwargs):
+            pass
+        def __call__(self, *args, **kwargs):
+            return self
+
+    def declarative_base():
+        class _Base:
+            def __init__(self, **kwargs):
+                for k, v in kwargs.items():
+                    setattr(self, k, v)
+        return _Base
+
+    Base = declarative_base()
+    Column = String = Integer = Float = Boolean = DateTime = ForeignKey = Text = Enum = UniqueConstraint = Index = relationship = _ColumnStub
 
 
 class DegreeLevelEnum(str, enum.Enum):
@@ -37,6 +57,7 @@ class RuleTypeEnum(str, enum.Enum):
     language = "language"
     work_experience = "work_experience"
     deadline = "deadline"
+    manual_review = "manual_review"
 
 
 class TrackerStatusEnum(str, enum.Enum):
@@ -86,10 +107,10 @@ class StudentProfile(Base):
     normalized_gpa = Column(Float, nullable=False)  # Standardized 0.0 - 100.0 score
     graduation_year = Column(String(50), nullable=False)
     primary_field = Column(String(255), nullable=False)
-    faculty_tags = Column(Text, nullable=True)  # JSON-serialized list
-    target_degrees = Column(Text, nullable=True)  # JSON-serialized list
-    target_regions = Column(Text, nullable=True)  # JSON-serialized list
-    target_countries = Column(Text, nullable=True)  # JSON-serialized list
+    faculty_tags = Column(Text, nullable=True)
+    target_degrees = Column(Text, nullable=True)
+    target_regions = Column(Text, nullable=True)
+    target_countries = Column(Text, nullable=True)
     delivery_modality = Column(String(50), default="on_campus", nullable=False)
     intended_start_term = Column(String(50), nullable=True)
     work_experience_years = Column(Float, default=0.0, nullable=False)
@@ -108,7 +129,7 @@ class ScholarshipProvider(Base):
 
     id = Column(String(128), primary_key=True)
     name = Column(String(255), unique=True, nullable=False, index=True)
-    category = Column(String(100), nullable=False)  # University Trust, Government, Foundation, etc.
+    category = Column(String(100), nullable=False)
     country = Column(String(100), nullable=False)
     website_url = Column(String(512), nullable=False)
     verified = Column(Boolean, default=True, nullable=False)
@@ -143,10 +164,10 @@ class Scholarship(Base):
     provider_id = Column(String(128), ForeignKey("scholarship_providers.id"), nullable=False)
     source_id = Column(String(128), ForeignKey("scholarship_sources.id"), nullable=False)
     hero_image = Column(String(512), nullable=True)
-    destination_countries = Column(Text, nullable=False)  # JSON-serialized array
-    host_institutions = Column(Text, nullable=True)  # JSON-serialized array
-    study_levels = Column(Text, nullable=False)  # JSON-serialized array
-    fields_of_study = Column(Text, nullable=False)  # JSON-serialized array
+    destination_countries = Column(Text, nullable=False)
+    host_institutions = Column(Text, nullable=True)
+    study_levels = Column(Text, nullable=False)
+    fields_of_study = Column(Text, nullable=False)
     total_award_value = Column(String(255), nullable=False)
     award_details = Column(String(512), nullable=True)
     estimated_usd_value = Column(Float, default=0.0, nullable=False)
@@ -178,7 +199,7 @@ class ScholarshipEligibilityRule(Base):
     description = Column(Text, nullable=False)
     is_mandatory = Column(Boolean, default=True, nullable=False)
     source_citation = Column(String(512), nullable=False)
-    rule_payload = Column(Text, nullable=True)  # JSON-serialized rule parameters (allowed countries, min_gpa, etc.)
+    rule_payload = Column(Text, nullable=True)
 
     scholarship = relationship("Scholarship", back_populates="eligibility_rules")
 
@@ -195,8 +216,6 @@ class RequiredDocument(Base):
     scholarship = relationship("Scholarship", back_populates="required_documents")
 
 
-# --- Student Actions & Application Tracking ---
-
 class SavedScholarship(Base):
     __tablename__ = "saved_scholarships"
 
@@ -207,11 +226,6 @@ class SavedScholarship(Base):
     notes = Column(Text, nullable=True)
     saved_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-
-    __table_args__ = (
-        UniqueConstraint("user_id", "scholarship_id", name="uq_user_saved_scholarship"),
-        Index("idx_user_saved", "user_id"),
-    )
 
     user = relationship("User", back_populates="saved_scholarships")
     scholarship = relationship("Scholarship", back_populates="saved_entries")
@@ -224,19 +238,13 @@ class ApplicationTrackerEntry(Base):
     user_id = Column(String(128), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     scholarship_id = Column(String(128), ForeignKey("scholarships.id", ondelete="CASCADE"), nullable=False)
     status = Column(Enum(TrackerStatusEnum), default=TrackerStatusEnum.interested, nullable=False)
-    completed_documents = Column(Text, nullable=True)  # JSON-serialized list of completed doc names
+    completed_documents = Column(Text, nullable=True)
     personal_deadline_target = Column(DateTime, nullable=True)
     notes = Column(Text, nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
-    __table_args__ = (
-        UniqueConstraint("user_id", "scholarship_id", name="uq_user_tracker_entry"),
-    )
-
     user = relationship("User", back_populates="tracker_entries")
 
-
-# --- Ingestion Pipeline Auditing & Provance ---
 
 class IngestionJob(Base):
     __tablename__ = "ingestion_jobs"

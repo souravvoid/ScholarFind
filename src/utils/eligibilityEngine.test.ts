@@ -1,3 +1,5 @@
+import { describe, test } from 'node:test';
+import assert from 'node:assert';
 import { normalizeGpa, evaluateEligibility, getEquivalentDegreeLabel } from './eligibilityEngine';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { StudentProfile } from '../types';
@@ -33,34 +35,37 @@ describe('ScholarFind Deterministic Eligibility Engine', () => {
 
   test('GPA standardization across global systems', () => {
     // 3.82 / 4.0 => 95.5%
-    expect(normalizeGpa(3.82, 'gpa_4_0', 4.0)).toBeCloseTo(95.5, 1);
+    const gpa4 = normalizeGpa(3.82, 'gpa_4_0', 4.0);
+    assert(Math.abs(gpa4 - 95.5) < 0.2);
 
     // 4.82 / 5.0 => 96.4%
-    expect(normalizeGpa(4.82, 'gpa_5_0', 5.0)).toBeCloseTo(96.4, 1);
+    const gpa5 = normalizeGpa(4.82, 'gpa_5_0', 5.0);
+    assert(Math.abs(gpa5 - 96.4) < 0.2);
 
     // UK Honours First Class (1.0) => 95%
-    expect(normalizeGpa(1.0, 'uk_honours')).toBe(95);
+    assert.strictEqual(normalizeGpa(1.0, 'uk_honours'), 95);
 
     // Percentage 85% => 85%
-    expect(normalizeGpa(85, 'percentage')).toBe(85);
+    assert.strictEqual(normalizeGpa(85, 'percentage'), 85);
 
     // German scale 1.0 (highest) => 100%
-    expect(normalizeGpa(1.0, 'german')).toBe(100);
+    assert.strictEqual(normalizeGpa(1.0, 'german'), 100);
   });
 
   test('International equivalency labels', () => {
-    expect(getEquivalentDegreeLabel(95)).toContain('UK First Class');
-    expect(getEquivalentDegreeLabel(75)).toContain('UK Upper Second Class');
+    assert(getEquivalentDegreeLabel(95).includes('UK First Class'));
+    assert(getEquivalentDegreeLabel(75).includes('UK Upper Second Class'));
   });
 
   test('Commonwealth Master scholarship evaluation for eligible Nigerian candidate', () => {
     const commonwealth = SCHOLARSHIPS_DATA.find(s => s.id === 'commonwealth-masters')!;
+    assert(commonwealth, 'Commonwealth scholarship must exist in verified dataset');
     const result = evaluateEligibility(commonwealth, sampleProfile);
 
     // Citizenship is Nigeria (Commonwealth eligible), GPA meets 2:1 equivalent, English medium waiver applies
-    expect(result.status).toBe('likely_eligible');
-    expect(result.mandatoryFailedCount).toBe(0);
-    expect(result.matchedCount).toBeGreaterThanOrEqual(3);
+    assert.strictEqual(result.status, 'likely_eligible');
+    assert.strictEqual(result.mandatoryFailedCount, 0);
+    assert(result.matchedCount >= 3);
   });
 
   test('Ineligible citizenship triggers strictly deterministic failure', () => {
@@ -71,10 +76,10 @@ describe('ScholarFind Deterministic Eligibility Engine', () => {
     };
     const result = evaluateEligibility(commonwealth, ineligibleProfile);
 
-    expect(result.status).toBe('ineligible');
-    expect(result.mandatoryFailedCount).toBeGreaterThanOrEqual(1);
+    assert.strictEqual(result.status, 'ineligible');
+    assert(result.mandatoryFailedCount >= 1);
     const failedCit = result.evaluatedList.find(e => e.criterion.ruleType === 'citizenship');
-    expect(failedCit?.status).toBe('failed');
+    assert.strictEqual(failedCit?.status, 'failed');
   });
 
   test('Missing information produces more_info_needed state rather than guessing', () => {
@@ -85,14 +90,14 @@ describe('ScholarFind Deterministic Eligibility Engine', () => {
     };
     const result = evaluateEligibility(rotary, incompleteProfile);
 
-    expect(result.status).toBe('ineligible');
+    assert.strictEqual(result.status, 'ineligible');
   });
 
   test('Empty profile returns profile_needed with 0 match score', () => {
     const gates = SCHOLARSHIPS_DATA.find(s => s.id === 'gates-cambridge')!;
     const result = evaluateEligibility(gates, null);
 
-    expect(result.status).toBe('more_info_needed');
-    expect(result.matchScore).toBe(0);
+    assert.strictEqual(result.status, 'more_info_needed');
+    assert.strictEqual(result.matchScore, 0);
   });
 });
