@@ -30,25 +30,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   ].filter(Boolean);
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full max-w-full overflow-x-hidden min-w-0">
       {/* Subtle ambient decorative glow strictly contained */}
       <div className="relative w-full overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[480px] bg-gradient-to-b from-[#0037b0]/10 via-[#0037b0]/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10"></div>
         <div className="absolute top-72 -right-40 w-96 h-96 bg-[#dce2f3]/40 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
         {/* Hero Section */}
-        <section className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12 pt-8 pb-16 lg:pt-16 lg:pb-24">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+        <section className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12 pt-8 pb-16 lg:pt-16 lg:pb-24 w-full min-w-0">
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto w-full min-w-0">
             {/* Subtitle Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#eeeeed] shadow-xs mb-6 border border-[#e5e7eb]">
-              <span className="w-2 h-2 rounded-full bg-[#0037b0] animate-pulse"></span>
-              <span className="font-label-sm text-[11px] text-[#0037b0] uppercase tracking-wider font-semibold">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#eeeeed] shadow-xs mb-6 border border-[#e5e7eb] max-w-full min-w-0">
+              <span className="w-2 h-2 rounded-full bg-[#0037b0] animate-pulse shrink-0"></span>
+              <span className="font-label-sm text-[10px] sm:text-[11px] text-[#0037b0] uppercase tracking-wider font-semibold truncate">
                 Global Scholarship Discovery &amp; Matching Platform
               </span>
             </div>
 
             {/* Editorial Headline */}
-            <h1 className="font-display text-display text-[#1a1a1e] max-w-3xl mb-6">
+            <h1 className="font-display text-display text-[#1a1a1e] max-w-3xl mb-6 break-words">
               Your future deserves to be funded.
             </h1>
 
@@ -58,59 +58,59 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </p>
 
             {/* Main CTAs */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 w-full sm:w-auto min-w-0">
               <button
                 onClick={onOpenProfileBuilder}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#1d4ed8] text-white font-body-strong text-sm shadow-md hover:bg-[#2563eb] active:scale-[0.97] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#1d4ed8] text-white font-body-strong text-sm shadow-md hover:bg-[#2563eb] active:scale-[0.97] transition-all cursor-pointer shrink-0"
               >
                 <span>Find My Scholarships</span>
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </button>
               <button
                 onClick={() => onNavigate('explore')}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-[#1a1a1e] font-body-strong text-sm shadow-xs border border-[#e5e7eb] hover:bg-[#f3f4f3] active:scale-[0.97] transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-[#1a1a1e] font-body-strong text-sm shadow-xs border border-[#e5e7eb] hover:bg-[#f3f4f3] active:scale-[0.97] transition-all cursor-pointer shrink-0"
               >
                 <span>Explore Opportunities</span>
               </button>
             </div>
 
             {/* Micro-copy */}
-            <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-[#6b7280] font-caption text-xs mb-10">
-              <span className="flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-6 text-[#6b7280] font-caption text-xs mb-10 w-full min-w-0">
+              <span className="flex items-center gap-1.5 shrink-0">
                 <span className="material-symbols-outlined text-[#0037b0] text-[16px]">check_circle</span>
                 No application fees
               </span>
-              <span className="text-[#6b7280]/40">•</span>
-              <span className="flex items-center gap-1.5">
+              <span className="text-[#6b7280]/40 hidden sm:inline">•</span>
+              <span className="flex items-center gap-1.5 shrink-0">
                 <span className="material-symbols-outlined text-[#0037b0] text-[16px]">verified</span>
                 Unbiased criteria matching
               </span>
-              <span className="text-[#6b7280]/40">•</span>
-              <span className="flex items-center gap-1.5">
+              <span className="text-[#6b7280]/40 hidden sm:inline">•</span>
+              <span className="flex items-center gap-1.5 shrink-0">
                 <span className="material-symbols-outlined text-[#0037b0] text-[16px]">visibility</span>
                 Always transparent
               </span>
             </div>
 
             {/* 3D Global Hub Constellation Graphic */}
-            <div className="w-full max-w-2xl mx-auto -mt-6 mb-4">
+            <div className="w-full max-w-2xl mx-auto -mt-6 mb-4 overflow-hidden min-w-0">
               <HeroGlobe3D />
             </div>
 
             {/* Unified Search Filter Bar */}
-            <div className="w-full bg-white rounded-2xl shadow-xl border border-[#e5e7eb] p-2.5 sm:p-3 max-w-4xl mx-auto backdrop-blur-md">
-              <form onSubmit={handleHeroSearch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2 sm:gap-3">
+            <div className="w-full bg-white rounded-2xl shadow-xl border border-[#e5e7eb] p-2.5 sm:p-3 max-w-4xl mx-auto backdrop-blur-md min-w-0">
+              <form onSubmit={handleHeroSearch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2 sm:gap-3 w-full min-w-0">
                 {/* Degree Level */}
-                <div className="lg:col-span-3 text-left p-3 rounded-xl bg-[#f3f4f3] hover:bg-[#eeeeed] transition-colors">
+                <div className="lg:col-span-3 text-left p-3 rounded-xl bg-[#f3f4f3] hover:bg-[#eeeeed] transition-colors w-full min-w-0">
                   <label className="block font-label-sm text-[10px] text-[#6b7280] uppercase tracking-wider mb-1 font-semibold">
                     Degree Level
                   </label>
-                  <div className="relative flex items-center">
-                    <span className="material-symbols-outlined text-[#6b7280] text-[20px] mr-2">school</span>
+                  <div className="relative flex items-center w-full min-w-0">
+                    <span className="material-symbols-outlined text-[#6b7280] text-[20px] mr-2 shrink-0">school</span>
                     <select
                       value={selectedDegree}
                       onChange={(e) => setSelectedDegree(e.target.value)}
-                      className="w-full bg-transparent font-body-strong text-sm text-[#1a1a1e] focus:outline-none cursor-pointer appearance-none pr-4"
+                      className="w-full bg-transparent font-body-strong text-sm text-[#1a1a1e] focus:outline-none cursor-pointer appearance-none pr-4 min-w-0"
                     >
                       <option value="postgraduate">Postgraduate / PhD</option>
                       <option value="masters">Master's Degree</option>
@@ -124,33 +124,33 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
 
                 {/* Field of Study */}
-                <div className="lg:col-span-4 text-left p-3 rounded-xl bg-[#f3f4f3] hover:bg-[#eeeeed] transition-colors">
+                <div className="lg:col-span-4 text-left p-3 rounded-xl bg-[#f3f4f3] hover:bg-[#eeeeed] transition-colors w-full min-w-0">
                   <label className="block font-label-sm text-[10px] text-[#6b7280] uppercase tracking-wider mb-1 font-semibold">
                     Field of Study
                   </label>
-                  <div className="flex items-center">
-                    <span className="material-symbols-outlined text-[#6b7280] text-[20px] mr-2">biotech</span>
+                  <div className="flex items-center w-full min-w-0">
+                    <span className="material-symbols-outlined text-[#6b7280] text-[20px] mr-2 shrink-0">biotech</span>
                     <input
                       type="text"
                       value={fieldOfStudy}
                       onChange={(e) => setFieldOfStudy(e.target.value)}
                       placeholder="e.g. Computer Science, Public Health"
-                      className="w-full bg-transparent font-body-strong text-sm text-[#1a1a1e] focus:outline-none placeholder:text-[#6b7280]/60"
+                      className="w-full bg-transparent font-body-strong text-sm text-[#1a1a1e] focus:outline-none placeholder:text-[#6b7280]/60 min-w-0"
                     />
                   </div>
                 </div>
 
                 {/* Destination Country */}
-                <div className="lg:col-span-3 text-left p-3 rounded-xl bg-[#f3f4f3] hover:bg-[#eeeeed] transition-colors">
+                <div className="lg:col-span-3 text-left p-3 rounded-xl bg-[#f3f4f3] hover:bg-[#eeeeed] transition-colors w-full min-w-0">
                   <label className="block font-label-sm text-[10px] text-[#6b7280] uppercase tracking-wider mb-1 font-semibold">
                     Destination
                   </label>
-                  <div className="relative flex items-center">
-                    <span className="material-symbols-outlined text-[#6b7280] text-[20px] mr-2">public</span>
+                  <div className="relative flex items-center w-full min-w-0">
+                    <span className="material-symbols-outlined text-[#6b7280] text-[20px] mr-2 shrink-0">public</span>
                     <select
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
-                      className="w-full bg-transparent font-body-strong text-sm text-[#1a1a1e] focus:outline-none cursor-pointer appearance-none pr-4"
+                      className="w-full bg-transparent font-body-strong text-sm text-[#1a1a1e] focus:outline-none cursor-pointer appearance-none pr-4 min-w-0"
                     >
                       <option value="all">Any Destination</option>
                       <option value="uk">United Kingdom</option>
@@ -166,12 +166,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
 
                 {/* Search Action Button */}
-                <div className="lg:col-span-2 flex items-stretch">
+                <div className="lg:col-span-2 flex items-stretch w-full min-w-0">
                   <button
                     type="submit"
-                    className="w-full rounded-xl bg-[#1d4ed8] text-white hover:bg-[#2563eb] transition-all flex items-center justify-center gap-2 font-body-strong text-sm py-3 px-4 shadow-sm active:scale-95 cursor-pointer"
+                    className="w-full rounded-xl bg-[#1d4ed8] text-white hover:bg-[#2563eb] transition-all flex items-center justify-center gap-2 font-body-strong text-sm py-3 px-4 shadow-sm active:scale-95 cursor-pointer min-w-0"
                   >
-                    <span className="material-symbols-outlined text-[20px]">search</span>
+                    <span className="material-symbols-outlined text-[20px] shrink-0">search</span>
                     <span>Search</span>
                   </button>
                 </div>
@@ -179,7 +179,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Live Trust Metric Banner */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 px-6 py-3 rounded-full bg-white/80 border border-[#e5e7eb] shadow-xs backdrop-blur-md">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-8 gap-y-3 px-4 sm:px-6 py-3 rounded-full bg-white/80 border border-[#e5e7eb] shadow-xs backdrop-blur-md max-w-full min-w-0">
               <div className="flex items-center gap-2">
                 <span className="font-body-strong text-sm text-[#1a1a1e]">12,400+</span>
                 <span className="font-caption text-xs text-[#6b7280]">Verified Opportunities</span>
@@ -200,20 +200,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </div>
 
       {/* Featured Opportunity Showcase with Editorial Imagery */}
-      <section className="w-full bg-[#f3f4f3] py-20 border-y border-[#e5e7eb]">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div>
+      <section className="w-full bg-[#f3f4f3] py-16 sm:py-20 border-y border-[#e5e7eb] min-w-0">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 w-full min-w-0">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-4 w-full min-w-0">
+            <div className="min-w-0 flex-1">
               <span className="font-label-sm text-[11px] text-[#0037b0] uppercase tracking-wider block mb-2 font-semibold">
                 Exemplary Registry
               </span>
-              <h2 className="font-headline-lg text-[#1a1a1e]">
+              <h2 className="font-headline-lg text-[#1a1a1e] break-words">
                 Active Verified Endowments
               </h2>
             </div>
             <button
               onClick={() => onNavigate('explore')}
-              className="inline-flex items-center gap-1.5 font-body-strong text-sm text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 font-body-strong text-sm text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer shrink-0"
             >
               <span>Browse all 12,400+ listings</span>
               <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -221,7 +221,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Grid of 3 Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full min-w-0">
             {featuredScholarships.map((sch) => {
               let badgeText = 'Likely eligible (based on sample profile)';
               let badgeBg = 'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857]';
@@ -244,9 +244,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <div
                   key={sch.id}
                   onClick={() => onSelectScholarship(sch)}
-                  className="bg-white rounded-2xl shadow-sm border border-[#e5e7eb] hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group cursor-pointer"
+                  className="bg-white rounded-2xl shadow-sm border border-[#e5e7eb] hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group cursor-pointer w-full min-w-0"
                 >
-                  <div className="relative h-44 w-full overflow-hidden bg-[#eeeeed]">
+                  <div className="relative h-44 w-full overflow-hidden bg-[#eeeeed] min-w-0">
                     <img
                       src={sch.heroImage}
                       alt={sch.title}
@@ -259,54 +259,54 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex items-center justify-between text-[#6b7280] font-caption text-xs mb-2">
-                      <span className="font-medium text-[#1a1a1e]">{sch.providerName}</span>
-                      <span className="flex items-center gap-1">
+                  <div className="p-4 sm:p-6 flex-1 flex flex-col min-w-0">
+                    <div className="flex items-center justify-between text-[#6b7280] font-caption text-xs mb-2 w-full min-w-0 gap-2">
+                      <span className="font-medium text-[#1a1a1e] truncate">{sch.providerName}</span>
+                      <span className="flex items-center gap-1 shrink-0">
                         <span className="material-symbols-outlined text-[14px]">location_on</span>
-                        {sch.destinationCountries.join(', ')}
+                        <span>{sch.destinationCountries.join(', ')}</span>
                       </span>
                     </div>
 
-                    <h3 className="font-title text-base sm:text-lg text-[#1a1a1e] mb-3 group-hover:text-[#0037b0] transition-colors">
+                    <h3 className="font-title text-base sm:text-lg text-[#1a1a1e] mb-3 group-hover:text-[#0037b0] transition-colors break-words">
                       {sch.title}
                     </h3>
 
                     {/* Funding Callout */}
-                    <div className="p-3.5 rounded-xl bg-[#f3f4f3] border border-[#e5e7eb] mb-5">
-                      <span className="block font-caption text-[11px] text-[#6b7280] mb-0.5">Total Award Value</span>
-                      <span className="font-headline-sm text-[19px] text-[#1a1a1e] block font-semibold">
+                    <div className="p-3.5 rounded-xl bg-[#f3f4f3] border border-[#e5e7eb] mb-5 w-full min-w-0">
+                      <span className="block font-caption text-[11px] text-[#6b7280] mb-0.5 truncate">Total Award Value</span>
+                      <span className="font-headline-sm text-[19px] text-[#1a1a1e] block font-semibold truncate">
                         {sch.totalAwardValue}
                       </span>
-                      <span className="block font-caption text-xs text-[#6b7280] mt-1">
+                      <span className="block font-caption text-xs text-[#6b7280] mt-1 break-words">
                         {sch.awardDetails}
                       </span>
                     </div>
 
                     {/* Criteria snapshot */}
-                    <div className="space-y-2 mb-6">
-                      <div className="flex items-center justify-between font-caption text-xs">
-                        <span className="text-[#6b7280]">Degree Level</span>
-                        <span className="font-medium text-[#1a1a1e] capitalize">{sch.studyLevels.join(' / ')}</span>
+                    <div className="space-y-2 mb-6 w-full min-w-0">
+                      <div className="flex items-center justify-between font-caption text-xs w-full min-w-0 gap-2">
+                        <span className="text-[#6b7280] shrink-0">Degree Level</span>
+                        <span className="font-medium text-[#1a1a1e] capitalize truncate">{sch.studyLevels.join(' / ')}</span>
                       </div>
-                      <div className="flex items-center justify-between font-caption text-xs">
-                        <span className="text-[#6b7280]">Criteria Match</span>
-                        <span className={`font-semibold flex items-center gap-1 ${
+                      <div className="flex items-center justify-between font-caption text-xs w-full min-w-0 gap-2">
+                        <span className="text-[#6b7280] shrink-0">Criteria Match</span>
+                        <span className={`font-semibold flex items-center gap-1 shrink-0 ${
                           criteriaIcon === 'check_circle' ? 'text-[#047857]' : criteriaIcon === 'help' ? 'text-[#b45309]' : 'text-[#1a1a1e]'
                         }`}>
-                          <span className="material-symbols-outlined text-[15px]">{criteriaIcon}</span>
-                          {criteriaText}
+                          <span className="material-symbols-outlined text-[15px] shrink-0">{criteriaIcon}</span>
+                          <span className="truncate">{criteriaText}</span>
                         </span>
                       </div>
-                      <div className="flex items-center justify-between font-caption text-xs">
-                        <span className="text-[#6b7280]">Last Verified</span>
-                        <span className="text-[#6b7280]">{sch.lastVerified}</span>
+                      <div className="flex items-center justify-between font-caption text-xs w-full min-w-0 gap-2">
+                        <span className="text-[#6b7280] shrink-0">Last Verified</span>
+                        <span className="text-[#6b7280] truncate">{sch.lastVerified}</span>
                       </div>
                     </div>
 
-                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#e5e7eb]">
-                      <span className="font-caption text-xs text-[#6b7280]">{sch.providerCategory}</span>
-                      <button className="inline-flex items-center gap-1 font-body-strong text-xs text-[#0037b0] group-hover:text-[#2563eb]">
+                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#e5e7eb] w-full min-w-0">
+                      <span className="font-caption text-xs text-[#6b7280] truncate pr-2">{sch.providerCategory}</span>
+                      <button className="inline-flex items-center gap-1 font-body-strong text-xs text-[#0037b0] group-hover:text-[#2563eb] shrink-0">
                         <span>View Rubric</span>
                         <span className="material-symbols-outlined text-[18px]">chevron_right</span>
                       </button>
@@ -320,19 +320,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Three Concise Steps ('How ScholarFind Works') */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12 py-24">
-        <div className="text-center max-w-2xl mx-auto mb-16">
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-16 sm:py-24 w-full min-w-0">
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 w-full min-w-0">
           <span className="font-label-sm text-[11px] text-[#0037b0] uppercase tracking-wider block mb-2 font-semibold">
             Process &amp; Methodology
           </span>
-          <h2 className="font-headline-lg text-[#1a1a1e] mb-4">How ScholarFind Works</h2>
+          <h2 className="font-headline-lg text-[#1a1a1e] mb-4 break-words">How ScholarFind Works</h2>
           <p className="font-body-lead text-[#6b7280]">
             We replaced speculative matching algorithms with radical transparency and deterministic eligibility criteria.
           </p>
         </div>
 
         {/* 3-Column Bento Step Flow */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative w-full min-w-0">
           {/* Step 01 */}
           <div className="p-8 rounded-2xl bg-white border border-[#e5e7eb] shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
             <div className="absolute -top-6 -right-6 font-display text-[96px] text-[#eeeeed] font-bold select-none pointer-events-none group-hover:text-[#0037b0]/10 transition-colors">
@@ -425,13 +425,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Source Transparency & Trust Principles Section */}
-      <section className="w-full bg-white py-20 border-t border-[#e5e7eb]">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12">
-          <div className="max-w-3xl mb-12">
+      <section className="w-full bg-white py-16 sm:py-20 border-t border-[#e5e7eb] min-w-0">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 w-full min-w-0">
+          <div className="max-w-3xl mb-10 sm:mb-12 w-full min-w-0">
             <span className="font-label-sm text-[11px] text-[#0037b0] uppercase tracking-wider block mb-2 font-semibold">
               Institutional Integrity
             </span>
-            <h2 className="font-headline-lg text-[#1a1a1e] mb-4">
+            <h2 className="font-headline-lg text-[#1a1a1e] mb-4 break-words">
               Built on audited, authoritative sources.
             </h2>
             <p className="font-body-lead text-[#6b7280]">
@@ -440,25 +440,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Principles Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div className="p-8 rounded-2xl bg-[#f3f4f3] border border-[#e5e7eb] flex gap-5 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12 w-full min-w-0">
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#f3f4f3] border border-[#e5e7eb] flex gap-4 sm:gap-5 items-start w-full min-w-0">
               <div className="p-3 rounded-xl bg-white text-[#0037b0] shadow-xs flex-shrink-0">
-                <span className="material-symbols-outlined text-[28px]">verified_user</span>
+                <span className="material-symbols-outlined text-[26px] sm:text-[28px]">verified_user</span>
               </div>
-              <div>
-                <h3 className="font-headline-sm text-lg text-[#1a1a1e] mb-2">Direct Official Sources</h3>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-headline-sm text-lg text-[#1a1a1e] mb-2 break-words">Direct Official Sources</h3>
                 <p className="font-body-default text-sm text-[#6b7280] leading-relaxed">
                   We crawl and manually audit official government ministries, accredited university trust offices, and vetted philanthropic endowments. Every listing links back to its verified origin domain.
                 </p>
               </div>
             </div>
 
-            <div className="p-8 rounded-2xl bg-[#f3f4f3] border border-[#e5e7eb] flex gap-5 items-start">
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#f3f4f3] border border-[#e5e7eb] flex gap-4 sm:gap-5 items-start w-full min-w-0">
               <div className="p-3 rounded-xl bg-white text-[#0037b0] shadow-xs flex-shrink-0">
-                <span className="material-symbols-outlined text-[28px]">savings</span>
+                <span className="material-symbols-outlined text-[26px] sm:text-[28px]">savings</span>
               </div>
-              <div>
-                <h3 className="font-headline-sm text-lg text-[#1a1a1e] mb-2">Zero Pay-to-Apply Guarantee</h3>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-headline-sm text-lg text-[#1a1a1e] mb-2 break-words">Zero Pay-to-Apply Guarantee</h3>
                 <p className="font-body-default text-sm text-[#6b7280] leading-relaxed">
                   ScholarFind never charges students to discover or apply for opportunities. We prohibit sponsored rankings and refuse commercial lead-aggregation arrangements.
                 </p>
@@ -467,10 +467,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Upfront Disclaimer Card */}
-          <div className="rounded-2xl p-6 sm:p-8 bg-[#eeeeed] border border-[#e5e7eb] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="flex items-start gap-4 max-w-3xl">
-              <span className="material-symbols-outlined text-[#0037b0] text-[28px] mt-0.5">info</span>
-              <div>
+          <div className="rounded-2xl p-5 sm:p-8 bg-[#eeeeed] border border-[#e5e7eb] flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6 w-full min-w-0">
+            <div className="flex items-start gap-3 sm:gap-4 max-w-3xl min-w-0 flex-1">
+              <span className="material-symbols-outlined text-[#0037b0] text-[24px] sm:text-[28px] mt-0.5 shrink-0">info</span>
+              <div className="min-w-0 flex-1">
                 <h4 className="font-body-strong text-sm text-[#1a1a1e] mb-1">
                   Notice &amp; Disclaimer Upfront
                 </h4>
@@ -490,29 +490,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Pre-footer Call-to-action Banner */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12 py-20 lg:py-24">
-        <div className="relative rounded-3xl bg-[#1a1a1e] text-white p-8 sm:p-14 lg:p-20 overflow-hidden shadow-2xl">
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-16 sm:py-20 lg:py-24 w-full min-w-0">
+        <div className="relative rounded-3xl bg-[#1a1a1e] text-white p-6 sm:p-14 lg:p-20 overflow-hidden shadow-2xl w-full min-w-0">
           <div className="absolute -right-24 -bottom-24 w-96 h-96 bg-[#1d4ed8]/30 rounded-full blur-3xl pointer-events-none"></div>
           <div className="absolute top-0 right-1/3 w-64 h-64 bg-[#585f6c]/30 rounded-full blur-2xl pointer-events-none"></div>
-          <div className="relative z-10 max-w-2xl">
+          <div className="relative z-10 max-w-2xl min-w-0">
             <span className="font-label-sm text-[11px] text-[#cad3ff] uppercase tracking-wider block mb-3 font-semibold">
               Begin Your Search
             </span>
-            <h2 className="font-headline-lg text-white mb-6">
+            <h2 className="font-headline-lg text-white mb-6 break-words">
               Ready to find your educational path?
             </h2>
-            <p className="font-body-lead text-white/80 mb-10 leading-relaxed text-sm sm:text-base">
+            <p className="font-body-lead text-white/80 mb-8 sm:mb-10 leading-relaxed text-sm sm:text-base">
               Create your free student profile in under five minutes. Unlock instant, verified scholarship alignments across 85+ countries.
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto min-w-0">
               <button
                 onClick={onOpenProfileBuilder}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-[#1a1a1e] font-body-strong text-sm shadow-lg hover:bg-[#eeeeed] transition-all active:scale-[0.98] cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-full bg-white text-[#1a1a1e] font-body-strong text-sm shadow-lg hover:bg-[#eeeeed] transition-all active:scale-[0.98] cursor-pointer shrink-0"
               >
                 <span>Create Free Student Profile</span>
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </button>
-              <span className="font-caption text-xs text-white/60 px-2">
+              <span className="font-caption text-xs text-white/60 px-2 text-center sm:text-left">
                 No credit card or payment required.
               </span>
             </div>

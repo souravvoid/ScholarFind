@@ -18,8 +18,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#fbfbfa]/95 backdrop-blur-xl border-b border-[#e5e7eb]">
-      <div className="h-16 max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 flex items-center justify-between gap-3 sm:gap-6">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#fbfbfa]/95 backdrop-blur-xl border-b border-[#e5e7eb] w-full max-w-full">
+      <div className="h-16 max-w-[1280px] w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 flex items-center justify-between gap-2 sm:gap-6 min-w-0">
         {/* Brand Logo & Desktop Nav */}
         <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 min-w-0">
           <button 

@@ -68,11 +68,11 @@ export const ScholarshipDetailsModal: React.FC<ScholarshipDetailsModalProps> = (
         <div 
           role="dialog"
           aria-modal="true"
-          className="relative w-full max-w-[820px] max-h-[92vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-[#e5e7eb] overflow-hidden z-50 my-auto animate-in fade-in zoom-in-95 duration-200"
+          className="relative w-full max-w-[820px] max-h-[92vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-[#e5e7eb] overflow-hidden z-50 my-auto animate-in fade-in zoom-in-95 duration-200 min-w-0"
         >
           {/* Sticky Header Bar */}
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-[#e5e7eb] bg-[#fbfbfa]">
-            <div className="flex items-center gap-2 min-w-0 pr-2">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-[#e5e7eb] bg-[#fbfbfa] w-full min-w-0">
+            <div className="flex items-center gap-2 min-w-0 pr-2 flex-1">
               <span className="text-xl shrink-0">{scholarship.destinationFlag}</span>
               <span className="font-caption-strong text-xs sm:text-sm text-[#1a1a1e] truncate">
                 {scholarship.destinationCountries.join(', ')} • {scholarship.providerCategory}
@@ -80,7 +80,7 @@ export const ScholarshipDetailsModal: React.FC<ScholarshipDetailsModalProps> = (
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#e8e8e7] transition-colors shrink-0"
+              className="p-1.5 rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#e8e8e7] transition-colors shrink-0 cursor-pointer"
               aria-label="Close details"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
@@ -88,50 +88,50 @@ export const ScholarshipDetailsModal: React.FC<ScholarshipDetailsModalProps> = (
           </div>
 
           {/* Scrollable Content Body */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 w-full min-w-0">
             {/* Top Overview & Status */}
-            <div>
-              <div className="flex flex-wrap items-center gap-2.5 mb-3">
+            <div className="w-full min-w-0">
+              <div className="flex flex-wrap items-center gap-2.5 mb-3 w-full min-w-0">
                 {getStatusBadge()}
-                <span className="text-xs text-[#6b7280]">
+                <span className="text-xs text-[#6b7280] truncate">
                   Verified {scholarship.lastVerified} via {scholarship.sourceDomain}
                 </span>
               </div>
-              <h2 className="font-headline-md sm:font-headline-lg text-[#1a1a1e] mb-2">
+              <h2 className="font-headline-md sm:font-headline-lg text-[#1a1a1e] mb-2 break-words">
                 {scholarship.title}
               </h2>
-              <p className="font-title text-base text-[#0037b0] font-medium">
+              <p className="font-title text-base text-[#0037b0] font-medium truncate">
                 {scholarship.providerName}
               </p>
             </div>
 
             {/* Key Value Proposition Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-[#f3f4f3] border border-[#e5e7eb]">
-              <div className="space-y-1">
-                <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider">Total Award Value</span>
-                <span className="font-headline-sm text-[20px] text-[#1a1a1e] block">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-[#f3f4f3] border border-[#e5e7eb] w-full min-w-0">
+              <div className="space-y-1 min-w-0">
+                <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider truncate">Total Award Value</span>
+                <span className="font-headline-sm text-[20px] text-[#1a1a1e] block truncate">
                   {scholarship.totalAwardValue}
                 </span>
-                <span className="font-caption text-xs text-[#6b7280] block">
+                <span className="font-caption text-xs text-[#6b7280] block break-words">
                   {scholarship.awardDetails}
                 </span>
               </div>
-              <div className="space-y-1">
-                <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider">Deadline</span>
-                <div className="flex items-center gap-1.5 font-caption-strong text-[#ba1a1a] text-sm">
-                  <span className="material-symbols-outlined text-[16px]">schedule</span>
-                  {scholarship.applicationDeadline}
+              <div className="space-y-1 min-w-0">
+                <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider truncate">Deadline</span>
+                <div className="flex items-center gap-1.5 font-caption-strong text-[#ba1a1a] text-sm min-w-0">
+                  <span className="material-symbols-outlined text-[16px] shrink-0">schedule</span>
+                  <span className="truncate">{scholarship.applicationDeadline}</span>
                 </div>
-                <span className="font-caption text-xs text-[#6b7280] block">
+                <span className="font-caption text-xs text-[#6b7280] block truncate">
                   {scholarship.daysRemaining} days remaining in cycle
                 </span>
               </div>
-              <div className="space-y-1">
-                <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider">Eligible Study Levels</span>
-                <span className="font-caption-strong text-sm text-[#1a1a1e] block capitalize">
+              <div className="space-y-1 min-w-0">
+                <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider truncate">Eligible Study Levels</span>
+                <span className="font-caption-strong text-sm text-[#1a1a1e] block capitalize truncate">
                   {scholarship.studyLevels.join(', ')}
                 </span>
-                <span className="font-caption text-xs text-[#6b7280] block">
+                <span className="font-caption text-xs text-[#6b7280] block truncate">
                   Academic Year {scholarship.academicYear}
                 </span>
               </div>

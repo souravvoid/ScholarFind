@@ -31,7 +31,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbfbfa] text-[#1a1c1c] antialiased">
+    <div className="min-h-screen flex flex-col bg-[#fbfbfa] text-[#1a1c1c] antialiased w-full max-w-full overflow-x-hidden">
       {/* Universal Navigation Bar */}
       <Navbar
         currentTab={currentTab}
@@ -40,7 +40,7 @@ function MainApp() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full pt-16">
+      <main className="flex-1 w-full max-w-full pt-16 overflow-x-hidden min-w-0">
         {currentTab === 'landing' && (
           <LandingPage
             onNavigate={handleNavigate}

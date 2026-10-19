@@ -153,19 +153,19 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
   return (
     <div className="fixed inset-0 z-40 bg-[#fbfbfa] overflow-y-auto">
       {/* Top Header Bar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#fbfbfa]/95 backdrop-blur-md border-b border-[#e5e7eb]">
-        <div className="h-14 max-w-[840px] mx-auto px-4 md:px-0 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#fbfbfa]/95 backdrop-blur-md border-b border-[#e5e7eb] w-full max-w-full">
+        <div className="h-14 max-w-[840px] w-full mx-auto px-4 md:px-0 flex items-center justify-between min-w-0">
           <button
             onClick={handlePrev}
-            className="inline-flex items-center gap-1 font-caption text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 font-caption text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
           >
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
             Back
           </button>
-          <span className="font-title text-base text-[#1a1a1e] font-semibold">ScholarFind</span>
+          <span className="font-title text-base text-[#1a1a1e] font-semibold truncate px-2">ScholarFind</span>
           <button
             onClick={() => setShowSaveModal(true)}
-            className="font-caption-strong text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer"
+            className="font-caption-strong text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
           >
             Save &amp; Exit
           </button>
@@ -173,31 +173,31 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
       </header>
 
       {/* Main Container */}
-      <main className="w-full pt-16 pb-24 px-4 min-h-screen flex flex-col items-center">
-        <div className="w-full max-w-[840px] mx-auto pt-6">
+      <main className="w-full max-w-full pt-16 pb-24 px-4 min-h-screen flex flex-col items-center min-w-0">
+        <div className="w-full max-w-[840px] mx-auto pt-6 min-w-0">
           {/* Breadcrumb meta badge & stage counter */}
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#dce2f3]/50 text-[#233f8f] font-label-sm text-[11px] tracking-wider uppercase font-semibold">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4 w-full min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#dce2f3]/50 text-[#233f8f] font-label-sm text-[11px] tracking-wider uppercase font-semibold shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] animate-pulse"></span>
                 Step {step} of 4
               </span>
               <span className="font-caption text-xs text-[#6b7280] hidden sm:inline">•</span>
-              <span className="font-caption text-xs text-[#6b7280]">
+              <span className="font-caption text-xs text-[#6b7280] truncate">
                 {step === 1 && 'Identity & Citizenship'}
                 {step === 2 && 'Academic Foundation & Global Intent'}
                 {step === 3 && 'Language Proficiency & Work Experience'}
                 {step === 4 && 'Credential Review & Match Unlock'}
               </span>
             </div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-caption-strong text-xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-caption-strong text-xs shrink-0">
               <span className="w-2 h-2 rounded-full bg-[#047857]"></span>
               <span>{step * 25}% Complete — Unlocks ~840 Verified Awards</span>
             </div>
           </div>
 
           {/* 4-Step Visual Progress Bar */}
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-6 sm:mb-8">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-6 sm:mb-8 w-full min-w-0">
             <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0">
               <div className={`h-1.5 w-full rounded-full ${step >= 1 ? 'bg-[#047857]' : 'bg-[#e2e2e2]'}`} />
               <div className="flex items-center justify-between text-[11px] sm:text-xs">
@@ -1140,33 +1140,33 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
           )}
 
           {/* Sticky Bottom Action Navigation Bar */}
-          <div className="mt-8 pt-6 pb-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#e5e7eb]">
+          <div className="mt-8 pt-6 pb-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#e5e7eb] w-full min-w-0">
             <button
               onClick={handlePrev}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#f3f4f3] hover:bg-[#eeeeed] text-[#1a1a1e] font-caption-strong text-xs transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#f3f4f3] hover:bg-[#eeeeed] text-[#1a1a1e] font-caption-strong text-xs transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-[18px]">arrow_back</span>
               {step === 1 ? 'Cancel' : 'Previous Step'}
             </button>
 
-            <div className="flex items-center gap-2 font-caption text-xs text-[#6b7280]">
-              <span className="w-2 h-2 rounded-full bg-[#047857]"></span>
-              <span>Auto-saved to Firestore candidate session</span>
+            <div className="flex items-center gap-2 font-caption text-xs text-[#6b7280] truncate">
+              <span className="w-2 h-2 rounded-full bg-[#047857] shrink-0"></span>
+              <span className="truncate">Auto-saved to Firestore candidate session</span>
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-end min-w-0">
               <button
                 onClick={() => setShowSaveModal(true)}
-                className="px-4 py-2.5 rounded-lg bg-[#f3f4f3] hover:bg-[#eeeeed] text-[#1a1a1e] font-caption-strong text-xs transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-[#f3f4f3] hover:bg-[#eeeeed] text-[#1a1a1e] font-caption-strong text-xs transition-colors cursor-pointer text-center"
               >
                 Save &amp; Exit
               </button>
               <button
                 onClick={handleNext}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1d4ed8] hover:bg-[#2563eb] text-white font-body-strong text-xs sm:text-sm shadow-sm transition-all transform active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1d4ed8] hover:bg-[#2563eb] text-white font-body-strong text-xs sm:text-sm shadow-sm transition-all transform active:scale-95 cursor-pointer text-center"
               >
-                <span>{step === 4 ? 'Save Profile & Explore Matches' : 'Continue to Next Step'}</span>
-                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                <span className="truncate">{step === 4 ? 'Save Profile & Explore Matches' : 'Continue to Next Step'}</span>
+                <span className="material-symbols-outlined text-[18px] shrink-0">arrow_forward</span>
               </button>
             </div>
           </div>

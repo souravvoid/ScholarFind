@@ -127,16 +127,16 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
   const currentItems = filteredScholarships.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
-    <div className="w-full pt-6 pb-20">
-      <div className="max-w-[1280px] w-full mx-auto px-4 md:px-8 lg:px-12">
+    <div className="w-full max-w-full pt-6 pb-20 min-w-0">
+      <div className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 min-w-0">
         {/* Page Header & Key Metrics Bento Strip */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>
-              Verified Registry • Updated Hourly
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 w-full min-w-0">
+          <div className="space-y-2 max-w-2xl min-w-0">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider font-semibold max-w-full min-w-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#047857] shrink-0"></span>
+              <span className="truncate">Verified Registry • Updated Hourly</span>
             </div>
-            <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight">
+            <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight break-words">
               Explore Verified Global Scholarships
             </h1>
             <p className="font-body-lead text-[#6b7280]">
@@ -145,24 +145,24 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
           </div>
 
           {/* Quick Match Meta Stats */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-2 sm:gap-4 p-2 rounded-xl bg-white border border-[#e5e7eb] shadow-xs w-full sm:w-auto">
-            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-2 sm:gap-4 p-2 rounded-xl bg-white border border-[#e5e7eb] shadow-xs w-full sm:w-auto min-w-0">
+            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 min-w-0 flex-1 sm:flex-initial">
               <div className="w-2.5 h-2.5 rounded-full bg-[#047857] shrink-0"></div>
-              <span className="font-caption-strong text-xs text-[#1a1a1e]">
+              <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
                 {eligibleCount > 0 ? `${eligibleCount * 12} Likely Eligible` : '48 Likely Eligible'}
               </span>
             </div>
             <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
-            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1">
+            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 min-w-0 flex-1 sm:flex-initial">
               <div className="w-2.5 h-2.5 rounded-full bg-[#b45309] shrink-0"></div>
-              <span className="font-caption-strong text-xs text-[#1a1a1e]">
+              <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
                 {potentialCount > 0 ? `${potentialCount * 28} Potential` : '112 Potential'}
               </span>
             </div>
             <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
             <button
               onClick={onOpenProfileBuilder}
-              className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer px-2 sm:px-3 py-1"
+              className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer px-2 sm:px-3 py-1 shrink-0"
             >
               <span>Update Profile</span>
               <span className="material-symbols-outlined text-[15px] sm:text-[16px]">arrow_forward</span>
@@ -171,10 +171,10 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
         </div>
 
         {/* Quick Search Bar & Controls Surface */}
-        <div className="w-full bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-[#e5e7eb] mb-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-center">
+        <div className="w-full bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-[#e5e7eb] mb-4 min-w-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-center w-full min-w-0">
             {/* Search Input */}
-            <div className="sm:col-span-2 lg:col-span-6 relative flex items-center">
+            <div className="sm:col-span-2 lg:col-span-6 relative flex items-center w-full min-w-0">
               <span className="material-symbols-outlined absolute left-3.5 text-[#6b7280] text-[20px] pointer-events-none">
                 search
               </span>
@@ -186,7 +186,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                   setCurrentPage(1);
                 }}
                 placeholder="Search by scholarship name, university, or keyword..."
-                className="w-full pl-11 pr-4 py-2.5 bg-[#f3f4f3] rounded-lg font-body-default text-sm text-[#1a1a1e] placeholder:text-[#6b7280] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] transition-all min-h-[42px]"
+                className="w-full pl-11 pr-4 py-2.5 bg-[#f3f4f3] rounded-lg font-body-default text-sm text-[#1a1a1e] placeholder:text-[#6b7280] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] transition-all min-h-[42px] min-w-0"
               />
               {searchQuery && (
                 <button
@@ -200,15 +200,15 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
             </div>
 
             {/* Sort Select */}
-            <div className="sm:col-span-1 lg:col-span-3 relative">
-              <div className="flex items-center bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px]">
+            <div className="sm:col-span-1 lg:col-span-3 relative w-full min-w-0">
+              <div className="flex items-center bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px] w-full min-w-0">
                 <span className="material-symbols-outlined text-[#6b7280] text-[18px] mr-2 shrink-0">sort</span>
                 <div className="flex flex-col min-w-0 flex-1">
                   <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Sort by</span>
                   <select
                     value={selectedSort}
                     onChange={(e) => setSelectedSort(e.target.value)}
-                    className="bg-transparent font-caption-strong text-xs text-[#1a1a1e] focus:outline-none cursor-pointer pr-4 truncate"
+                    className="bg-transparent font-caption-strong text-xs text-[#1a1a1e] focus:outline-none cursor-pointer pr-4 truncate w-full min-w-0"
                   >
                     <option value="deadline">Deadline (Soonest first)</option>
                     <option value="funding">Funding Value (Highest)</option>
@@ -219,10 +219,10 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
             </div>
 
             {/* Match Mode Toggle */}
-            <div className="sm:col-span-1 lg:col-span-3 flex items-center justify-between bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px]">
-              <div className="flex flex-col min-w-0 pr-2">
-                <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Match Mode</span>
-                <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
+            <div className="sm:col-span-1 lg:col-span-3 flex items-center justify-between bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px] w-full min-w-0 gap-2">
+              <div className="flex flex-col min-w-0 flex-1 pr-1">
+                <span className="font-label-sm text-[10px] text-[#6b7280] uppercase truncate">Match Mode</span>
+                <span className="font-caption-strong text-xs text-[#1a1a1e] truncate block">
                   {matchMode === 'profile' ? `Active Profile (${profile?.displayName || 'Amara'})` : 'Showing all criteria'}
                 </span>
               </div>
@@ -238,7 +238,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
         </div>
 
         {/* Active Filter Chips Row */}
-        <div className="flex flex-wrap items-center gap-2 pb-6">
+        <div className="flex flex-wrap items-center gap-2 pb-6 w-full min-w-0">
           <span className="font-caption-strong text-xs text-[#6b7280] mr-1">Active filters:</span>
           {selectedCountries.map(c => (
             <span
@@ -295,27 +295,27 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
         </div>
 
         {/* Two-Column Primary Body */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full min-w-0">
           {/* Left Filter Sidebar Panel */}
-          <aside className={`lg:col-span-4 xl:col-span-3 space-y-4 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-[#e5e7eb] space-y-5">
-              <div className="flex items-center justify-between pb-2 border-b border-[#e5e7eb]">
-                <h2 className="font-title text-base text-[#1a1a1e] flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[20px] text-[#0037b0]">tune</span>
-                  Filter Criteria
+          <aside className={`lg:col-span-4 xl:col-span-3 space-y-4 w-full min-w-0 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-[#e5e7eb] space-y-5 w-full min-w-0">
+              <div className="flex items-center justify-between pb-2 border-b border-[#e5e7eb] w-full min-w-0">
+                <h2 className="font-title text-base text-[#1a1a1e] flex items-center gap-2 min-w-0">
+                  <span className="material-symbols-outlined text-[20px] text-[#0037b0] shrink-0">tune</span>
+                  <span className="truncate">Filter Criteria</span>
                 </h2>
                 <button 
                   onClick={clearAllFilters}
-                  className="font-caption text-xs text-[#6b7280] hover:text-[#1a1a1e] cursor-pointer"
+                  className="font-caption text-xs text-[#6b7280] hover:text-[#1a1a1e] cursor-pointer shrink-0"
                 >
                   Reset
                 </button>
               </div>
 
               {/* Destination Countries Filter */}
-              <div className="space-y-2">
+              <div className="space-y-2 w-full min-w-0">
                 <label className="block font-caption-strong text-xs text-[#1a1a1e]">Destination Countries</label>
-                <div className="space-y-2 pt-1 text-sm">
+                <div className="space-y-2 pt-1 text-sm w-full min-w-0">
                   {[
                     { name: 'United Kingdom', count: 342 },
                     { name: 'Germany', count: 215 },
@@ -326,18 +326,18 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                   ].map((dest) => (
                     <label 
                       key={dest.name}
-                      className="flex items-center justify-between text-[#1a1a1e] cursor-pointer hover:text-[#0037b0] transition-colors select-none"
+                      className="flex items-center justify-between text-[#1a1a1e] cursor-pointer hover:text-[#0037b0] transition-colors select-none w-full min-w-0"
                     >
-                      <span className="flex items-center gap-2.5">
+                      <span className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
                         <input
                           type="checkbox"
                           checked={selectedCountries.includes(dest.name)}
                           onChange={() => toggleCountry(dest.name)}
-                          className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer"
+                          className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer shrink-0"
                         />
-                        <span>{dest.name}</span>
+                        <span className="truncate">{dest.name}</span>
                       </span>
-                      <span className="font-caption text-xs text-[#6b7280]">{dest.count}</span>
+                      <span className="font-caption text-xs text-[#6b7280] shrink-0">{dest.count}</span>
                     </label>
                   ))}
                 </div>
@@ -346,12 +346,12 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
               <div className="h-px bg-[#e5e7eb] w-full" />
 
               {/* Applicant Citizenship */}
-              <div className="space-y-2">
+              <div className="space-y-2 w-full min-w-0">
                 <label className="block font-caption-strong text-xs text-[#1a1a1e]">Applicant Citizenship</label>
                 <select
                   value={selectedCitizenship}
                   onChange={(e) => setSelectedCitizenship(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#f3f4f3] rounded-lg text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0037b0] cursor-pointer"
+                  className="w-full max-w-full px-3 py-2 bg-[#f3f4f3] rounded-lg text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0037b0] cursor-pointer min-w-0"
                 >
                   <option value="Nigeria">Nigeria (Select your country)</option>
                   <option value="Ghana">Ghana</option>
@@ -371,9 +371,9 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
               <div className="h-px bg-[#e5e7eb] w-full" />
 
               {/* Study Level Filter */}
-              <div className="space-y-2">
+              <div className="space-y-2 w-full min-w-0">
                 <label className="block font-caption-strong text-xs text-[#1a1a1e]">Study Level</label>
-                <div className="space-y-2 pt-1 text-sm">
+                <div className="space-y-2 pt-1 text-sm w-full min-w-0">
                   {[
                     { id: 'masters', label: 'Master’s Degree' },
                     { id: 'phd', label: 'Doctoral / PhD' },
@@ -382,15 +382,15 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                   ].map((level) => (
                     <label 
                       key={level.id}
-                      className="flex items-center gap-2.5 text-[#1a1a1e] cursor-pointer select-none"
+                      className="flex items-center gap-2.5 text-[#1a1a1e] cursor-pointer select-none w-full min-w-0"
                     >
                       <input
                         type="checkbox"
                         checked={selectedLevels.includes(level.id as DegreeLevel)}
                         onChange={() => toggleLevel(level.id as DegreeLevel)}
-                        className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer"
+                        className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer shrink-0"
                       />
-                      <span>{level.label}</span>
+                      <span className="truncate">{level.label}</span>
                     </label>
                   ))}
                 </div>
@@ -399,10 +399,10 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
               <div className="h-px bg-[#e5e7eb] w-full" />
 
               {/* Minimum Award Range Slider */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <label className="font-caption-strong text-[#1a1a1e]">Minimum Award Value</label>
-                  <span className="font-caption-strong text-[#0037b0]">
+              <div className="space-y-2 w-full min-w-0">
+                <div className="flex items-center justify-between text-xs w-full min-w-0">
+                  <label className="font-caption-strong text-[#1a1a1e] truncate pr-2">Minimum Award Value</label>
+                  <span className="font-caption-strong text-[#0037b0] shrink-0">
                     ${minAwardUSD.toLocaleString()}+
                   </span>
                 </div>
@@ -416,9 +416,9 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                     setMinAwardUSD(parseInt(e.target.value) || 0);
                     setCurrentPage(1);
                   }}
-                  className="w-full accent-[#0037b0] h-1.5 bg-[#eeeeed] rounded-lg cursor-pointer"
+                  className="w-full accent-[#0037b0] h-1.5 bg-[#eeeeed] rounded-lg cursor-pointer min-w-0"
                 />
-                <div className="flex justify-between font-label-sm text-[11px] text-[#6b7280]">
+                <div className="flex justify-between font-label-sm text-[11px] text-[#6b7280] w-full min-w-0">
                   <span>$0</span>
                   <span>$50k</span>
                   <span>$100k+</span>
@@ -428,9 +428,9 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
               <div className="h-px bg-[#e5e7eb] w-full" />
 
               {/* Deadline Window */}
-              <div className="space-y-2">
+              <div className="space-y-2 w-full min-w-0">
                 <label className="block font-caption-strong text-xs text-[#1a1a1e]">Deadline Window</label>
-                <div className="space-y-2 pt-1 text-sm">
+                <div className="space-y-2 pt-1 text-sm w-full min-w-0">
                   {[
                     { id: 'urgent_30d', label: 'Next 30 days (Urgent)' },
                     { id: '1_3_months', label: '1 – 3 months' },
@@ -439,7 +439,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                   ].map((win) => (
                     <label 
                       key={win.id}
-                      className="flex items-center gap-2.5 text-[#1a1a1e] cursor-pointer select-none"
+                      className="flex items-center gap-2.5 text-[#1a1a1e] cursor-pointer select-none w-full min-w-0"
                     >
                       <input
                         type="radio"
@@ -449,9 +449,9 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                           setDeadlineWindow(win.id);
                           setCurrentPage(1);
                         }}
-                        className="w-4 h-4 accent-[#0037b0] cursor-pointer"
+                        className="w-4 h-4 accent-[#0037b0] cursor-pointer shrink-0"
                       />
-                      <span>{win.label}</span>
+                      <span className="truncate">{win.label}</span>
                     </label>
                   ))}
                 </div>
@@ -460,24 +460,24 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
               <div className="h-px bg-[#e5e7eb] w-full" />
 
               {/* Verified Status Filter */}
-              <div className="pt-1">
-                <label className="flex items-center gap-2.5 font-caption-strong text-xs text-[#1a1a1e] cursor-pointer select-none">
+              <div className="pt-1 w-full min-w-0">
+                <label className="flex items-center gap-2.5 font-caption-strong text-xs text-[#1a1a1e] cursor-pointer select-none w-full min-w-0">
                   <input
                     type="checkbox"
                     checked={verifiedRecentOnly}
                     onChange={(e) => setVerifiedRecentOnly(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer"
+                    className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer shrink-0"
                   />
-                  <span>Verified within 30 days only</span>
+                  <span className="truncate">Verified within 30 days only</span>
                 </label>
               </div>
             </div>
 
             {/* Institutional Trust Snippet Card */}
-            <div className="p-4 rounded-xl bg-[#dce2f3]/50 border border-[#b7c4ff]/50 space-y-1.5">
-              <div className="flex items-center gap-2 text-[#1a1a1e]">
-                <span className="material-symbols-outlined text-[18px] text-[#0037b0]">verified_user</span>
-                <span className="font-caption-strong text-xs">100% Direct Verification</span>
+            <div className="p-4 rounded-xl bg-[#dce2f3]/50 border border-[#b7c4ff]/50 space-y-1.5 w-full min-w-0">
+              <div className="flex items-center gap-2 text-[#1a1a1e] w-full min-w-0">
+                <span className="material-symbols-outlined text-[18px] text-[#0037b0] shrink-0">verified_user</span>
+                <span className="font-caption-strong text-xs truncate">100% Direct Verification</span>
               </div>
               <p className="font-caption text-xs text-[#434655] leading-relaxed">
                 Every registry entry links directly to public government ministries or university senates. No scraped third-party spam.
@@ -486,9 +486,9 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
           </aside>
 
           {/* Main Results Grid Area (Scholarship Cards) */}
-          <main className="lg:col-span-8 xl:col-span-9 space-y-4">
+          <main className="lg:col-span-8 xl:col-span-9 space-y-4 w-full min-w-0">
             {currentItems.length === 0 ? (
-              <div className="p-12 text-center bg-white rounded-xl border border-[#e5e7eb]">
+              <div className="p-8 sm:p-12 text-center bg-white rounded-xl border border-[#e5e7eb] w-full min-w-0">
                 <span className="material-symbols-outlined text-[48px] text-[#6b7280] mb-2">
                   search_off
                 </span>
@@ -500,7 +500,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                 </p>
                 <button
                   onClick={clearAllFilters}
-                  className="px-4 py-2 rounded-lg bg-[#0037b0] text-white font-caption-strong text-xs"
+                  className="px-4 py-2 rounded-lg bg-[#0037b0] text-white font-caption-strong text-xs cursor-pointer"
                 >
                   Reset All Filters
                 </button>
@@ -512,12 +512,12 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                 return (
                   <article 
                     key={scholarship.id}
-                    className="bg-white rounded-xl p-6 shadow-sm border border-[#e5e7eb] hover:shadow-md transition-shadow relative overflow-hidden group"
+                    className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-[#e5e7eb] hover:shadow-md transition-shadow relative overflow-hidden group w-full min-w-0"
                   >
-                    <div className="flex flex-col space-y-4">
+                    <div className="flex flex-col space-y-4 w-full min-w-0">
                       {/* Card Top Meta & Status Pill */}
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 w-full min-w-0">
+                        <div className="flex items-start gap-3 min-w-0 flex-1 w-full sm:w-auto">
                           <div className="w-10 h-10 rounded-lg bg-[#eeeeed] flex items-center justify-center text-[#0037b0] shrink-0 font-bold mt-0.5">
                             <span className="material-symbols-outlined text-[22px]">
                               {scholarship.providerCategory.includes('University') ? 'account_balance' : scholarship.providerCategory.includes('Government') ? 'flag' : 'hub'}
@@ -537,44 +537,44 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                         </div>
 
                         {/* Status Pill Badge */}
-                        <div className="shrink-0 self-start sm:self-auto">
+                        <div className="w-full sm:w-auto shrink-0 self-start sm:self-auto min-w-0 max-w-full">
                           {evaluation.status === 'likely_eligible' ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-label-sm text-[11px] font-semibold whitespace-nowrap">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-label-sm text-[11px] font-semibold max-w-full min-w-0">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#047857] shrink-0"></span>
-                              <span>Likely eligible ({evaluation.matchScore}% match)</span>
+                              <span className="break-words sm:whitespace-nowrap truncate sm:overflow-visible">Likely eligible ({evaluation.matchScore}% match)</span>
                             </div>
                           ) : evaluation.status === 'more_info_needed' ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fffbeb] border border-[#fde68a] text-[#b45309] font-label-sm text-[11px] font-semibold whitespace-nowrap">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fffbeb] border border-[#fde68a] text-[#b45309] font-label-sm text-[11px] font-semibold max-w-full min-w-0">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#b45309] shrink-0"></span>
-                              <span>Potential match — more info needed</span>
+                              <span className="break-words sm:whitespace-nowrap truncate sm:overflow-visible">Potential match — more info needed</span>
                             </div>
                           ) : (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fff1f2] border border-[#fecdd3] text-[#be123c] font-label-sm text-[11px] font-semibold whitespace-nowrap">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fff1f2] border border-[#fecdd3] text-[#be123c] font-label-sm text-[11px] font-semibold max-w-full min-w-0">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#be123c] shrink-0"></span>
-                              <span>Does not meet mandatory rule</span>
+                              <span className="break-words sm:whitespace-nowrap truncate sm:overflow-visible">Does not meet mandatory rule</span>
                             </div>
                           )}
                         </div>
                       </div>
 
                       {/* Key Value Proposition Block */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb]">
-                        <div className="space-y-0.5">
-                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Destination</span>
-                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#1a1a1e] truncate">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] w-full min-w-0">
+                        <div className="space-y-0.5 min-w-0">
+                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase block truncate">Destination</span>
+                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#1a1a1e] min-w-0">
                             <span className="material-symbols-outlined text-[15px] text-[#6b7280] shrink-0">location_on</span>
                             <span className="truncate">{scholarship.destinationCountries.join(', ')}</span>
                           </div>
                         </div>
-                        <div className="space-y-0.5">
-                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Estimated Value</span>
+                        <div className="space-y-0.5 min-w-0">
+                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase block truncate">Estimated Value</span>
                           <div className="font-caption-strong text-xs text-[#1a1a1e] truncate">
                             {scholarship.totalAwardValue}
                           </div>
                         </div>
-                        <div className="space-y-0.5">
-                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Application Deadline</span>
-                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#ba1a1a] truncate">
+                        <div className="space-y-0.5 min-w-0">
+                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase block truncate">Application Deadline</span>
+                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#ba1a1a] min-w-0">
                             <span className="material-symbols-outlined text-[15px] shrink-0">schedule</span>
                             <span className="truncate">{scholarship.applicationDeadline} ({scholarship.daysRemaining}d left)</span>
                           </div>
@@ -582,29 +582,31 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                       </div>
 
                       {/* Eligibility Rubric Preview Strip */}
-                      <div className="py-1 px-1 flex flex-wrap items-center gap-x-4 gap-y-1 font-caption text-xs">
+                      <div className="py-1 px-1 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-caption text-xs w-full min-w-0">
                         {evaluation.evaluatedList.slice(0, 3).map((crit, idx) => (
                           <span 
                             key={idx}
-                            className={`inline-flex items-center gap-1 ${
+                            className={`inline-flex items-center gap-1 min-w-0 max-w-full ${
                               crit.status === 'passed' ? 'text-[#047857]' : crit.status === 'missing' ? 'text-[#b45309]' : 'text-[#be123c]'
                             }`}
                           >
-                            <span className="material-symbols-outlined text-[15px]">
+                            <span className="material-symbols-outlined text-[15px] shrink-0">
                               {crit.status === 'passed' ? 'check_circle' : crit.status === 'missing' ? 'warning' : 'cancel'}
                             </span>
-                            <span>{crit.criterion.title}</span>
+                            <span className="truncate">{crit.criterion.title}</span>
                           </span>
                         ))}
                       </div>
 
                       {/* Card Action Row & Verification Timestamp */}
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 border-t border-[#e5e7eb]">
-                        <div className="inline-flex items-center gap-1.5 font-caption text-xs text-[#6b7280]">
-                          <span className="material-symbols-outlined text-[15px] text-[#0037b0]">verified</span>
-                          Verified {scholarship.lastVerified} via official <span className="font-caption-strong text-[#1a1a1e]">{scholarship.sourceDomain}</span> portal
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 border-t border-[#e5e7eb] w-full min-w-0">
+                        <div className="inline-flex flex-wrap items-center gap-1.5 font-caption text-xs text-[#6b7280] min-w-0 max-w-full">
+                          <span className="material-symbols-outlined text-[15px] text-[#0037b0] shrink-0">verified</span>
+                          <span>Verified {scholarship.lastVerified} via official</span>
+                          <span className="font-caption-strong text-[#1a1a1e] truncate max-w-[150px] sm:max-w-none">{scholarship.sourceDomain}</span>
+                          <span>portal</span>
                         </div>
-                        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                        <div className="flex items-center gap-2.5 w-full sm:w-auto min-w-0 shrink-0">
                           <button
                             type="button"
                             onClick={() => {
@@ -621,7 +623,7 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                               }
                             }}
                             aria-label={`Save ${scholarship.title}`}
-                            className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+                            className={`p-2 rounded-lg border transition-colors cursor-pointer shrink-0 ${
                               saved 
                                 ? 'bg-[#dce2f3] text-[#0037b0] border-[#b7c4ff]' 
                                 : 'bg-[#eeeeed] hover:bg-[#e2e2e2] text-[#6b7280] hover:text-[#1a1a1e] border-transparent'
@@ -634,10 +636,10 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                           <button
                             type="button"
                             onClick={() => onSelectScholarship(scholarship)}
-                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#0037b0] text-white font-caption-strong text-xs hover:bg-[#2563eb] transition-colors shadow-xs cursor-pointer"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#0037b0] text-white font-caption-strong text-xs hover:bg-[#2563eb] transition-colors shadow-xs cursor-pointer min-w-0 truncate"
                           >
-                            <span>View Details &amp; Criteria</span>
-                            <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
+                            <span className="truncate">View Details &amp; Criteria</span>
+                            <span className="material-symbols-outlined text-[15px] shrink-0">arrow_forward</span>
                           </button>
                         </div>
                       </div>
@@ -649,11 +651,11 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="font-caption text-xs text-[#6b7280]">
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 w-full min-w-0">
+                <div className="font-caption text-xs text-[#6b7280] text-center sm:text-left min-w-0">
                   Showing <span className="font-caption-strong text-[#1a1a1e]">{(currentPage - 1) * pageSize + 1}–{Math.min(totalItems, currentPage * pageSize)}</span> of <span className="font-caption-strong text-[#1a1a1e]">{totalItems}</span> verified awards
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap justify-center min-w-0">
                   <button
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
