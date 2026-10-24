@@ -14,6 +14,61 @@ interface ScholarshipExplorerProps {
   onOpenProfileBuilder: () => void;
 }
 
+export const ScholarshipCardSkeleton: React.FC = () => {
+  return (
+    <article 
+      className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-[#e5e7eb] w-full min-w-0 animate-pulse"
+      aria-hidden="true"
+    >
+      <div className="flex flex-col space-y-4 w-full min-w-0">
+        {/* Header Strip Skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 w-full min-w-0">
+          <div className="flex items-start gap-3 min-w-0 flex-1 w-full sm:w-auto">
+            <div className="w-10 h-10 rounded-lg bg-[#eeeeed] shrink-0 mt-0.5"></div>
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="h-3 w-32 bg-[#eeeeed] rounded"></div>
+              <div className="h-5 w-4/5 sm:w-3/5 bg-[#eeeeed] rounded"></div>
+            </div>
+          </div>
+          <div className="h-6 w-36 bg-[#eeeeed] rounded-full shrink-0"></div>
+        </div>
+
+        {/* Triple Bento Box Strip Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] w-full min-w-0">
+          <div className="space-y-1.5 min-w-0">
+            <div className="h-2.5 w-16 bg-[#e5e7eb] rounded"></div>
+            <div className="h-3.5 w-28 bg-[#e5e7eb] rounded"></div>
+          </div>
+          <div className="space-y-1.5 min-w-0">
+            <div className="h-2.5 w-20 bg-[#e5e7eb] rounded"></div>
+            <div className="h-3.5 w-24 bg-[#e5e7eb] rounded"></div>
+          </div>
+          <div className="space-y-1.5 min-w-0">
+            <div className="h-2.5 w-24 bg-[#e5e7eb] rounded"></div>
+            <div className="h-3.5 w-32 bg-[#e5e7eb] rounded"></div>
+          </div>
+        </div>
+
+        {/* Rubric Preview Badges Skeleton */}
+        <div className="py-1 flex flex-wrap items-center gap-3 w-full min-w-0">
+          <div className="h-3 w-28 bg-[#eeeeed] rounded-full"></div>
+          <div className="h-3 w-36 bg-[#eeeeed] rounded-full"></div>
+          <div className="h-3 w-32 bg-[#eeeeed] rounded-full"></div>
+        </div>
+
+        {/* Bottom Verification & Action Row Skeleton */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-t border-[#e5e7eb] w-full min-w-0">
+          <div className="h-3 w-48 bg-[#eeeeed] rounded"></div>
+          <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-[#eeeeed] shrink-0"></div>
+            <div className="h-9 w-40 rounded-full bg-[#eeeeed] shrink-0"></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+};
+
 export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
   onSelectScholarship,
   onOpenProfileBuilder
@@ -560,16 +615,17 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
             )}
 
             {loadingFromDB ? (
-              <div className="p-8 sm:p-12 text-center bg-white rounded-xl border border-[#e5e7eb] w-full min-w-0 shadow-xs">
-                <div className="inline-block animate-spin text-[#0037b0] mb-3">
-                  <span className="material-symbols-outlined text-[36px]">sync</span>
+              <div className="space-y-4 w-full min-w-0" role="status" aria-label="Loading scholarships from Firestore database">
+                <div className="p-3.5 rounded-xl bg-white border border-[#e5e7eb] shadow-xs flex items-center justify-between gap-3 text-xs text-[#434655] w-full min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="material-symbols-outlined text-[18px] text-[#0037b0] animate-spin shrink-0">sync</span>
+                    <span className="truncate">Connecting to Firestore database... Synchronizing official endowments and calculating live deadlines.</span>
+                  </div>
+                  <span className="font-label-sm text-[11px] font-semibold text-[#0037b0] shrink-0 hidden sm:inline">Live Query</span>
                 </div>
-                <h3 className="font-headline-sm text-base text-[#1a1a1e] mb-1">
-                  Querying Firestore Database...
-                </h3>
-                <p className="font-body-default text-xs text-[#6b7280]">
-                  Retrieving verified scholarship records and computing dynamic deadline horizons.
-                </p>
+                {[1, 2, 3, 4].map((skeletonIndex) => (
+                  <ScholarshipCardSkeleton key={skeletonIndex} />
+                ))}
               </div>
             ) : currentItems.length === 0 ? (
               <div className="p-8 sm:p-12 text-center bg-white rounded-xl border border-[#e5e7eb] w-full min-w-0">
