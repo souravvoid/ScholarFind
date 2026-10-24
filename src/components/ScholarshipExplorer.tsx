@@ -214,8 +214,111 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
     setMinAwardUSD(0);
     setSearchQuery('');
     setDeadlineWindow('all');
+    setVerifiedRecentOnly(false);
     setCurrentPage(1);
   };
+
+  // Compile active filters as manageable, removable tags
+  const activeFilters = useMemo(() => {
+    const list: {
+      id: string;
+      category: string;
+      label: string;
+      icon: string;
+      onRemove: () => void;
+    }[] = [];
+
+    // Search query tag
+    if (searchQuery.trim()) {
+      list.push({
+        id: 'search-query',
+        category: 'Keyword',
+        label: `"${searchQuery.trim()}"`,
+        icon: 'search',
+        onRemove: () => {
+          setSearchQuery('');
+          setCurrentPage(1);
+        }
+      });
+    }
+
+    // Destination country tags
+    selectedCountries.forEach(country => {
+      list.push({
+        id: `country-${country}`,
+        category: 'Destination',
+        label: country,
+        icon: 'public',
+        onRemove: () => toggleCountry(country)
+      });
+    });
+
+    // Degree level tags
+    const levelLabels: Record<string, string> = {
+      masters: "Master's Degree",
+      phd: 'Doctoral / PhD',
+      bachelors: "Bachelor's Degree",
+      postdoc: 'Postdoc Fellowship'
+    };
+    selectedLevels.forEach(lvl => {
+      list.push({
+        id: `level-${lvl}`,
+        category: 'Degree',
+        label: levelLabels[lvl] || lvl,
+        icon: 'school',
+        onRemove: () => toggleLevel(lvl)
+      });
+    });
+
+    // Minimum award tag
+    if (minAwardUSD > 0) {
+      list.push({
+        id: 'min-award',
+        category: 'Min Award',
+        label: `$${minAwardUSD.toLocaleString()}+`,
+        icon: 'payments',
+        onRemove: () => {
+          setMinAwardUSD(0);
+          setCurrentPage(1);
+        }
+      });
+    }
+
+    // Deadline window tag
+    if (deadlineWindow !== 'all') {
+      const windowLabels: Record<string, string> = {
+        urgent_30d: 'Next 30 days (Urgent)',
+        '1_3_months': '1 – 3 months',
+        '3_6_months': '3 – 6 months'
+      };
+      list.push({
+        id: 'deadline-window',
+        category: 'Deadline',
+        label: windowLabels[deadlineWindow] || deadlineWindow,
+        icon: 'calendar_month',
+        onRemove: () => {
+          setDeadlineWindow('all');
+          setCurrentPage(1);
+        }
+      });
+    }
+
+    // Verified recent tag
+    if (verifiedRecentOnly) {
+      list.push({
+        id: 'verified-recent',
+        category: 'Verification',
+        label: 'Recent (within 30d)',
+        icon: 'verified',
+        onRemove: () => {
+          setVerifiedRecentOnly(false);
+          setCurrentPage(1);
+        }
+      });
+    }
+
+    return list;
+  }, [searchQuery, selectedCountries, selectedLevels, minAwardUSD, deadlineWindow, verifiedRecentOnly]);
 
   // Pagination (4 items per page)
   const pageSize = 4;
@@ -349,44 +452,79 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
           </div>
         </div>
 
-        {/* Active Filter Chips Row */}
-        <div className="flex flex-wrap items-center gap-2 pb-6 w-full min-w-0">
-          <span className="font-caption-strong text-xs text-[#6b7280] mr-1">Active filters:</span>
-          {selectedCountries.map(c => (
-            <span
-              key={c}
-              onClick={() => toggleCountry(c)}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#1a1a1e] font-caption text-xs shadow-xs hover:bg-[#e2e2e2] transition-colors cursor-pointer"
-            >
-              Destination: {c}
-              <span className="material-symbols-outlined text-[14px] text-[#6b7280]">close</span>
-            </span>
-          ))}
-          {selectedLevels.map(l => (
-            <span
-              key={l}
-              onClick={() => toggleLevel(l)}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#1a1a1e] font-caption text-xs shadow-xs hover:bg-[#e2e2e2] transition-colors cursor-pointer capitalize"
-            >
-              Degree: {l}
-              <span className="material-symbols-outlined text-[14px] text-[#6b7280]">close</span>
-            </span>
-          ))}
-          {minAwardUSD > 0 && (
-            <span
-              onClick={() => setMinAwardUSD(0)}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#1a1a1e] font-caption text-xs shadow-xs hover:bg-[#e2e2e2] transition-colors cursor-pointer"
-            >
-              Min Award: ${minAwardUSD.toLocaleString()}+
-              <span className="material-symbols-outlined text-[14px] text-[#6b7280]">close</span>
-            </span>
+        {/* Active Filter Tags Panel (Removable Tags just below Search Bar) */}
+        <div className="w-full bg-white rounded-xl p-3 sm:p-4 shadow-xs border border-[#e5e7eb] mb-6 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[#e5e7eb] w-full min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="material-symbols-outlined text-[#0037b0] text-[18px] shrink-0">filter_alt</span>
+              <span className="font-caption-strong text-xs text-[#1a1a1e]">Active Filters</span>
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#dce2f3] text-[#0037b0] shrink-0">
+                {activeFilters.length} active
+              </span>
+            </div>
+
+            {activeFilters.length > 0 ? (
+              <button
+                type="button"
+                onClick={clearAllFilters}
+                className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#be123c] hover:text-[#9f1239] hover:underline transition-colors cursor-pointer self-start sm:self-auto min-h-[32px] sm:min-h-0"
+              >
+                <span className="material-symbols-outlined text-[15px]">clear_all</span>
+                <span>Clear all filters</span>
+              </button>
+            ) : (
+              <span className="font-caption text-xs text-[#6b7280]">
+                Showing all verified opportunities
+              </span>
+            )}
+          </div>
+
+          {activeFilters.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2 pt-3 w-full min-w-0">
+              {activeFilters.map((filter) => (
+                <span
+                  key={filter.id}
+                  className="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-1 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-[#1a1a1e] font-caption text-xs shadow-xs hover:border-[#b7c4ff] hover:bg-[#f0f4ff] transition-all min-w-0 group"
+                >
+                  <span className="material-symbols-outlined text-[15px] text-[#0037b0] shrink-0">
+                    {filter.icon}
+                  </span>
+                  <span className="truncate max-w-[170px] sm:max-w-[240px]">
+                    <span className="text-[#6b7280] font-normal">{filter.category}: </span>
+                    <span className="font-semibold text-[#1a1a1e]">{filter.label}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={filter.onRemove}
+                    aria-label={`Remove filter ${filter.category}: ${filter.label}`}
+                    title={`Remove ${filter.category} filter`}
+                    className="w-5 h-5 rounded flex items-center justify-center text-[#6b7280] hover:text-[#be123c] hover:bg-[#fee2e2] transition-colors cursor-pointer shrink-0 ml-0.5"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">close</span>
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#6b7280] w-full min-w-0">
+              <span>No active filters applied. Search keywords or select criteria to narrow opportunities.</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCountries(['United Kingdom', 'Germany']);
+                  setSelectedLevels(['masters']);
+                  setMinAwardUSD(25000);
+                  setDeadlineWindow('1_3_months');
+                  setVerifiedRecentOnly(true);
+                  setCurrentPage(1);
+                }}
+                className="inline-flex items-center gap-1 text-[#0037b0] hover:text-[#2563eb] font-caption-strong hover:underline cursor-pointer self-start sm:self-auto shrink-0"
+              >
+                <span className="material-symbols-outlined text-[14px]">tune</span>
+                <span>Restore recommended filters</span>
+              </button>
+            </div>
           )}
-          <button
-            onClick={clearAllFilters}
-            className="ml-2 font-caption-strong text-xs text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer"
-          >
-            Clear all filters
-          </button>
         </div>
 
         {/* Mobile Filter Toggle Button */}
@@ -394,11 +532,11 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
           <button
             type="button"
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white border border-[#e5e7eb] font-caption-strong text-xs text-[#1a1a1e] shadow-xs hover:bg-[#f3f4f3] transition-colors cursor-pointer min-h-[42px]"
+            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white border border-[#e5e7eb] font-caption-strong text-xs text-[#1a1a1e] shadow-xs hover:bg-[#f3f4f3] transition-colors cursor-pointer min-h-[44px]"
           >
             <span className="flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px] text-[#0037b0]">tune</span>
-              <span>Filter Criteria ({selectedCountries.length + selectedLevels.length + (minAwardUSD > 0 ? 1 : 0)} active)</span>
+              <span>Filter Criteria ({activeFilters.length} active)</span>
             </span>
             <span className="material-symbols-outlined text-[20px] text-[#6b7280]">
               {mobileFiltersOpen ? 'expand_less' : 'expand_more'}
@@ -415,12 +553,17 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                 <h2 className="font-title text-base text-[#1a1a1e] flex items-center gap-2 min-w-0">
                   <span className="material-symbols-outlined text-[20px] text-[#0037b0] shrink-0">tune</span>
                   <span className="truncate">Filter Criteria</span>
+                  {activeFilters.length > 0 && (
+                    <span className="px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-[#dce2f3] text-[#0037b0]">
+                      {activeFilters.length}
+                    </span>
+                  )}
                 </h2>
                 <button 
                   onClick={clearAllFilters}
-                  className="font-caption text-xs text-[#6b7280] hover:text-[#1a1a1e] cursor-pointer shrink-0"
+                  className="font-caption text-xs text-[#6b7280] hover:text-[#be123c] cursor-pointer shrink-0"
                 >
-                  Reset
+                  Reset all
                 </button>
               </div>
 
