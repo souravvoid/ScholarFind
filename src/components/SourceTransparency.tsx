@@ -59,15 +59,15 @@ export const SourceTransparency: React.FC = () => {
   };
 
   return (
-    <div className="w-full pt-8 pb-20">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-12">
+    <div className="w-full max-w-full overflow-x-hidden pt-8 pb-20 min-w-0">
+      <div className="w-full max-w-[1280px] mx-auto px-3.5 sm:px-4 md:px-8 lg:px-12 min-w-0">
         {/* Header */}
-        <div className="mb-10 text-left">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider mb-2 font-semibold">
-            <span className={`w-1.5 h-1.5 rounded-full ${isDatabaseConnected ? 'bg-[#047857]' : 'bg-[#b45309]'}`}></span>
-            <span>{isDatabaseConnected ? 'Live Firestore Database Audit Registry' : 'Offline / Cached Mode'}</span>
+        <div className="mb-8 sm:mb-10 text-left w-full min-w-0">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider mb-2 font-semibold max-w-full">
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isDatabaseConnected ? 'bg-[#047857]' : 'bg-[#b45309]'}`}></span>
+            <span className="truncate">{isDatabaseConnected ? 'Live Firestore Database Audit Registry' : 'Offline / Cached Mode'}</span>
           </div>
-          <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2">
+          <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2 break-words">
             Source Transparency &amp; Ingestion Pipeline
           </h1>
           <p className="font-body-lead text-[#6b7280] max-w-3xl">
@@ -76,42 +76,42 @@ export const SourceTransparency: React.FC = () => {
         </div>
 
         {/* 10 Sources Status Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12 w-full min-w-0">
           {sources.map((src) => {
             const isRunning = runningJobId === src.id;
 
             return (
               <div
                 key={src.id}
-                className="bg-white rounded-2xl p-6 border border-[#e5e7eb] shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+                className="bg-white rounded-2xl p-4 sm:p-6 border border-[#e5e7eb] shadow-xs hover:shadow-md transition-all flex flex-col justify-between w-full min-w-0"
               >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{src.flag}</span>
-                      <div>
-                        <h3 className="font-title text-base text-[#1a1a1e]">
+                <div className="w-full min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-3 mb-3 w-full min-w-0">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-2xl shrink-0">{src.flag}</span>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-title text-base text-[#1a1a1e] truncate">
                           {src.name}
                         </h3>
-                        <span className="font-caption text-xs text-[#6b7280] block">
+                        <span className="font-caption text-xs text-[#6b7280] block truncate">
                           {src.originAgency} • {src.country}
                         </span>
                       </div>
                     </div>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-[11px] font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-[11px] font-semibold self-start shrink-0">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>
                       {src.status}
                     </span>
                   </div>
 
-                  <div className="space-y-1.5 text-xs text-[#434655] bg-[#f9f9f8] p-3 rounded-xl border border-[#e5e7eb] mb-4">
-                    <div className="flex justify-between">
-                      <span className="text-[#6b7280]">Adapter Module:</span>
-                      <span className="font-mono text-[#0037b0] text-[11px]">{src.adapterModule}</span>
+                  <div className="space-y-2 text-xs text-[#434655] bg-[#f9f9f8] p-3 rounded-xl border border-[#e5e7eb] mb-4 w-full min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-0.5">
+                      <span className="text-[#6b7280] shrink-0">Adapter Module:</span>
+                      <span className="font-mono text-[#0037b0] text-[11px] break-all">{src.adapterModule}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#6b7280]">Access Method:</span>
-                      <span className="font-medium text-[#1a1a1e]">{src.accessMethod}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-0.5">
+                      <span className="text-[#6b7280] shrink-0">Access Method:</span>
+                      <span className="font-medium text-[#1a1a1e] truncate">{src.accessMethod}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#6b7280]">Verified Endowments:</span>
@@ -123,17 +123,17 @@ export const SourceTransparency: React.FC = () => {
                     </div>
                   </div>
 
-                  <p className="font-caption text-xs text-[#6b7280] leading-relaxed mb-4">
+                  <p className="font-caption text-xs text-[#6b7280] leading-relaxed mb-4 break-words">
                     <strong>Audit Protocol:</strong> {src.auditPrinciples}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[#e5e7eb] flex items-center justify-between gap-3">
+                <div className="pt-3 border-t border-[#e5e7eb] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 w-full min-w-0">
                   <a
                     href={src.provenanceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-[#0037b0] hover:underline"
+                    className="inline-flex items-center justify-center sm:justify-start gap-1 text-xs text-[#0037b0] hover:underline min-h-[44px] sm:min-h-0 py-2 sm:py-0"
                   >
                     <span>View Origin Source</span>
                     <span className="material-symbols-outlined text-[14px]">open_in_new</span>
@@ -142,7 +142,7 @@ export const SourceTransparency: React.FC = () => {
                   <button
                     onClick={() => handleRunIngestion(src.id)}
                     disabled={isRunning}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#f3f4f3] hover:bg-[#e8e8e7] text-xs font-semibold text-[#1a1a1e] transition-colors cursor-pointer disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg bg-[#f3f4f3] hover:bg-[#e8e8e7] text-xs font-semibold text-[#1a1a1e] transition-colors cursor-pointer disabled:opacity-60 min-h-[44px] sm:min-h-0"
                   >
                     <span className={`material-symbols-outlined text-[15px] ${isRunning ? 'animate-spin text-[#0037b0]' : 'text-[#6b7280]'}`}>
                       sync
@@ -152,7 +152,7 @@ export const SourceTransparency: React.FC = () => {
                 </div>
 
                 {syncFeedback[src.id] && (
-                  <div className="mt-2.5 px-3 py-1.5 rounded-lg bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-[11px] font-caption flex items-center gap-1.5 animate-in fade-in">
+                  <div className="mt-2.5 px-3 py-1.5 rounded-lg bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-[11px] font-caption flex items-center gap-1.5 animate-in fade-in min-w-0">
                     <span className="material-symbols-outlined text-[14px] shrink-0">check_circle</span>
                     <span className="truncate">{syncFeedback[src.id]}</span>
                   </div>

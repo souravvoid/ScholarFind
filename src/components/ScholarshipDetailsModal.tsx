@@ -81,7 +81,7 @@ export const ScholarshipDetailsModal: React.FC<ScholarshipDetailsModalProps> = (
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#e8e8e7] transition-colors shrink-0 cursor-pointer"
+              className="w-11 h-11 flex items-center justify-center rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#e8e8e7] transition-colors shrink-0 cursor-pointer"
               aria-label="Close details"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
@@ -282,7 +282,7 @@ export const ScholarshipDetailsModal: React.FC<ScholarshipDetailsModalProps> = (
                   });
                 }
               }}
-              className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border font-caption-strong text-sm transition-colors cursor-pointer min-h-[42px] ${
+              className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border font-caption-strong text-sm transition-colors cursor-pointer min-h-[44px] ${
                 currentlySaved
                   ? 'bg-[#dce2f3] text-[#0037b0] border-[#b7c4ff]'
                   : 'bg-white text-[#1a1a1e] border-[#e5e7eb] hover:bg-[#f3f4f3]'
@@ -296,7 +296,7 @@ export const ScholarshipDetailsModal: React.FC<ScholarshipDetailsModalProps> = (
 
             <button
               onClick={() => setShowRedirectConfirm(true)}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#1d4ed8] hover:bg-[#2563eb] text-white font-body-strong text-sm shadow-md active:scale-95 transition-all cursor-pointer min-h-[42px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#1d4ed8] hover:bg-[#2563eb] text-white font-body-strong text-sm shadow-md active:scale-95 transition-all cursor-pointer min-h-[44px]"
             >
               <span>Continue to Official Application</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>

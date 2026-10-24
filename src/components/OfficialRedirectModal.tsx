@@ -45,12 +45,12 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="redirect-dialog-title"
-        className="relative w-full max-w-[540px] bg-white rounded-2xl shadow-2xl border border-[#e5e7eb] p-6 sm:p-8 z-10 animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[540px] max-h-[92vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-[#e5e7eb] p-5 sm:p-8 z-10 animate-in fade-in zoom-in-95 duration-200 min-w-0"
       >
-        {/* Close Button */}
+        {/* Close Button with 44px touch target */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1 rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors"
+          className="absolute top-3 right-3 sm:top-5 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors cursor-pointer"
           aria-label="Close redirect confirmation"
         >
           <span className="material-symbols-outlined text-[20px]">close</span>
@@ -103,17 +103,17 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
         </label>
 
         {/* Action Buttons */}
-        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 w-full min-w-0">
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-[#e5e7eb] font-caption-strong text-sm text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors"
+            className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-lg border border-[#e5e7eb] font-caption-strong text-sm text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors flex items-center justify-center cursor-pointer"
           >
             Stay on ScholarFind
           </button>
           <button
             onClick={handleProceed}
             disabled={!hasAcknowledged}
-            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-body-strong text-sm transition-all shadow-sm ${
+            className={`w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-body-strong text-sm transition-all shadow-sm ${
               hasAcknowledged
                 ? 'bg-[#1d4ed8] hover:bg-[#2563eb] text-white active:scale-95 cursor-pointer'
                 : 'bg-[#e2e2e2] text-[#6b7280] cursor-not-allowed'
