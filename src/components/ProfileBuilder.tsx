@@ -22,7 +22,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
   const [gradingScale, setGradingScale] = useState<GradingScale>(profile?.gradingScale || 'gpa_4_0');
   const [gpa, setGpa] = useState<number>(profile?.gpa || 3.82);
   const [maxGpa, setMaxGpa] = useState<number>(profile?.maxGpa || 4.0);
-  const [graduationYear, setGraduationYear] = useState(profile?.graduationYear || '2025 (Expected)');
+  const [graduationYear, setGraduationYear] = useState(profile?.graduationYear || '2026 (Expected)');
   
   const [primaryField, setPrimaryField] = useState(profile?.primaryField || 'Computer Science & Artificial Intelligence (STEM)');
   const [facultyTags, setFacultyTags] = useState<string[]>(profile?.facultyTags || ['Computer Science', 'Machine Learning', 'STEM']);
@@ -45,7 +45,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
   const [deliveryModality, setDeliveryModality] = useState<'on_campus' | 'hybrid' | 'online'>(
     profile?.deliveryModality || 'on_campus'
   );
-  const [intendedStartTerm, setIntendedStartTerm] = useState(profile?.intendedStartTerm || 'Fall 2025');
+  const [intendedStartTerm, setIntendedStartTerm] = useState(profile?.intendedStartTerm || 'Fall 2026');
 
   const [workExperienceYears, setWorkExperienceYears] = useState<number>(profile?.workExperienceYears ?? 2);
   const [hasEnglishMediumInstruction, setHasEnglishMediumInstruction] = useState<boolean>(
@@ -474,11 +474,11 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       onChange={(e) => setGraduationYear(e.target.value)}
                       className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
                     >
-                      <option value="2023 or earlier">2023 or earlier</option>
-                      <option value="2024">2024</option>
-                      <option value="2025 (Expected)">2025 (Expected)</option>
-                      <option value="2026">2026</option>
-                      <option value="2027+">2027+</option>
+                      <option value="2024 or earlier">2024 or earlier</option>
+                      <option value="2025">2025</option>
+                      <option value="2026 (Expected)">2026 (Expected)</option>
+                      <option value="2027">2027</option>
+                      <option value="2028+">2028+</option>
                     </select>
                   </div>
                 </div>
@@ -965,7 +965,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     Intended Start Year / Term
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {['Fall 2025', 'Spring 2026', 'Fall 2026', 'Flexible / Any'].map((term) => (
+                    {['Fall 2026', 'Spring 2027', 'Fall 2027', 'Flexible / Any'].map((term) => (
                       <button
                         key={term}
                         type="button"

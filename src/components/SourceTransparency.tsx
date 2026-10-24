@@ -1,27 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { INGESTION_SOURCES } from '../data/sourcesData';
 import { IngestionSource } from '../types';
+import { getSourcesFromDatabase, triggerLiveSourceSync } from '../services/databaseService';
 
 export const SourceTransparency: React.FC = () => {
   const [sources, setSources] = useState<IngestionSource[]>(INGESTION_SOURCES);
   const [runningJobId, setRunningJobId] = useState<string | null>(null);
-  const [selectedSource, setSelectedSource] = useState<IngestionSource | null>(null);
+  const [syncFeedback, setSyncFeedback] = useState<{ [sourceId: string]: string }>({});
+  const [isDatabaseConnected, setIsDatabaseConnected] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const handleRunIngestion = (sourceId: string) => {
+  // Fetch actual sources from Firestore database on mount
+  useEffect(() => {
+    let isMounted = true;
+    async function loadSources() {
+      setLoading(true);
+      const res = await getSourcesFromDatabase();
+      if (isMounted) {
+        setSources(res.data);
+        setIsDatabaseConnected(res.fromDatabase);
+        setLoading(false);
+      }
+    }
+    loadSources();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleRunIngestion = async (sourceId: string) => {
     setRunningJobId(sourceId);
-    setTimeout(() => {
+    setSyncFeedback(prev => ({ ...prev, [sourceId]: 'Contacting official registry & executing pipeline...' }));
+
+    const result = await triggerLiveSourceSync(sourceId);
+
+    if (result.success) {
       setSources(prev => prev.map(s => {
         if (s.id === sourceId) {
           return {
             ...s,
-            lastIngested: new Date().toISOString(),
-            scholarshipCount: s.scholarshipCount + Math.floor(Math.random() * 3)
+            lastIngested: result.timestamp,
+            status: 'verified'
           };
         }
         return s;
       }));
-      setRunningJobId(null);
-    }, 1500);
+      setSyncFeedback(prev => ({
+        ...prev,
+        [sourceId]: `Audit verified! Stored in Firestore (Log: ${result.logId?.slice(0, 8)}...)`
+      }));
+    } else {
+      setSyncFeedback(prev => ({
+        ...prev,
+        [sourceId]: `Sync failed: ${result.error || 'Connection error'}`
+      }));
+    }
+    setRunningJobId(null);
   };
 
   return (
@@ -30,8 +64,8 @@ export const SourceTransparency: React.FC = () => {
         {/* Header */}
         <div className="mb-10 text-left">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider mb-2 font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>
-            Academic Provenance &amp; Open Audit Registry
+            <span className={`w-1.5 h-1.5 rounded-full ${isDatabaseConnected ? 'bg-[#047857]' : 'bg-[#b45309]'}`}></span>
+            <span>{isDatabaseConnected ? 'Live Firestore Database Audit Registry' : 'Offline / Cached Mode'}</span>
           </div>
           <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2">
             Source Transparency &amp; Ingestion Pipeline
@@ -116,6 +150,13 @@ export const SourceTransparency: React.FC = () => {
                     <span>{isRunning ? 'Auditing feed...' : 'Audit & Refresh'}</span>
                   </button>
                 </div>
+
+                {syncFeedback[src.id] && (
+                  <div className="mt-2.5 px-3 py-1.5 rounded-lg bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-[11px] font-caption flex items-center gap-1.5 animate-in fade-in">
+                    <span className="material-symbols-outlined text-[14px] shrink-0">check_circle</span>
+                    <span className="truncate">{syncFeedback[src.id]}</span>
+                  </div>
+                )}
               </div>
             );
           })}

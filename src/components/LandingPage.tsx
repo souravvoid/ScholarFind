@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { HeroGlobe3D } from './HeroGlobe3D';
 import { Scholarship, DegreeLevel } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
+import { getDeadlineDisplay } from '../services/databaseService';
 
 interface LandingPageProps {
   onNavigate: (tab: string) => void;
@@ -234,9 +235,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 criteriaText = 'Confirm Bachelor field';
                 criteriaIcon = 'help';
               } else if (sch.id === 'knight-hennessy') {
-                badgeText = 'Review required — deadline approaching';
-                badgeBg = 'bg-[#eeeeed] border-[#e2e2e2] text-[#1a1a1e]';
-                criteriaText = '14 days left';
+                const deadlineInfo = getDeadlineDisplay(sch.applicationDeadline);
+                badgeText = deadlineInfo.isClosed ? 'Cycle closed' : 'Review required — upcoming deadline';
+                badgeBg = `${deadlineInfo.badgeClass} border-[#e2e2e2]`;
+                criteriaText = deadlineInfo.isClosed ? 'Cycle closed' : `${deadlineInfo.daysRemaining} days left`;
                 criteriaIcon = 'schedule';
               }
 

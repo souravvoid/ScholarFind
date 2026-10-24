@@ -89,7 +89,7 @@ class UserProfileCreate(BaseModel):
     target_regions: List[str] = []
     target_countries: List[str] = []
     delivery_modality: str = "on_campus"
-    intended_start_term: Optional[str] = "Fall 2025"
+    intended_start_term: Optional[str] = "Fall 2026"
     work_experience_years: float = 0.0
     english_test_type: str = "none"
     english_score: Optional[str] = None

@@ -57,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[#6b7280] font-caption text-xs">
-          <p>© 2025 ScholarFind Academic Verification Initiative. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} ScholarFind Academic Verification Initiative. All rights reserved.</p>
           <p>Authoritative registry for verified international collegiate endowments.</p>
         </div>
       </div>

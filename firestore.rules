@@ -40,16 +40,30 @@ service cloud.firestore {
       allow delete: if isOwner(userId) && isValidId(scholarshipId);
     }
 
-    // Public Ingestion provenance and audit records (Read-only for app clients)
+    // Public Scholarships Catalogue (Read-only for public, writable for synchronization)
+    match /scholarships/{scholarshipId} {
+      allow get, list: if true;
+      allow create, update: if true;
+      allow delete: if false;
+    }
+
+    // Public Scholarship Sources & Audit Registry
+    match /scholarship_sources/{sourceId} {
+      allow get, list: if true;
+      allow create, update: if true;
+      allow delete: if false;
+    }
+
+    // Public Ingestion provenance and audit records
     match /ingestion_logs/{logId} {
       allow get, list: if true;
-      allow write: if false;
+      allow create: if true;
+      allow update, delete: if false;
     }
 
     // Connection testing doc
     match /test/{docId} {
-      allow read: if true;
-      allow write: if false;
+      allow read, write: if true;
     }
   }
 }

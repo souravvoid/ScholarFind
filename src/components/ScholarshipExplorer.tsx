@@ -1,8 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Scholarship, DegreeLevel } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { useAuth } from '../context/AuthContext';
 import { evaluateEligibility } from '../utils/eligibilityEngine';
+import { 
+  getScholarshipsFromDatabase, 
+  getDeadlineDisplay, 
+  calculateDaysRemaining 
+} from '../services/databaseService';
 
 interface ScholarshipExplorerProps {
   onSelectScholarship: (scholarship: Scholarship) => void;
@@ -14,6 +19,43 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
   onOpenProfileBuilder
 }) => {
   const { profile, isSaved, saveScholarship, unsaveScholarship } = useAuth();
+
+  // Database-backed state
+  const [scholarships, setScholarships] = useState<Scholarship[]>(SCHOLARSHIPS_DATA);
+  const [loadingFromDB, setLoadingFromDB] = useState<boolean>(true);
+  const [isDatabaseConnected, setIsDatabaseConnected] = useState<boolean>(true);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<string>('');
+  const [dbErrorMessage, setDbErrorMessage] = useState<string | null>(null);
+
+  // Fetch real database records on mount
+  useEffect(() => {
+    let isMounted = true;
+    async function loadData() {
+      setLoadingFromDB(true);
+      const result = await getScholarshipsFromDatabase();
+      if (isMounted) {
+        setScholarships(result.data);
+        setIsDatabaseConnected(result.fromDatabase);
+        setDbErrorMessage(result.error || null);
+        setLastRefreshedAt(new Date().toLocaleTimeString());
+        setLoadingFromDB(false);
+      }
+    }
+    loadData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleRefreshFromDB = async () => {
+    setLoadingFromDB(true);
+    const result = await getScholarshipsFromDatabase();
+    setScholarships(result.data);
+    setIsDatabaseConnected(result.fromDatabase);
+    setDbErrorMessage(result.error || null);
+    setLastRefreshedAt(new Date().toLocaleTimeString());
+    setLoadingFromDB(false);
+  };
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,14 +75,14 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
 
   // Evaluate all scholarships against active profile
   const scholarshipsWithEvaluation = useMemo(() => {
-    return SCHOLARSHIPS_DATA.map(sch => {
+    return scholarships.map(sch => {
       const evaluation = evaluateEligibility(sch, matchMode === 'profile' ? profile : null);
       return {
         scholarship: sch,
         evaluation
       };
     });
-  }, [profile, matchMode]);
+  }, [scholarships, profile, matchMode]);
 
   // Filter logic
   const filteredScholarships = useMemo(() => {
@@ -133,38 +175,53 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 w-full min-w-0">
           <div className="space-y-2 max-w-2xl min-w-0">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider font-semibold max-w-full min-w-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#047857] shrink-0"></span>
-              <span className="truncate">Verified Registry • Updated Hourly</span>
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isDatabaseConnected ? 'bg-[#047857]' : 'bg-[#b45309]'}`}></span>
+              <span className="truncate">
+                {isDatabaseConnected ? 'Live Firestore Database' : 'Local Verified Fallback'}
+                {lastRefreshedAt ? ` • Synced at ${lastRefreshedAt}` : ''}
+              </span>
             </div>
             <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight break-words">
               Explore Verified Global Scholarships
             </h1>
             <p className="font-body-lead text-[#6b7280]">
-              1,428 active opportunities matched with international study programs.
+              {scholarships.length} verified opportunities fetched from official institutional and government endowments.
             </p>
           </div>
 
-          {/* Quick Match Meta Stats */}
+          {/* Quick Match Meta Stats & Database Refresh */}
           <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-2 sm:gap-4 p-2 rounded-xl bg-white border border-[#e5e7eb] shadow-xs w-full sm:w-auto min-w-0">
             <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 min-w-0 flex-1 sm:flex-initial">
               <div className="w-2.5 h-2.5 rounded-full bg-[#047857] shrink-0"></div>
               <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
-                {eligibleCount > 0 ? `${eligibleCount * 12} Likely Eligible` : '48 Likely Eligible'}
+                {eligibleCount} Likely Eligible
               </span>
             </div>
             <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
             <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 min-w-0 flex-1 sm:flex-initial">
               <div className="w-2.5 h-2.5 rounded-full bg-[#b45309] shrink-0"></div>
               <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
-                {potentialCount > 0 ? `${potentialCount * 28} Potential` : '112 Potential'}
+                {potentialCount} More Info Needed
               </span>
             </div>
+            <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
+            <button
+              onClick={handleRefreshFromDB}
+              disabled={loadingFromDB}
+              title="Refresh from database"
+              className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#434655] hover:text-[#1a1a1e] transition-colors cursor-pointer px-2 sm:px-3 py-1 shrink-0 disabled:opacity-50"
+            >
+              <span className={`material-symbols-outlined text-[15px] sm:text-[16px] ${loadingFromDB ? 'animate-spin text-[#0037b0]' : ''}`}>
+                sync
+              </span>
+              <span>{loadingFromDB ? 'Syncing...' : 'Refresh'}</span>
+            </button>
             <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
             <button
               onClick={onOpenProfileBuilder}
               className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer px-2 sm:px-3 py-1 shrink-0"
             >
-              <span>Update Profile</span>
+              <span>Profile</span>
               <span className="material-symbols-outlined text-[15px] sm:text-[16px]">arrow_forward</span>
             </button>
           </div>
@@ -487,7 +544,34 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
 
           {/* Main Results Grid Area (Scholarship Cards) */}
           <main className="lg:col-span-8 xl:col-span-9 space-y-4 w-full min-w-0">
-            {currentItems.length === 0 ? (
+            {dbErrorMessage && (
+              <div className="p-3.5 rounded-xl bg-[#fffbeb] border border-[#fde68a] text-[#b45309] text-xs flex items-center justify-between gap-3 w-full min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="material-symbols-outlined text-[18px] shrink-0">info</span>
+                  <span className="truncate">Database sync status: Using verified institutional offline cache ({dbErrorMessage}).</span>
+                </div>
+                <button 
+                  onClick={handleRefreshFromDB}
+                  className="font-semibold underline cursor-pointer hover:text-[#92400e] shrink-0"
+                >
+                  Retry Connection
+                </button>
+              </div>
+            )}
+
+            {loadingFromDB ? (
+              <div className="p-8 sm:p-12 text-center bg-white rounded-xl border border-[#e5e7eb] w-full min-w-0 shadow-xs">
+                <div className="inline-block animate-spin text-[#0037b0] mb-3">
+                  <span className="material-symbols-outlined text-[36px]">sync</span>
+                </div>
+                <h3 className="font-headline-sm text-base text-[#1a1a1e] mb-1">
+                  Querying Firestore Database...
+                </h3>
+                <p className="font-body-default text-xs text-[#6b7280]">
+                  Retrieving verified scholarship records and computing dynamic deadline horizons.
+                </p>
+              </div>
+            ) : currentItems.length === 0 ? (
               <div className="p-8 sm:p-12 text-center bg-white rounded-xl border border-[#e5e7eb] w-full min-w-0">
                 <span className="material-symbols-outlined text-[48px] text-[#6b7280] mb-2">
                   search_off
@@ -574,10 +658,17 @@ export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
                         </div>
                         <div className="space-y-0.5 min-w-0">
                           <span className="font-label-sm text-[10px] text-[#6b7280] uppercase block truncate">Application Deadline</span>
-                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#ba1a1a] min-w-0">
-                            <span className="material-symbols-outlined text-[15px] shrink-0">schedule</span>
-                            <span className="truncate">{scholarship.applicationDeadline} ({scholarship.daysRemaining}d left)</span>
-                          </div>
+                          {(() => {
+                            const deadlineInfo = getDeadlineDisplay(scholarship.applicationDeadline);
+                            return (
+                              <div className={`flex items-center gap-1 font-caption-strong text-xs min-w-0 ${deadlineInfo.isClosed ? 'text-[#6b7280]' : 'text-[#ba1a1a]'}`}>
+                                <span className="material-symbols-outlined text-[15px] shrink-0">schedule</span>
+                                <span className="truncate">
+                                  {scholarship.applicationDeadline} {deadlineInfo.isClosed ? '• Cycle closed' : `(${deadlineInfo.daysRemaining}d left)`}
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
 

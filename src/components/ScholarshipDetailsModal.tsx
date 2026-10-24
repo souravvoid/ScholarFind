@@ -3,6 +3,7 @@ import { Scholarship, StudentProfile } from '../types';
 import { evaluateEligibility } from '../utils/eligibilityEngine';
 import { useAuth } from '../context/AuthContext';
 import { OfficialRedirectModal } from './OfficialRedirectModal';
+import { getDeadlineDisplay } from '../services/databaseService';
 
 interface ScholarshipDetailsModalProps {
   scholarship: Scholarship | null;
@@ -118,13 +119,20 @@ export const ScholarshipDetailsModal: React.FC<ScholarshipDetailsModalProps> = (
               </div>
               <div className="space-y-1 min-w-0">
                 <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider truncate">Deadline</span>
-                <div className="flex items-center gap-1.5 font-caption-strong text-[#ba1a1a] text-sm min-w-0">
-                  <span className="material-symbols-outlined text-[16px] shrink-0">schedule</span>
-                  <span className="truncate">{scholarship.applicationDeadline}</span>
-                </div>
-                <span className="font-caption text-xs text-[#6b7280] block truncate">
-                  {scholarship.daysRemaining} days remaining in cycle
-                </span>
+                {(() => {
+                  const deadlineInfo = getDeadlineDisplay(scholarship.applicationDeadline);
+                  return (
+                    <>
+                      <div className={`flex items-center gap-1.5 font-caption-strong text-sm min-w-0 ${deadlineInfo.isClosed ? 'text-[#6b7280]' : 'text-[#ba1a1a]'}`}>
+                        <span className="material-symbols-outlined text-[16px] shrink-0">schedule</span>
+                        <span className="truncate">{scholarship.applicationDeadline}</span>
+                      </div>
+                      <span className="font-caption text-xs text-[#6b7280] block truncate">
+                        {deadlineInfo.statusLabel}
+                      </span>
+                    </>
+                  );
+                })()}
               </div>
               <div className="space-y-1 min-w-0">
                 <span className="block font-label-sm text-[#6b7280] uppercase tracking-wider truncate">Eligible Study Levels</span>

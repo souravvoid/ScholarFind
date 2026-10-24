@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { TrackerStatus, Scholarship } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { OfficialRedirectModal } from './OfficialRedirectModal';
+import { getDeadlineDisplay } from '../services/databaseService';
 
 interface ApplicationTrackerProps {
   onSelectScholarship: (scholarship: Scholarship) => void;
@@ -150,10 +151,15 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                           {item.provider} • {item.destination}
                         </span>
                         <span className="text-[#e5e7eb] hidden sm:inline">•</span>
-                        <span className="font-caption-strong text-xs text-[#ba1a1a] flex items-center gap-1 shrink-0">
-                          <span className="material-symbols-outlined text-[14px]">schedule</span>
-                          Deadline: {item.deadline}
-                        </span>
+                        {(() => {
+                          const deadlineInfo = getDeadlineDisplay(item.deadline);
+                          return (
+                            <span className={`font-caption-strong text-xs flex items-center gap-1 shrink-0 ${deadlineInfo.isClosed ? 'text-[#6b7280]' : 'text-[#ba1a1a]'}`}>
+                              <span className="material-symbols-outlined text-[14px]">schedule</span>
+                              <span>{item.deadline} {deadlineInfo.isClosed ? '• Closed' : `(${deadlineInfo.daysRemaining}d left)`}</span>
+                            </span>
+                          );
+                        })()}
                       </div>
 
                       <h3 

@@ -215,7 +215,7 @@ def search_scholarships(
                 "destination_countries": ["United Kingdom"],
                 "total_award_value": "Full tuition + £20,000/yr",
                 "estimated_usd_value": 68000.0,
-                "application_deadline": "2025-12-04T23:59:00",
+                "application_deadline": "2026-12-03T23:59:00",
                 "official_source_url": "https://www.gatescambridge.org",
                 "official_application_url": "https://www.postgraduate.study.cam.ac.uk/how-to-apply"
             },
@@ -226,7 +226,7 @@ def search_scholarships(
                 "destination_countries": ["Germany"],
                 "total_award_value": "Full funding + €934/mo",
                 "estimated_usd_value": 42000.0,
-                "application_deadline": "2025-11-30T23:59:00",
+                "application_deadline": "2026-11-30T23:59:00",
                 "official_source_url": "https://www.daad.de",
                 "official_application_url": "https://www.daad.de/en/study-and-research-in-germany/scholarships/helmut-schmidt-programme/"
             }
