@@ -62,8 +62,8 @@ class CSCCommonwealthAdapter(BaseSourceAdapter):
         """
         return [
             {
-                "scheme_code": "CSC-MASTERS-2025-26",
-                "title": "Commonwealth Master’s Scholarship 2025/26",
+                "scheme_code": "CSC-MASTERS-2026-27",
+                "title": "Commonwealth Master’s Scholarship 2026/27",
                 "provider": "Commonwealth Scholarship Commission in the UK",
                 "provider_type": "Government Endowment",
                 "destination_countries": ["United Kingdom"],
@@ -85,8 +85,8 @@ class CSCCommonwealthAdapter(BaseSourceAdapter):
                     "clothing_allowance_gbp": 490.0,
                     "estimated_annual_usd": 54000.0
                 },
-                "deadline_date": "2025-12-12T16:00:00Z",
-                "academic_year": "2025/2026",
+                "deadline_date": "2026-12-12T16:00:00Z",
+                "academic_year": "2026/2027",
                 "official_source_url": "https://www.gov.uk/government/organisations/commonwealth-scholarship-commission-in-the-uk",
                 "official_apply_url": "https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/",
                 "official_urls": {
@@ -110,7 +110,7 @@ class CSCCommonwealthAdapter(BaseSourceAdapter):
                         "title": "Eligible Commonwealth Developing Country Citizen",
                         "description": "Must be a citizen of or have refugee status granted by an eligible Commonwealth developing country.",
                         "is_mandatory": True,
-                        "source_citation": "CSC Terms and Conditions 2025/26, Clause 1.1",
+                        "source_citation": "CSC Terms and Conditions 2026/27, Clause 1.1",
                         "parameters": {
                             "allowed_countries": [
                                 "Bangladesh", "Belize", "Botswana", "Cameroon", "Dominica",
@@ -159,8 +159,8 @@ class CSCCommonwealthAdapter(BaseSourceAdapter):
                 ]
             },
             {
-                "scheme_code": "CSC-PHD-2025-26",
-                "title": "Commonwealth PhD Scholarship 2025/26",
+                "scheme_code": "CSC-PHD-2026-27",
+                "title": "Commonwealth PhD Scholarship 2026/27",
                 "provider": "Commonwealth Scholarship Commission in the UK",
                 "provider_type": "Government Endowment",
                 "destination_countries": ["United Kingdom"],
@@ -177,8 +177,8 @@ class CSCCommonwealthAdapter(BaseSourceAdapter):
                     "travel_allowance": "Approved return flights",
                     "estimated_annual_usd": 62000.0
                 },
-                "deadline_date": "2025-12-12T16:00:00Z",
-                "academic_year": "2025/2026",
+                "deadline_date": "2026-12-12T16:00:00Z",
+                "academic_year": "2026/2027",
                 "official_source_url": "https://www.gov.uk/government/organisations/commonwealth-scholarship-commission-in-the-uk",
                 "official_apply_url": "https://cscuk.fcdo.gov.uk/scholarships/commonwealth-phd-scholarships-for-least-developed-countries-and-fragile-states/",
                 "official_urls": {
@@ -201,7 +201,7 @@ class CSCCommonwealthAdapter(BaseSourceAdapter):
                         "title": "Least Developed Countries & Fragile States Commonwealth Citizenship",
                         "description": "Citizen of eligible least developed or fragile Commonwealth state.",
                         "is_mandatory": True,
-                        "source_citation": "CSC PhD Charter 2025/26",
+                        "source_citation": "CSC PhD Charter 2026/27",
                         "parameters": {
                             "allowed_countries": ["Nigeria", "Ghana", "Kenya", "Rwanda", "Uganda", "Malawi", "Tanzania", "Zambia", "Bangladesh"]
                         }
@@ -261,7 +261,7 @@ class CSCCommonwealthAdapter(BaseSourceAdapter):
                 raw_award_currency="GBP",
                 raw_award_amount=fin.get("estimated_annual_usd", 54000.0),
                 raw_deadline=item.get("deadline_date", ""),
-                academic_cycle=item.get("academic_year", "2025/2026"),
+                academic_cycle=item.get("academic_year", "2026/2027"),
                 official_source_url=item.get("official_source_url") or item.get("official_urls", {}).get("source", ""),
                 official_application_url=item.get("official_apply_url") or item.get("official_urls", {}).get("application", ""),
                 required_documents=item.get("required_documents", []),

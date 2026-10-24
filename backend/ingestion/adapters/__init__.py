@@ -11,8 +11,8 @@ class CommonwealthAdapter:
 
     def collect(self) -> List[Dict[str, Any]]:
         return [{
-            "source_record_id": "cws-masters-2025-26",
-            "title": "Commonwealth Master's Scholarship 2025/26",
+            "source_record_id": "cws-masters-2026-27",
+            "title": "Commonwealth Master's Scholarship 2026/27",
             "provider_name": "Commonwealth Scholarship Commission",
             "provider_category": "Government Endowment",
             "country_destinations": ["United Kingdom"],
@@ -20,10 +20,10 @@ class CommonwealthAdapter:
             "academic_fields": ["Science & Tech", "Health Systems", "Global Prosperity", "Peace & Governance"],
             "award_summary": "Full tuition + £1,347/mo + return flight",
             "award_usd": 54000.0,
-            "deadline_iso": "2025-12-12T16:00:00",
+            "deadline_iso": "2026-12-12T16:00:00",
             "official_source_url": "https://www.gov.uk/government/organisations/commonwealth-scholarship-commission-in-the-uk",
             "official_apply_url": "https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/",
-            "academic_cycle": "2025/2026",
+            "academic_cycle": "2026/2027",
             "eligibility_clauses": [
                 {"type": "citizenship", "mandatory": True, "allowed": ["Nigeria", "Ghana", "Kenya", "India", "Pakistan"]},
                 {"type": "academic_score", "mandatory": True, "min_gpa_normalized": 75.0}
@@ -39,7 +39,7 @@ class DAADScholarshipAdapter:
 
     def collect(self) -> List[Dict[str, Any]]:
         return [{
-            "source_record_id": "daad-helmut-schmidt-2025",
+            "source_record_id": "daad-helmut-schmidt-2026",
             "title": "DAAD Helmut-Schmidt Programme (PPGG)",
             "provider_name": "Federal Foreign Office",
             "provider_category": "Government Endowment",
@@ -48,10 +48,10 @@ class DAADScholarshipAdapter:
             "academic_fields": ["Public Policy", "Economics", "Governance", "Social Sciences"],
             "award_summary": "Full funding + €934/mo + health insurance",
             "award_usd": 42000.0,
-            "deadline_iso": "2025-11-30T23:59:00",
+            "deadline_iso": "2026-11-30T23:59:00",
             "official_source_url": "https://www.daad.de",
             "official_apply_url": "https://www.daad.de/en/study-and-research-in-germany/scholarships/helmut-schmidt-programme/",
-            "academic_cycle": "2025/2026",
+            "academic_cycle": "2026/2027",
             "eligibility_clauses": [
                 {"type": "citizenship", "mandatory": True, "dac_countries_only": True},
                 {"type": "field_of_study", "mandatory": True, "allowed_fields": ["Public Policy", "Economics", "Law"]}
@@ -123,7 +123,7 @@ class CheveningAdapter:
 
     def collect(self) -> List[Dict[str, Any]]:
         return [{
-            "source_record_id": "chevening-uk-2025",
+            "source_record_id": "chevening-uk-2026",
             "title": "Chevening Scholarships UK",
             "provider_name": "UK FCDO",
             "provider_category": "Government Endowment",
@@ -132,10 +132,10 @@ class CheveningAdapter:
             "academic_fields": ["All eligible one-year taught Master’s courses"],
             "award_summary": "Full tuition + monthly living allowance + airfare",
             "award_usd": 52000.0,
-            "deadline_iso": "2025-11-05T12:00:00",
+            "deadline_iso": "2026-11-05T12:00:00",
             "official_source_url": "https://www.chevening.org",
             "official_apply_url": "https://www.chevening.org/scholarships/guidance/",
-            "academic_cycle": "2025/2026",
+            "academic_cycle": "2026/2027",
             "eligibility_clauses": [
                 {"type": "work_experience", "mandatory": True, "min_work_years": 2.0},
                 {"type": "academic_score", "mandatory": True, "min_gpa_normalized": 75.0}
@@ -235,7 +235,7 @@ class VanierAdapter:
 
     def collect(self) -> List[Dict[str, Any]]:
         return [{
-            "source_record_id": "vanier-cgs-doctoral-2025",
+            "source_record_id": "vanier-cgs-doctoral-2026",
             "title": "Vanier Canada Graduate Scholarships (Vanier CGS)",
             "provider_name": "Government of Canada",
             "provider_category": "Government Endowment",
@@ -244,10 +244,10 @@ class VanierAdapter:
             "academic_fields": ["Health", "Natural Sciences", "Engineering", "Social Sciences", "Humanities"],
             "award_summary": "$50,000 CAD/year for 3 years",
             "award_usd": 110000.0,
-            "deadline_iso": "2025-11-01T20:00:00",
+            "deadline_iso": "2026-11-01T20:00:00",
             "official_source_url": "https://vanier.gc.ca",
             "official_apply_url": "https://vanier.gc.ca/en/nomination_process-processus_de_mise_en_candidature.html",
-            "academic_cycle": "2025/2026",
+            "academic_cycle": "2026/2027",
             "eligibility_clauses": [
                 {"type": "degree_level", "mandatory": True, "required_degree": "phd"},
                 {"type": "academic_score", "mandatory": True, "min_gpa_normalized": 85.0}

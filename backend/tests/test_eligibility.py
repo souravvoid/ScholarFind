@@ -66,7 +66,7 @@ class TestDeterministicEligibilityScenarios(unittest.TestCase):
                 title="Eligible Commonwealth Country",
                 description="Must hold citizenship of an eligible Commonwealth developing country.",
                 is_mandatory=True,
-                source_citation="CSC Charter 2025/26, Sec 1.1",
+                source_citation="CSC Charter 2026/27, Sec 1.1",
                 parameters={
                     "allowed_countries": ["Nigeria", "Ghana", "Kenya", "India", "Pakistan", "Uganda"],
                     "prohibited_countries": ["United Kingdom", "United States", "Australia"]

@@ -229,7 +229,7 @@ export const SCHOLARSHIPS_DATA: Scholarship[] = [
         title: 'Recent Bachelor Graduation Window',
         description: 'Earned first undergraduate degree within the past 7 years.',
         isMandatory: true,
-        sourceCitation: 'Eligibility Cycle Guidelines 2025'
+        sourceCitation: 'Eligibility Cycle Guidelines 2026'
       },
       {
         id: 'kh_crit_gpa',
@@ -371,7 +371,7 @@ export const SCHOLARSHIPS_DATA: Scholarship[] = [
         title: 'Partner Country or Programme Country Citizen',
         description: 'Open to students worldwide. Partner country applicants receive prioritized living allowances.',
         isMandatory: true,
-        sourceCitation: 'Erasmus+ Programme Guide 2025/2026',
+        sourceCitation: 'Erasmus+ Programme Guide 2026/2027',
         allowedCitizenships: ['*']
       },
       {
@@ -451,7 +451,7 @@ export const SCHOLARSHIPS_DATA: Scholarship[] = [
         title: 'Worldwide Applicant Eligibility',
         description: 'Open to nationals of all countries. Note: active Rotarians and immediate family are ineligible.',
         isMandatory: true,
-        sourceCitation: 'Rotary Conflict of Interest Policy 2025',
+        sourceCitation: 'Rotary Conflict of Interest Policy 2026',
         allowedCitizenships: ['*']
       },
       {
@@ -584,7 +584,7 @@ export const SCHOLARSHIPS_DATA: Scholarship[] = [
         title: 'Chevening-eligible Country Citizen',
         description: 'Citizen of a Chevening-eligible country or territory and commitment to return for minimum 2 years.',
         isMandatory: true,
-        sourceCitation: 'Chevening Programme Charter 2025',
+        sourceCitation: 'Chevening Programme Charter 2026',
         prohibitedCitizenships: ['United Kingdom', 'United States']
       },
       {
