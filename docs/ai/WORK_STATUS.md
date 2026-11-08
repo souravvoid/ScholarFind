@@ -7,9 +7,8 @@ Companion docs: `AGENTS.md`, `docs/DESIGN_BRIEF.md` (once approved),
 
 ## Current phase
 
-**Design-agent phase — Step 0 (foundation) + Step 1 (auth/state) done. Next: Step 2 (Landing).**
-Remaining steps: 2 Landing, 3 Explorer, 4 Detail route, 5 Tracker, 6 Sources, 7 Profile wizard,
-8 A11y/responsive sweep, 9 verification.
+**Page plan complete (Steps 0–9). All routes rebuilt on the shared design system; DoD green.**
+Next: optional deeper passes (M2 engine parity, M6 backend, i18n, dark mode) — see ROADMAP.md.
 
 ## Done
 
@@ -28,6 +27,7 @@ Remaining steps: 2 Landing, 3 Explorer, 4 Detail route, 5 Tracker, 6 Sources, 7 
 | 2026-11-08 | Step 6 — sources informational provenance; fake audit removed | Step 6 commit |
 | 2026-11-08 | Step 7 — profile wizard step 1, honest copy, fake stats removed | Step 7 commit |
 | 2026-11-08 | Step 8 — a11y sweep: aria-hidden icons, aria-live, focus-visible rings | Step 8 commit |
+| 2026-11-08 | Step 9 — full verification: lint + 22 unit + backend 27 + build + 8 e2e green | Step 9 |
 
 Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 ·
 8/9 catalogue URLs gate `verified`, gates-cambridge `mismatch` (allied portal, warns).
