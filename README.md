@@ -1,6 +1,6 @@
 # ScholarFind — Global Scholarship Discovery & Deterministic Eligibility Matching Platform
 
-ScholarFind is a production-grade, global scholarship discovery and academic credential matching web application built in accordance with the Google Stitch visual design system. It enables high-school, undergraduate, postgraduate, and doctoral students to complete an academic profile once, discover verified opportunities worldwide without commercial bias or paywalls, inspect explainable criteria rubrics, track application documents, and securely transition to official provider portals.
+ScholarFind is a production-grade, global scholarship discovery and academic credential matching web application built on a custom design system documented in `docs/DESIGN_SYSTEM.md`. It enables high-school, undergraduate, postgraduate, and doctoral students to complete an academic profile once, discover verified opportunities worldwide without commercial bias or paywalls, inspect explainable criteria rubrics, track application documents, and securely transition to official provider portals.
 
 ---
 
@@ -9,29 +9,29 @@ ScholarFind is a production-grade, global scholarship discovery and academic cre
 ```
                        +-----------------------------------+
                        |    ScholarFind React 19 Client    |
-                       |  (Vite + Tailwind v4 + Three.js)  |
+                       |  (Vite + Tailwind + Three.js)     |
                        +-----------------+-----------------+
                                          |
                 +------------------------+------------------------+
                 |                                                 |
                 v                                                 v
 +-------------------------------+               +----------------------------------+
-|   Firebase Cloud Services     |               |    Python 3.10+ FastAPI Backend  |
-| - Firebase Auth (Google Sign) |               | - Deterministic Matching Engine  |
-| - Firestore DB (ABAC Rules)   |               | - SQLAlchemy 2.0 ORM Schema      |
-| - Student Profile & Dossier   |               | - 10-Source Ingestion Pipeline   |
-| - Saved Items & Tracker Sync  |               | - Idempotent Ingestion Storage   |
+|   Firebase Cloud Services     |               |    Python 3.10+ Eligibility Engine|
+| - Firebase Auth (Google Sign) |               | - Deterministic Matching Rules   |
+| - Firestore DB (ABAC Rules)   |               | - Normalized 0-100 Benchmark     |
+| - Student Profile & Dossier   |               | - UK Honours / German Equivalence|
+| - Saved Items & Tracker Sync  |               | - Citizenship & Bilateral Pacts  |
 +-------------------------------+               +----------------------------------+
 ```
 
 ### Visual & Component System
-- **Visual Reference**: Google Stitch Design System (Tactile Academic Modernism, `#fbfbfa` canvas, `#0037b0` sapphire interactive accents, `#1a1a1e` ink typography).
+- **Visual Reference**: Custom design system (`docs/DESIGN_SYSTEM.md`) — paper/sapphire palette, 3 type roles, 4px scale, lucide-react icons.
 - **Hero Visualization**: Three.js interactive 3D Geodesic Hub constellation with collegiate destination nodes and motion reduction support (`prefers-reduced-motion` compliance, WebGL detection with graceful DOM fallback).
-- **Semantic Badging**:
-  - `Likely eligible`: Muted Emerald (`#ecfdf5` / `#047857`)
-  - `More information needed`: Amber (`#fffbeb` / `#b45309`)
-  - `Does not meet criterion`: Rose (`#fff1f2` / `#be123c`)
-  - `Needs manual review`: Indigo (`#eef2ff` / `#4338ca`)
+- **Semantic Badging** (design system tokens):
+  - `Likely eligible`: `--color-ok-text` / `--color-ok-surface` / `--color-ok-border`
+  - `More information needed`: `--color-warn-text` / `--color-warn-surface` / `--color-warn-border`
+  - `Does not meet criterion`: `--color-bad-text` / `--color-bad-surface` / `--color-bad-border`
+  - `Needs manual review`: Indigo accent (`--color-royal`)
 
 ---
 
@@ -89,6 +89,16 @@ Rather than relying on opaque probabilistic guesses or hallucinated percentages,
 - **Zero Open-Redirects**: URL schemes are strictly verified against stored data records; arbitrary query parameter redirects are blocked.
 - **Zero-Trust ABAC**: Firestore Security Rules isolate student profiles (`/users/{userId}/profile/data`) and personal saved items (`/users/{userId}/saved/{id}`).
 - **Open Government Data**: All listings credit official statutory origins with live timestamps and canonical links.
+
+---
+
+## 6. Recent Honesty Fixes
+
+### #6B7280 Color Retirement
+Retired the `#6B7280` ("old muted gray") raw hex color across 5 files (`SaveResumeModal.tsx`, `OfficialRedirectModal.tsx`, `ProfileBuilder.tsx`, `LandingPage.tsx`, `eligibilityEngine.ts`) and replaced with the design system semantic token `text-ink-muted` (`--color-ink-muted: #5A5A66`). This color failed AA contrast on sunken surfaces per `docs/DESIGN_SYSTEM.md §36`.
+
+### M2 Engine Parity: UK 1st Class Threshold
+Aligned the TypeScript eligibility engine (`src/utils/eligibilityEngine.ts`) UK 1st class threshold from `95` to `85`, matching the Python backend (`backend/eligibility.py`) canonical value. Both engines now use `85` as the threshold for UK First Class Honours equivalence.
 
 ---
 
