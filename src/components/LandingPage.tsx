@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Scholarship } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { getDeadlineDisplay } from '../services/databaseService';
+import { Container } from './ui/Container';
+import { Button } from './ui/Button';
+import { Icon } from './ui/Icon';
+import { Card } from './ui/Card';
 
 interface LandingPageProps {
   onNavigate: (tab: string) => void;
@@ -9,255 +14,272 @@ interface LandingPageProps {
   onSelectScholarship: (scholarship: Scholarship) => void;
 }
 
-const TESTIMONIALS = [
+const HOW_IT_WORKS = [
   {
-    quote: 'ScholarFind turned a maze of deadlines into a clear, funded path. I matched with three programs in a week.',
-    handle: '@amara.k',
-    emoji: '✨',
+    icon: 'checklist' as const,
+    title: 'Answer four questions',
+    body: 'Citizenship, academics, goals, and target regions. Takes about two minutes.',
   },
   {
-    quote: 'The eligibility rubric is the first thing that actually explained why I qualified. No guesswork.',
-    handle: '@diego.r',
-    emoji: '💙',
+    icon: 'verified' as const,
+    title: 'See the exact rule',
+    body: 'Every verdict shows the eligibility rule that produced it, plus what you are missing.',
   },
   {
-    quote: 'Verified sources only. I stopped wasting time on scammy listings and applied with confidence.',
-    handle: '@priya.s',
-    emoji: '🕊️',
-  },
-  {
-    quote: 'One profile, opportunities worldwide. The tracker kept every deadline honest.',
-    handle: '@yuki.t',
-    emoji: '⚡',
+    icon: 'external' as const,
+    title: 'Apply at the official page',
+    body: 'We never host applications. Every link is checked against its audited source domain.',
   },
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigate,
   onOpenProfileBuilder,
-  onSelectScholarship
+  onSelectScholarship,
 }) => {
-  const handleHeroSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    onNavigate('explore');
+  const navigate = useNavigate();
+
+  const featuredScholarships = useMemo(() => {
+    return [...SCHOLARSHIPS_DATA]
+      .sort((a, b) => new Date(a.applicationDeadline).getTime() - new Date(b.applicationDeadline).getTime())
+      .slice(0, 3);
+  }, []);
+
+  const counts = useMemo(() => {
+    const countries = new Set(SCHOLARSHIPS_DATA.flatMap((s) => s.destinationCountries));
+    const providers = new Set(SCHOLARSHIPS_DATA.map((s) => s.providerName));
+    return { records: SCHOLARSHIPS_DATA.length, countries: countries.size, providers: providers.size };
+  }, []);
+
+  const handleHeroSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const degree = (form.elements.namedItem('degree') as HTMLSelectElement).value;
+    const field = (form.elements.namedItem('field') as HTMLInputElement).value.trim();
+    const params = new URLSearchParams();
+    if (degree) params.set('degree', degree);
+    if (field) params.set('q', field);
+    navigate(`/explore${params.toString() ? `?${params.toString()}` : ''}`);
   };
 
-  const featuredIds = ['gates-cambridge', 'daad-helmut-schmidt', 'knight-hennessy'];
-  const featuredScholarships = featuredIds
-    .map(id => SCHOLARSHIPS_DATA.find(s => s.id === id))
-    .filter((s): s is Scholarship => !!s);
-
   return (
-    <div className="flex flex-col w-full max-w-full overflow-x-hidden min-w-0">
+    <div className="flex w-full max-w-full flex-col overflow-x-hidden min-w-0">
       {/* Announcement bar */}
-      <div className="w-full bg-[#1A1A8C] text-white">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12 py-2.5 flex items-center justify-center gap-2 text-center">
-          <span className="font-arc-mono text-xs text-white/90">Now available worldwide</span>
-          <span className="text-white/70 hidden sm:inline">—</span>
-          <span className="font-body-default text-sm text-white/90 hidden sm:inline">
-            Discover verified funding from trusted universities, foundations, and governments.
+      <div className="w-full bg-arc-indigo text-white">
+        <Container className="flex items-center justify-center gap-2 py-2.5 text-center">
+          <span className="font-data text-xs text-white/90">Curated verified catalogue</span>
+          <span className="hidden text-white/70 sm:inline">—</span>
+          <span className="hidden text-sm text-white/90 sm:inline">
+            {counts.records} opportunities across {counts.countries} countries, from {counts.providers} providers.
           </span>
-        </div>
+        </Container>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative w-full bg-arc-blue-textured text-white overflow-hidden">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12 pt-16 pb-20 lg:pt-24 lg:pb-28">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-            {/* Circular stamp */}
-            <div className="relative mb-8">
-              <div className="w-24 h-24 rounded-full border-2 border-white/40 flex items-center justify-center rotate-[-8deg]">
-                <span className="font-arc-mono text-white text-[10px] leading-tight text-center">
-                  Now<br />Open<br />Worldwide
-                </span>
-              </div>
-            </div>
-
-            {/* Hero display quote */}
-            <h1 className="font-arc-display text-white text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] max-w-3xl mb-6 break-words">
+      {/* Hero */}
+      <section className="relative w-full overflow-hidden bg-arc-blue-textured text-white">
+        <Container className="pt-16 pb-20 lg:pt-24 lg:pb-28">
+          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+            <h1 className="font-arc-display text-4xl leading-tight text-white sm:text-5xl md:text-6xl">
               &ldquo;Your future deserves to be funded.&rdquo;
             </h1>
-
-            {/* Supporting copy */}
-            <p className="font-body-lead text-white/85 max-w-2xl mb-10 text-lg">
-              One profile. Opportunities worldwide. A clearer path to apply. Discover curated, verified funding from trusted universities, foundations, and governments without the guesswork.
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/85">
+              One profile. Opportunities worldwide. A clearer path to apply. Discover curated, verified funding
+              from trusted universities, foundations, and governments without the guesswork.
             </p>
 
-            {/* Button pair */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 mb-12">
-              <button
-                onClick={onOpenProfileBuilder}
-                className="arc-btn-primary"
-              >
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                <span>Get Started</span>
-              </button>
-              <button
+            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
+              <Button variant="primary" size="lg" onClick={onOpenProfileBuilder} className="bg-white text-royal hover:bg-white/90">
+                <Icon name="arrowRight" size={16} />
+                Get Started
+              </Button>
+              <Button
+                variant="secondary"
+                size="lg"
                 onClick={() => onNavigate('explore')}
-                className="arc-btn-secondary"
+                className="border-white/35 bg-arc-indigo text-white hover:bg-[#141466]"
               >
-                <span className="material-symbols-outlined text-[16px]">search</span>
-                <span>Explore Scholarships</span>
-              </button>
+                Explore Scholarships
+              </Button>
             </div>
 
-            {/* Search form card */}
             <form
               onSubmit={handleHeroSearch}
-              className="w-full max-w-3xl bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3"
+              className="mt-12 grid w-full max-w-3xl grid-cols-1 gap-3 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm sm:grid-cols-3 sm:p-5"
             >
               <select
+                name="degree"
                 defaultValue="masters"
-                className="bg-white text-[#1A1A8C] rounded-lg px-3 py-2.5 font-body-default text-sm focus:outline-none focus:ring-2 focus:ring-white/60"
+                aria-label="Degree level"
+                className="rounded-control bg-white px-3 py-2.5 text-sm text-arc-indigo focus:outline-none focus:ring-2 focus:ring-white/60"
               >
-                <option value="bachelors">Bachelor's</option>
-                <option value="masters">Master's</option>
+                <option value="bachelors">Bachelor&apos;s</option>
+                <option value="masters">Master&apos;s</option>
                 <option value="phd">PhD / Doctoral</option>
               </select>
               <input
+                name="field"
                 type="text"
                 placeholder="Field of study"
-                className="bg-white text-[#1A1A8C] rounded-lg px-3 py-2.5 font-body-default text-sm placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-white/60"
+                aria-label="Field of study"
+                className="rounded-control bg-white px-3 py-2.5 text-sm text-arc-indigo placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-white/60"
               />
               <button
                 type="submit"
-                className="bg-white text-[#3B3BFF] font-arc-mono text-xs rounded-lg px-3 py-2.5 hover:bg-white/90 transition-colors cursor-pointer"
+                className="rounded-control bg-white px-3 py-2.5 font-data text-xs font-bold uppercase tracking-[0.05em] text-royal transition-colors hover:bg-white/90"
               >
                 Find Scholarships
               </button>
             </form>
           </div>
-        </div>
+        </Container>
 
-        {/* Wavy divider */}
-        <svg className="arc-wave-divider text-[#FFFEF0]" viewBox="0 0 1440 24" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className="arc-wave-divider text-cream" viewBox="0 0 1440 24" preserveAspectRatio="none" aria-hidden="true">
           <path d="M0,12 C240,24 480,0 720,12 C960,24 1200,0 1440,12 L1440,24 L0,24 Z" fill="currentColor" />
         </svg>
       </section>
 
-      {/* Social proof / testimonials (cream band) */}
-      <section className="w-full bg-arc-cream">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12 py-16 lg:py-24">
-          {/* Emoji icons row */}
-          <div className="flex items-center justify-center gap-6 mb-10 text-2xl">
-            <span aria-hidden>✌️</span>
-            <span aria-hidden>💙</span>
-            <span aria-hidden>✨</span>
+      {/* How it works */}
+      <section className="w-full bg-cream">
+        <Container className="py-16 lg:py-24">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="font-data text-xs uppercase tracking-[0.14em] text-ink-muted">How it works</p>
+            <h2 className="mt-2 font-arc-display text-3xl text-arc-indigo md:text-4xl">
+              Three steps, no guesswork
+            </h2>
           </div>
-
-          <h2 className="font-arc-display text-[#1A1A8C] text-3xl md:text-4xl text-center mb-4">
-            Loved by scholars worldwide
-          </h2>
-          <p className="font-body-lead text-[#6B6B8C] text-center max-w-2xl mx-auto mb-12">
-            Real students, real funding, real outcomes.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {TESTIMONIALS.map((t) => (
-              <div key={t.handle} className="flex flex-col items-center text-center">
-                <span className="text-2xl mb-4" aria-hidden>{t.emoji}</span>
-                <p className="font-arc-display text-[#3B3BFF] text-lg md:text-xl leading-snug mb-4">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <span className="arc-pill">{t.handle}</span>
-              </div>
+          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {HOW_IT_WORKS.map((step) => (
+              <Card key={step.title} className="text-center">
+                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#DCE1FF] text-sapphire">
+                  <Icon name={step.icon} size={20} />
+                </span>
+                <h3 className="mt-4 font-ui-display text-lg font-semibold text-ink">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">{step.body}</p>
+              </Card>
             ))}
           </div>
-        </div>
-
-        {/* Wavy divider back to blue */}
-        <svg className="arc-wave-divider text-[#3B3BFF]" viewBox="0 0 1440 24" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,12 C240,0 480,24 720,12 C960,0 1200,24 1440,12 L1440,24 L0,24 Z" fill="currentColor" />
-        </svg>
+        </Container>
       </section>
 
-      {/* Featured scholarships (on blue) */}
+      {/* Featured records */}
       <section className="w-full bg-arc-blue-textured text-white">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12 py-16 lg:py-24">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+        <Container className="py-16 lg:py-24">
+          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="font-arc-mono text-xs text-white/85 mb-2">Featured</p>
-              <h2 className="font-arc-display text-white text-3xl md:text-4xl">
-                Scholarships worth your time
-              </h2>
+              <p className="font-data text-xs text-white/85">Featured</p>
+              <h2 className="font-arc-display text-3xl text-white md:text-4xl">Scholarships worth your time</h2>
             </div>
-            <button
+            <Button
+              variant="secondary"
+              size="md"
               onClick={() => onNavigate('explore')}
-              className="arc-btn-secondary self-start md:self-auto"
+              className="self-start border-white/35 bg-arc-indigo text-white hover:bg-[#141466] md:self-auto"
             >
-              <span>View all</span>
-              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-            </button>
+              View all
+              <Icon name="arrowRight" size={15} />
+            </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredScholarships.map((s) => {
-              const deadlineInfo = getDeadlineDisplay(s.applicationDeadline);
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {featuredScholarships.map((scholarship) => {
+              const deadline = getDeadlineDisplay(scholarship.applicationDeadline);
               return (
                 <button
-                  key={s.id}
-                  onClick={() => onSelectScholarship(s)}
-                  className="text-left bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-colors cursor-pointer group"
+                  key={scholarship.id}
+                  type="button"
+                  onClick={() => onSelectScholarship(scholarship)}
+                  className="group flex flex-col overflow-hidden rounded-card border border-white/20 bg-white/10 text-left transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <div className="relative h-40 w-full overflow-hidden bg-white/5">
                     <img
-                      src={s.heroImage}
-                      alt={s.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      src={scholarship.heroImage}
+                      alt={scholarship.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#3B3BFF]/60 via-transparent to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-royal/60 via-transparent to-transparent" />
                   </div>
-                  <div className="p-5">
-                    <p className="font-arc-mono text-xs text-white/85 mb-2">
-                      {s.studyLevels[0]} · {s.providerName}
+                  <div className="flex flex-1 flex-col p-5">
+                    <p className="font-data text-xs text-white/85">
+                      {scholarship.studyLevels[0]} · {scholarship.providerName}
                     </p>
-                    <h3 className="font-headline-sm text-white text-lg mb-2 group-hover:text-white/90">
-                      {s.title}
+                    <h3 className="mt-2 font-ui-display text-lg font-semibold text-white group-hover:text-white/90">
+                      {scholarship.title}
                     </h3>
-                    <p className="font-body-default text-white/85 text-sm line-clamp-2 mb-4">
-                      {s.overview}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="font-arc-mono text-xs text-white/85">
-                        {deadlineInfo.isClosed
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/85">{scholarship.overview}</p>
+                    <div className="mt-auto flex items-center justify-between pt-4">
+                      <span className="font-data text-xs text-white/85">
+                        {deadline.isClosed
                           ? 'Cycle closed'
-                          : deadlineInfo.daysRemaining === 0
+                          : deadline.daysRemaining === 0
                             ? 'Closes today'
-                            : `${deadlineInfo.daysRemaining} days left`}
+                            : `${deadline.daysRemaining} days left`}
                       </span>
-                      <span className="material-symbols-outlined text-white/70 group-hover:translate-x-1 transition-transform">
-                        arrow_forward
-                      </span>
+                      <Icon name="arrowRight" size={16} className="text-white/70 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
                 </button>
               );
             })}
           </div>
-        </div>
+        </Container>
+      </section>
+
+      {/* Verification strip */}
+      <section className="w-full bg-cream">
+        <Container className="py-12 lg:py-16">
+          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+            <div>
+              <p className="font-data text-xs uppercase tracking-[0.14em] text-ink-muted">Verification</p>
+              <p className="mt-1 max-w-xl text-sm leading-relaxed text-ink">
+                Every record links to its source and shows the date it was last audited. Catalogue writes happen
+                server-side; the client can only read.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="text-center">
+                <p className="font-ui-display text-2xl font-bold text-ink">{counts.records}</p>
+                <p className="text-xs text-ink-muted">Verified records</p>
+              </div>
+              <div className="text-center">
+                <p className="font-ui-display text-2xl font-bold text-ink">{counts.countries}</p>
+                <p className="text-xs text-ink-muted">Countries</p>
+              </div>
+              <div className="text-center">
+                <p className="font-ui-display text-2xl font-bold text-ink">{counts.providers}</p>
+                <p className="text-xs text-ink-muted">Providers</p>
+              </div>
+              <Button variant="secondary" size="md" onClick={() => onNavigate('sources')}>
+                How verification works
+              </Button>
+            </div>
+          </div>
+        </Container>
       </section>
 
       {/* Conversion band */}
-      <section className="w-full bg-[#1A1A8C] text-white">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-8 lg:px-12 py-16 lg:py-24 text-center">
-          <h2 className="font-arc-display text-white text-3xl md:text-5xl mb-6">
-            Ready to find your funding?
-          </h2>
-          <p className="font-body-lead text-white/80 max-w-2xl mx-auto mb-10">
+      <section className="w-full bg-arc-indigo text-white">
+        <Container className="py-16 text-center lg:py-24">
+          <h2 className="font-arc-display text-3xl text-white md:text-5xl">Ready to find your funding?</h2>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/80">
             Build your profile once. Get matched to verified scholarships worldwide.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button onClick={onOpenProfileBuilder} className="arc-btn-primary">
-              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-              <span>Get Started</span>
-            </button>
-            <button onClick={() => onNavigate('explore')} className="arc-btn-secondary">
-              <span>Explore Scholarships</span>
-            </button>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button variant="primary" size="lg" onClick={onOpenProfileBuilder} className="bg-white text-royal hover:bg-white/90">
+              <Icon name="arrowRight" size={16} />
+              Get Started
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={() => onNavigate('explore')}
+              className="border-white/35 bg-transparent text-white hover:bg-white/10"
+            >
+              Explore Scholarships
+            </Button>
           </div>
-        </div>
+        </Container>
       </section>
-
     </div>
   );
 };

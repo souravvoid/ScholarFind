@@ -21,6 +21,11 @@ test('Explore button navigates to explorer', async ({ page }) => {
 });
 
 test('featured scholarship card opens details modal', async ({ page }) => {
-  await page.locator('h3', { hasText: /gates/i }).first().click();
-  await expect(page.locator('h2, h3, .font-headline-sm').filter({ hasText: /gates/i }).first()).toBeVisible();
+  const featured = page
+    .locator('section')
+    .filter({ hasText: /Scholarships worth your time/i })
+    .locator('h3')
+    .first();
+  await featured.click();
+  await expect(page.getByRole('dialog')).toBeVisible();
 });
