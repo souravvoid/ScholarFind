@@ -9,7 +9,7 @@ ScholarFind is a production-grade, global scholarship discovery and academic cre
 ```
                        +-----------------------------------+
                        |    ScholarFind React 19 Client    |
-                       |  (Vite + Tailwind + Three.js)     |
+                       |  (Vite + Tailwind + lucide-react) |
                        +-----------------+-----------------+
                                          |
                 +------------------------+------------------------+
@@ -26,7 +26,6 @@ ScholarFind is a production-grade, global scholarship discovery and academic cre
 
 ### Visual & Component System
 - **Visual Reference**: Custom design system (`docs/DESIGN_SYSTEM.md`) — paper/sapphire palette, 3 type roles, 4px scale, lucide-react icons.
-- **Hero Visualization**: Three.js interactive 3D Geodesic Hub constellation with collegiate destination nodes and motion reduction support (`prefers-reduced-motion` compliance, WebGL detection with graceful DOM fallback).
 - **Semantic Badging** (design system tokens):
   - `Likely eligible`: `--color-ok-text` / `--color-ok-surface` / `--color-ok-border`
   - `More information needed`: `--color-warn-text` / `--color-warn-surface` / `--color-warn-border`
@@ -93,9 +92,6 @@ Rather than relying on opaque probabilistic guesses or hallucinated percentages,
 ---
 
 ## 6. Recent Honesty Fixes
-
-### #6B7280 Color Retirement
-Retired the `#6B7280` ("old muted gray") raw hex color across 5 files (`SaveResumeModal.tsx`, `OfficialRedirectModal.tsx`, `ProfileBuilder.tsx`, `LandingPage.tsx`, `eligibilityEngine.ts`) and replaced with the design system semantic token `text-ink-muted` (`--color-ink-muted: #5A5A66`). This color failed AA contrast on sunken surfaces per `docs/DESIGN_SYSTEM.md §36`.
 
 ### M2 Engine Parity: UK 1st Class Threshold
 Aligned the TypeScript eligibility engine (`src/utils/eligibilityEngine.ts`) UK 1st class threshold from `95` to `85`, matching the Python backend (`backend/eligibility.py`) canonical value. Both engines now use `85` as the threshold for UK First Class Honours equivalence.

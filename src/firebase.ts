@@ -29,12 +29,9 @@ export enum OperationType {
   CREATE = 'create',
   UPDATE = 'update',
   DELETE = 'delete',
-  LIST = 'list',
-  GET = 'get',
-  WRITE = 'write',
 }
 
-export interface FirestoreErrorInfo {
+interface FirestoreErrorInfo {
   error: string;
   operationType: OperationType;
   path: string | null;

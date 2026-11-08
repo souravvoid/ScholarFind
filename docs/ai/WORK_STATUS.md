@@ -8,6 +8,7 @@ Companion docs: `AGENTS.md`, `docs/DESIGN_BRIEF.md` (once approved),
 ## Current phase
 
 **Page plan complete (Steps 0–9). All routes rebuilt on the shared design system; DoD green.**
+Recent: 2026-11-08 Refactor Session - Dead Code Cleanup (deleted 5 components, removed 9 deps, ~3500 LOC).
 Next: optional deeper passes (M2 engine parity, M6 backend, i18n, dark mode) — see ROADMAP.md.
 
 ## Done

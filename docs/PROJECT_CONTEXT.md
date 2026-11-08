@@ -49,8 +49,11 @@ backend/ FastAPI (uvicorn, not run by any script, never called by the SPA)
 | `src/components/ApplicationTracker.tsx` | saved list, stages, docs checklist, notes | verified |
 | `src/components/ScholarshipDetailsModal.tsx` | rubric breakdown, save, redirect guard | verified |
 | `src/components/OfficialRedirectModal.tsx` | external-link gate (no scheme/allowlist check) | verified |
-| `src/components/SaveResumeModal.tsx` | **fake** "resume link emailed" flow (setTimeout) | verified |
-| `src/components/HeroGlobe3D.tsx` | Three.js globe — **dead code**, zero importers | verified |
+| `src/components/SaveResumeModal.tsx` | **fake** "resume link emailed" flow (setTimeout) - deleted in 2026-11-08 refactor | deleted |
+| `src/components/HeroGlobe3D.tsx` | Three.js globe — **dead code**, zero importers - deleted in 2026-11-08 refactor | deleted |
+| `src/components/Dialog.tsx` | UI dialog component - deleted in 2026-11-08 refactor (no importers) | deleted |
+| `src/components/Field.tsx` | UI FormField components (Input, Textarea, Select) - deleted in 2026-11-08 refactor (no importers) | deleted |
+| `src/components/PageHeader.tsx` | Consistent page intro component - deleted in 2026-11-08 refactor (no importers) | deleted |
 | `src/context/AuthContext.tsx` | demo persona, Firestore profile/saved CRUD, listener leak | verified |
 | `src/services/databaseService.ts` | Firestore catalogue reads + client-side seeding + fake audit | verified |
 | `src/utils/eligibilityEngine.ts` | TS eligibility engine (product truth today) | verified |

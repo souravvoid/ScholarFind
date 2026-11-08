@@ -85,8 +85,10 @@ numerals in tables/deadlines use `font-variant-numeric: tabular-nums`.
   profile/account control right; primary CTA `Find my matches` on the landing page only.
 - **Mobile**: hamburger opens a right-side drawer (`min(360px, 88vw)`), 56 px rows, focus
   trap, Escape, backdrop click, body scroll lock, focus restore.
-- **Page frame**: `PageHeader` (eyebrow caption → h1 → one-line description → optional
-  actions) then content sections. Same component on all routes.
+- **Page frame**: eyebrow caption → h1 → one-line description → optional actions,
+  then content sections. Same layout pattern on all routes. (No shared `PageHeader`
+  primitive — one was created in Step 0 but deleted 2026-11-08 after grep showed zero
+  importers; see `docs/DELETION_LOG.md`.)
 - **No sidebar**, no bottom tab bar (decision 2).
 
 ## 3. Components
@@ -135,15 +137,6 @@ Every component below is shared (`src/components/ui/`) — never re-implemented 
 - Variants map 1:1 to eligibility/trust: eligible, pending/manual review, missing,
   verified link, unaudited link, blocked link.
 - Badge text must match the rubric that produced it; no badge without evidence.
-
-### Dialog / sheet
-- Desktop: centered, max-w `560px` (gate/wizard) / `720px` (detail fallback), radius 16 px,
-  `shadow-overlay`, paper bg, padding 24–32 px.
-- Mobile (<768): bottom sheet, full width, top radius 16 px, max-height `90dvh`, scroll body,
-  sticky action row.
-- Required behavior: `role="dialog"`, `aria-modal`, labelled title, focus trap, initial
-  focus on title or first control, Escape, backdrop click (non-destructive only), focus
-  restore, body scroll lock. One shared `Dialog` primitive implements all of it.
 
 ### Tooltip
 - Icon-only controls only. 400 ms open delay, ink background, white 12 px text, radius 8 px,
@@ -217,7 +210,7 @@ page gets a sticky bottom action bar under 768 px.
 ## 7. Implementation mapping
 
 - Tokens: `src/index.css` `@theme` block (replace the current mixed M3/Arc tokens).
-- Primitives: `src/components/ui/{Button,Icon,Field,Select,Textarea,Chip,Badge,Row,Card,Dialog,EmptyState,Skeleton,ErrorPanel,PageHeader,Container}.tsx`.
+- Primitives: `src/components/ui/{Button,Icon,Badge,Card,Chip,Container,EmptyState,ErrorPanel,Skeleton}.tsx`.
 - Layout: `src/components/layout/{AppShell,TopNav,MobileDrawer,Footer}.tsx`.
 - Retire: `arc-*` one-off utility classes once pages consume primitives; Manrope +
   Material Symbols font links; hardcoded hexes in components.

@@ -1,0 +1,7 @@
+from rest_framework import viewsets
+from .models import StudentProfile, DegreeLevelChoices
+from .serializers import StudentProfileSerializer
+
+class StudentProfileViewSet(viewsets.ModelViewSet):
+    queryset = StudentProfile.objects.all()
+    serializer_class = StudentProfileSerializer

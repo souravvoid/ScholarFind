@@ -1,5 +1,5 @@
 /** Loading placeholder matching final content geometry (no spinners for page content). */
-export function Skeleton({ className = '' }: { className?: string }) {
+function Skeleton({ className = '' }: { className?: string }) {
   return (
     <div
       aria-hidden="true"

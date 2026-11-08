@@ -24,7 +24,7 @@ scholarship schemes.
 
 from typing import List, Dict, Any
 from datetime import datetime
-from backend.ingestion.base import BaseSourceAdapter, RawScholarshipRecord, RawEligibilityClause
+from ..base import BaseSourceAdapter, RawScholarshipRecord, RawEligibilityClause
 
 
 class CSCCommonwealthAdapter(BaseSourceAdapter):

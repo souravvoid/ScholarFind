@@ -25,7 +25,7 @@ Program: Helmut-Schmidt-Programme (Master's Scholarships for Public Policy and G
 """
 
 from typing import List, Dict, Any
-from backend.ingestion.base import BaseSourceAdapter, RawScholarshipRecord, RawEligibilityClause
+from ..base import BaseSourceAdapter, RawScholarshipRecord, RawEligibilityClause
 
 
 class DAADHelmutSchmidtAdapter(BaseSourceAdapter):

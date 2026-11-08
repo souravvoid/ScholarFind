@@ -15,11 +15,11 @@ import logging
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Set
 
-from backend.ingestion.base import (
+from .base import (
     BaseSourceAdapter,
     RawScholarshipRecord,
     NormalizedScholarshipRecord,
-    NormalizedRule
+    NormalizedRule,
 )
 
 logger = logging.getLogger("scholarfind.ingestion")

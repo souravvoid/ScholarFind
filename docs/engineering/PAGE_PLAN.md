@@ -14,9 +14,12 @@ Scope:
   `jetbrains-mono`).
 - `src/index.css`: rewrite `@theme` to the token contract in `docs/DESIGN_SYSTEM.md`;
   remove unused M3/Manrope tokens after pages migrate.
-- new `src/components/ui/*` primitives (Button, Icon, Field, Select, Textarea, Chip, Badge,
-  Row, Card, Dialog, EmptyState, Skeleton, ErrorPanel, PageHeader, Container) and
+- new `src/components/ui/*` primitives (Button, Icon, Chip, Badge,
+  Card, EmptyState, Skeleton, ErrorPanel, Container) and
   `src/components/layout/{AppShell,TopNav,MobileDrawer,Footer}`.
+  (Step 0 originally also scoped Field, Select, Textarea, Row, Dialog, PageHeader —
+  Field, Dialog, PageHeader and the `Row` export were deleted 2026-11-08, zero
+  importers; see `docs/DELETION_LOG.md`.)
 - `src/App.tsx`: router with `/`, `/explore`, `/scholarship/:id`, `/tracker`, `/sources`, `*`;
   keep `AuthProvider`.
 - `index.html`: drop Google Fonts + Material Symbols links; self-host fonts.
@@ -136,7 +139,7 @@ no horizontal scroll at 320 px; all status feedback announced.
 ## Sequencing notes
 
 - **Retirements need one explicit confirmation** (removing functionality): `SaveResumeModal`
-  (theater), `ScholarshipDetailsModal` (replaced by route), Sources audit button. Listed here
+  (deleted in 2026-11-08 refactor — theater flow removed), `ScholarshipDetailsModal` (replaced by route), Sources audit button. Listed here
   for approval; then they are deleted in Steps 4–6.
 - `tests/e2e/landing.spec.ts` asserts `Step 2 of 4`; it gets updated in Step 7 with the
   wizard fix, not before, so the guard stays meaningful.

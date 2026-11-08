@@ -42,7 +42,6 @@ implemented** — ingestion exists only as simulated stubs.)
 
 ## 5. Not real (fabricated UI — must be removed or built for-truth)
 
-- "Save & Resume" magic-link email (`SaveResumeModal.tsx`) — pure theater.
 - "Audit & Refresh" live-source sync on Sources page (`databaseService.ts:206-266`) — writes a
   fake log with a fake ingested count; says "Stored in Firestore".
 - Hardcoded stats: 842/840 awards, 342/215/… country counts, `total_count: 1428`, WHED badges,
@@ -72,8 +71,9 @@ FR-7 Accessibility baseline: focus trap + Escape + restore in all dialogs; icon 
 - Works fully offline without account (static data fallback) — keep.
 - No secrets in repo; Firebase web config (public) + restricted API keys.
 - a11y: keyboard-operable dialogs, AA contrast for text.
-- Bundle: remove `three`, `motion`, `@google/genai`, `express`, `lucide-react`, `dotenv`
-  (verified unused).
+- Bundle: remove `three`, `motion`, `@google/genai`, `express`, `dotenv`
+  (verified unused — removed 2026-11-08). `lucide-react` is **used** (icons via
+  `src/components/ui/Icon.tsx`) and must stay.
 
 ## 8. Acceptance criteria (spot checks)
 

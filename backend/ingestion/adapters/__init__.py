@@ -32,9 +32,9 @@ class CommonwealthAdapter:
         }]
 
 
-from backend.ingestion.adapters.csc_uk import CSCCommonwealthAdapter
-from backend.ingestion.adapters.daad_de import DAADHelmutSchmidtAdapter
-from backend.ingestion.adapters.fulbright_us import FulbrightProgramAdapter
+from .csc_uk import CSCCommonwealthAdapter
+from .daad_de import DAADHelmutSchmidtAdapter
+from .fulbright_us import FulbrightProgramAdapter
 
 
 

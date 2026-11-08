@@ -86,10 +86,8 @@ Short message + `Go to Explore`.
 
 | Overlay | Status | Trigger | Notes |
 |---|---|---|---|
-| `ProfileBuilder` wizard | keep, fix | CTA/nav/explore/detail | Steps: 1 citizenship → 2 academics → 3 goals → 4 results. Starts at step 1 (B-09). Shared `Dialog` behavior, full-screen sheet <768 px |
+| `ProfileBuilder` wizard | keep, fix | CTA/nav/explore/detail | Steps: 1 citizenship → 2 academics → 3 goals → 4 results. Starts at step 1 (B-09). Wizard implements its own dialog behavior, full-screen sheet <768 px (no shared `Dialog` primitive — deleted 2026-11-08, zero importers) |
 | `OfficialRedirectModal` | keep | Detail + tracker apply | verified / unaudited / blocked gate; https-only; blocked disables proceed |
-| `ScholarshipDetailsModal` | **retire** | — | replaced by `/scholarship/:id`; delete after e2e migration |
-| `SaveResumeModal` | **retire** | — | theater (B-11); its localStorage resume lives in the wizard itself |
 | Mobile nav drawer | keep | hamburger | shared focus-trap behavior |
 
 ## Navigation labels

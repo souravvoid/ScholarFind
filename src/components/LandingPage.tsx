@@ -223,38 +223,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </Container>
       </section>
 
-      {/* Verification strip */}
-      <section className="w-full bg-cream">
-        <Container className="py-12 lg:py-16">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div>
-              <p className="font-data text-xs uppercase tracking-[0.14em] text-ink-muted">Verification</p>
-              <p className="mt-1 max-w-xl text-sm leading-relaxed text-ink">
-                Every record links to its source and shows the date it was last audited. Catalogue writes happen
-                server-side; the client can only read.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="text-center">
-                <p className="font-ui-display text-2xl font-bold text-ink">{counts.records}</p>
-                <p className="text-xs text-ink-muted">Verified records</p>
-              </div>
-              <div className="text-center">
-                <p className="font-ui-display text-2xl font-bold text-ink">{counts.countries}</p>
-                <p className="text-xs text-ink-muted">Countries</p>
-              </div>
-              <div className="text-center">
-                <p className="font-ui-display text-2xl font-bold text-ink">{counts.providers}</p>
-                <p className="text-xs text-ink-muted">Providers</p>
-              </div>
-              <Button variant="secondary" size="md" onClick={() => onNavigate('sources')}>
-                How verification works
-              </Button>
-            </div>
-          </div>
-        </Container>
-      </section>
-
       {/* Conversion band */}
       <section className="w-full bg-arc-indigo text-white">
         <Container className="py-16 text-center lg:py-24">

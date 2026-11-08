@@ -1,0 +1,135 @@
+{
+  "api_endpoints": {
+    "GET /api/v1/health": {
+      "method": "GET",
+      "response": {
+        "status": "str",
+        "service": "str",
+        "timestamp": "str",
+        "registered_sources": "int",
+        "stored_scholarships": "int"
+      }
+    },
+    "GET /api/v1/sources": {
+      "method": "GET",
+      "response": {
+        "source_id": "str",
+        "source_name": "str",
+        "origin_agency": "str",
+        "status": "str",
+        "is_authoritative": "bool",
+        "license": "str"
+      }
+    },
+    "POST /api/v1/admin/ingest/{source_id}": {
+      "method": "POST",
+      "parameter": "source_id: str",
+      "response": "job_results from pipeline.run_job()"
+    },
+    "POST /api/v1/evaluate": {
+      "method": "POST",
+      "body": "Dict[str, Any] with profile and rules",
+      "response": {
+        "scholarship_id": "str",
+        "outcome": "str (Likely eligible | More info needed | Does not meet criterion | Needs manual review)",
+        "match_percentage": "int",
+        "summary": "str",
+        "mandatory_failed_count": "int",
+        "missing_info_count": "int",
+        "manual_review_count": "int",
+        "met_criteria_count": "int",
+        "total_criteria_count": "int",
+        "criteria_results": "List of criterion results"
+      }
+    },
+    "GET /api/v1/scholarships": {
+      "method": "GET",
+      "parameters": {
+        "query": "str | None",
+        "destination": "str | None",
+        "degree_level": "str | None",
+        "page": "int",
+        "page_size": "int"
+      },
+      "response": {
+        "page": "int",
+        "page_size": "int",
+        "total_count": "int",
+        "results": "List of scholarship objects"
+      }
+    }
+  },
+  "sqlalchemy_models": [
+    "User (id, email, display_name, photo_url, is_active, created_at, updated_at)",
+    "StudentProfile (id, user_id, citizenship, residence_country, education_level, institution_name, grading_scale, gpa, max_gpa, normalized_gpa, graduation_year, primary_field, faculty_tags, target_degrees, target_regions, target_countries, delivery_modality, intended_start_term, work_experience_years, english_test_type, english_score, has_english_medium_instruction, updated_at)",
+    "ScholarshipProvider (id, name, category, country, website_url, verified, created_at)",
+    "ScholarshipSource (id, name, origin_agency, country, adapter_module, access_method, provenance_url, is_active, last_ingested_at)",
+    "Scholarship (id, slug, title, provider_id, source_id, hero_image, destination_countries, host_institutions, study_levels, fields_of_study, total_award_value, award_details, estimated_usd_value, application_deadline, academic_year, official_source_url, official_application_url, source_domain, overview, last_verified_at, is_active, created_at, updated_at)",
+    "ScholarshipEligibilityRule (id, scholarship_id, rule_type, title, description, is_mandatory, source_citation, rule_payload)",
+    "RequiredDocument (id, scholarship_id, document_name, description, is_mandatory)",
+    "SavedScholarship (id, user_id, scholarship_id, status, notes, saved_at, updated_at)",
+    "ApplicationTrackerEntry (id, user_id, scholarship_id, status, completed_documents, personal_deadline_target, notes, updated_at)",
+    "IngestionJob (id, source_id, status, records_fetched, records_upserted, records_failed, error_log, started_at, completed_at)",
+    "IngestionAdapter (abstract)"
+  ],
+  "eligibility_engine": {
+    "GradingScale enum": [
+      "GPA_4_0, GPA_5_0, UK_HONOURS, PERCENTAGE, ECTS, GERMAN"
+    ],
+    "RuleType enum": [
+      "CITIZENSHIP, DEGREE_LEVEL, ACADEMIC_SCORE, FIELD_OF_STUDY, LANGUAGE, WORK_EXPERIENCE, MANUAL_REVIEW"
+    ],
+    "CriterionStatus enum": [
+      "MEETS, FAILS, MORE_INFO_NEEDED, NEEDS_MANUAL_REVIEW"
+    ],
+    "OverallOutcome enum": [
+      "LIKELY_ELIGIBLE, MORE_INFO_NEEDED, DOES_NOT_MEET, NEEDS_MANUAL_REVIEW"
+    ],
+    "Core functions": [
+      "standardize_gpa() - converts 4.0/5.0/UK/Honours/Percentage/German scales to 0-100",
+      "evaluate_citizenship() - checks against allowed/prohibited countries",
+      "evaluate_degree_level() - verifies target degree alignment",
+      "evaluate_academic_score() - compares standardized GPA against threshold",
+      "evaluate_field_of_study() - checks discipline against allowed fields",
+      "evaluate_language() - IELTS/TOEFL/Duolingo/MOI waiver evaluation",
+      "evaluate_work_experience() - checks years of experience",
+      "evaluate_manual_review() - flags qualitative criteria",
+      "DeterministicEligibilityEngine.evaluate() - orchestrates all criteria"
+    ]
+  },
+  "ingestion_pipeline": {
+    "adapters": [
+      "CSCCommonwealthAdapter",
+      "DAADHelmutSchmidtAdapter",
+      "FulbrightProgramAdapter"
+    ],
+    "pipeline_stages": [
+      "Access Policy Verification",
+      "Backoff Fetch",
+      "Parse",
+      "Normalize",
+      "Validate",
+      "Idempotent Storage",
+      "Audit Logging"
+    ],
+    "storage": "IngestionStorageRepository (in-memory or PostgreSQL)",
+    "metrics": [
+      "records_fetched, records_parsed, records_stored_new, duplicates_prevented, elapsed_ms"
+    ]
+  },
+  "authentication": {
+    "google_oauth": "Google Sign-In / OAuth2",
+    "session_based": "Django session auth",
+    "endpoints": [
+      "login",
+      "callback",
+      "logout",
+      "protected"
+    ]
+  },
+  "tests": {
+    "test_backend": "10 adapter collect + pipeline idempotency + degree normalization + redirect safety",
+    "test_eligibility": "GPA standardization (4.0/5.0/UK/German), 4 deterministic outcomes, citizenship/degree/language/work experience rules",
+    "test_ingestion": "Access conditions, raw data fetch, parse to records, pipeline stages, idempotency, normalization integrity, validation rejects insecure URLs"
+  }
+}

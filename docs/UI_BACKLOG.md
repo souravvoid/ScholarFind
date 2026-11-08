@@ -17,7 +17,7 @@ Rule: a defect moves to "Done" only after tests/build/verification evidence.
 | B-08 | P1 | Landing | Hero search ignores inputs | M5 | `LandingPage.tsx:40-43` |
 | B-09 | P1 | Profile | Wizard opens at step 2 | M5 | `ProfileBuilder.tsx:14` |
 | B-10 | P2 | Builder | Fake stats (842/~840, WHED badges, region counts) | M4 | `ProfileBuilder.tsx:195,417-425,1108-1114` |
-| B-11 | P2 | Save & Resume | Entire flow is theater | M4 | `SaveResumeModal.tsx:24-33` |
+| B-11 | P2 | Save & Resume | Deleted in 2026-11-08 refactor — SaveResumeModal removed | M4 | N/A — component deleted |
 | B-12 | P2 | Icons | ~100 material-symbol spans not `aria-hidden` | M8 | grep |
 | B-13 | P2 | Builder | Form labels not associated | M8 | `ProfileBuilder.tsx:257-530` |
 | B-14 | P2 | A11y | No `aria-live` mutation feedback (save/stage/audit) | M8 | grep `role="status"` |

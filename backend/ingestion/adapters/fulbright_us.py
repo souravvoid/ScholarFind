@@ -26,7 +26,7 @@ and the Institute of International Education (IIE).
 """
 
 from typing import List, Dict, Any
-from backend.ingestion.base import BaseSourceAdapter, RawScholarshipRecord, RawEligibilityClause
+from ..base import BaseSourceAdapter, RawScholarshipRecord, RawEligibilityClause
 
 
 class FulbrightProgramAdapter(BaseSourceAdapter):

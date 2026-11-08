@@ -66,7 +66,7 @@ export interface EligibilityCriterion {
   requiresEnglishCert?: boolean;
 }
 
-export type EligibilityStatus = 
+type EligibilityStatus = 
   | 'likely_eligible' 
   | 'more_info_needed' 
   | 'ineligible' 

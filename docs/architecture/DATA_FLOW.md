@@ -24,7 +24,6 @@ Bug: the `onSnapshot` unsubscribe is returned from *inside* the auth callback �
 
 ```
 ScholarshipExplorer.tsx:86-113
-  getScholarshipsFromDatabase (databaseService.ts:135-166)
      getDocs("scholarships") ─ empty? seedScholarshipsIfEmpty :97-111
                                 └─ setDoc(merge) ×9 records from SCHOLARSHIPS_DATA (client creds!)
      error ──▶ fallback to static array, fromDatabase=false

@@ -57,9 +57,11 @@ route, explicit CORS, `TestClient` tests, fix the 7 broken adapters & currency d
 Trade-off documented in `TECHNICAL_DEBT.md`; nothing shipped to users depends on it either way.
 
 ### M7 — Dependency & build hygiene
-Remove unused deps (`three`,`motion`,`@google/genai`,`express`,`lucide-react`,`dotenv`,
-`@types/jest`,… verified dead) and files (`HeroGlobe3D.tsx`, `src/utils/ingestion/*`,
-`backend/models.py` if M6=B). Add `"strict"` incrementally (start with `noUncheckedIndexedAccess`
+Remove unused deps (`three`,`motion`,`@google/genai`,`express`,`dotenv`,
+`@types/express`,`@types/three`,`autoprefixer`,`@testing-library/user-event` —
+**removed 2026-11-08**) and files (`HeroGlobe3D.tsx` — **deleted 2026-11-08**;
+`src/utils/ingestion/*` still pending, see below; `backend/models.py` if M6=B). `lucide-react`
+is **used** (icons via `Icon.tsx`) and must stay. Add `"strict"` incrementally (start with `noUncheckedIndexedAccess`
 off, measure). Update `name`/README. Risk: low; build+tests gate.
 
 ### M8 — Accessibility baseline & a11y tests

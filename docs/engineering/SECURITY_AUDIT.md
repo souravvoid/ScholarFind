@@ -45,7 +45,7 @@ admin-only trigger — otherwise the combination above becomes SSRF-by-construct
 ## L-items
 1. Committed Firebase web API key is public-by-design — restrict in console (app/referrer).
 2. `.env.example` placeholders only; `.env*` gitignored ✅.
-3. `@google/genai` declared but never imported — no key exposure to bundle ✅; keep it that way.
+3. `@google/genai` was declared but never imported — **removed 2026-11-08** along with `three`, `motion`, `express`, `dotenv`; no key exposure to bundle ✅.
 4. Auth fallback: any popup failure silently adopts demo persona (`AuthContext.tsx:184-196`) —
    trust/UX integrity issue (see PRD FR-4).
 

@@ -48,7 +48,7 @@ confirmed by Technical Lead. Split per the product-agent protocol:
 
 | Sev | Type | Problem | Evidence |
 |---|---|---|---|
-| P1 | [D] | No unified dialog behavior: no focus trap, no Escape (except drawer), no focus restore, 5 surfaces implement overlays differently | `ScholarshipDetailsModal.tsx:69-72`, `SaveResumeModal.tsx:44-47`, `OfficialRedirectModal.tsx:44-48`, `ProfileBuilder.tsx:154`, `Navbar.tsx:226-243` |
+| P1 | [D] | No unified dialog behavior: no focus trap, no Escape (except drawer), no focus restore, 5 surfaces implement overlays differently | `OfficialRedirectModal.tsx:44-48`, `ProfileBuilder.tsx:154`, `Navbar.tsx:226-243` |
 | P2 | [P] | ~100 Material Symbols icon spans announced by screen readers; only ~7 have `aria-hidden` | grep across `src/components` |
 | P2 | [P] | No `aria-live` on save/unsave/stage-change/audit feedback (single `role="status"` in explorer loading only) | `ScholarshipExplorer.tsx:761` |
 | P2 | [P] | Tab state isn't URL-addressable; refresh loses place, Back exits the site | `App.tsx:18-21` (no router) ⚠[A] acceptable for v-next? |
