@@ -22,6 +22,7 @@ Remaining steps: 2 Landing, 3 Explorer, 4 Detail route, 5 Tracker, 6 Sources, 7 
 | 2026-11-08 | Step 0 — router shell, tokens, ui primitives, lucide, self-hosted fonts; 8/8 e2e green | Step 0 commit |
 | 2026-11-08 | Step 1 — auth/state hardening (demo fallback removed, guarded storage, leak + stale writes fixed) | Step 1 commit |
 | 2026-11-08 | Step 2 — landing rebuilt on shared primitives; fake testimonials/stats removed; data-driven counts + featured | Step 2 commit |
+| 2026-11-08 | Step 3 — explorer dense rows, filters wired, URL params, empty state, save toggle | Step 3 commit |
 
 Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 ·
 8/9 catalogue URLs gate `verified`, gates-cambridge `mismatch` (allied portal, warns).
