@@ -52,7 +52,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
           className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors"
           aria-label="Close modal"
         >
-          <span className="material-symbols-outlined text-[20px]">close</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
         </button>
 
         {/* Bespoke Vector Badge: Secure Bookmark Vault Graphic */}
@@ -91,7 +91,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
         <div className="bg-[#f9f9f8] border border-[#e5e7eb] rounded-xl p-4 mb-6">
           <div className="flex items-start gap-3.5">
             <div className="w-9 h-9 rounded-lg bg-[#eeeeed] flex items-center justify-center shrink-0 text-[#1d4ed8]">
-              <span className="material-symbols-outlined text-[20px]">bookmark_added</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">bookmark_added</span>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -114,20 +114,20 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
               Candidate Email
             </label>
             <span className="inline-flex items-center gap-1 font-label-sm text-[11px] text-[#047857]">
-              <span className="material-symbols-outlined text-[14px]">verified</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[14px]">verified</span>
               Identity verified
             </span>
           </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6b7280]">
-              <span className="material-symbols-outlined text-[18px]">mail</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">mail</span>
             </div>
             <input
               id="magic-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-11 pl-10 pr-24 bg-white border border-[#e5e7eb] rounded-lg font-body-default text-sm text-[#1a1a1e] focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+              className="w-full h-11 pl-10 pr-24 bg-white border border-[#e5e7eb] rounded-lg font-body-default text-sm text-[#1a1a1e] focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
               <span className="font-label-sm text-[10px] text-[#6b7280] uppercase tracking-wider bg-[#eeeeed] px-2 py-0.5 rounded">
@@ -136,7 +136,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
             </div>
           </div>
           <p className="font-caption text-xs text-[#6b7280] flex items-center gap-1.5 pt-0.5">
-            <span className="material-symbols-outlined text-[15px] text-[#6b7280]">lock</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-[15px] text-[#6b7280]">lock</span>
             One-click resumption link will be encrypted and sent here. Valid for 14 days.
           </p>
         </div>
@@ -154,18 +154,18 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
           >
             {isSending ? (
               <>
-                <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                <span aria-hidden="true" className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
                 <span>Generating secure resumption key...</span>
               </>
             ) : isSent ? (
               <>
-                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">check_circle</span>
                 <span>Link Sent! Progress Safely Saved</span>
               </>
             ) : (
               <>
                 <span>Save and Resume Later</span>
-                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </>
             )}
           </button>
@@ -181,7 +181,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
         {/* Trust Note Footer */}
         <div className="mt-5 pt-3 text-center border-t border-[#e5e7eb]">
           <p className="font-caption text-xs text-[#6b7280] max-w-[380px] mx-auto text-center flex items-center justify-center gap-1.5">
-            <span className="material-symbols-outlined text-[15px] text-[#047857]">verified_user</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-[15px] text-[#047857]">verified_user</span>
             ScholarFind never charges discovery fees or submits applications without your explicit review.
           </p>
         </div>

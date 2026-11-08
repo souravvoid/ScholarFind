@@ -208,7 +208,7 @@ export const HeroGlobe3D: React.FC = () => {
     return (
       <div className="w-full h-full flex items-center justify-center opacity-40">
         <div className="w-48 h-48 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center">
-          <span className="material-symbols-outlined text-[48px] text-primary">public</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[48px] text-primary">public</span>
         </div>
       </div>
     );

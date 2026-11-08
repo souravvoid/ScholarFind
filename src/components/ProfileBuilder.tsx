@@ -157,7 +157,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
             onClick={handlePrev}
             className="inline-flex items-center gap-1 font-caption text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
           >
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">arrow_back</span>
             Back
           </button>
           <span className="font-title text-base text-[#1a1a1e] font-semibold truncate px-2">ScholarFind</span>
@@ -258,7 +258,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                   <select
                     value={citizenship}
                     onChange={(e) => setCitizenship(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+                    className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                   >
                     <option value="Nigeria">Nigeria</option>
                     <option value="Ghana">Ghana</option>
@@ -288,7 +288,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     type="text"
                     value={residenceCountry}
                     onChange={(e) => setResidenceCountry(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+                    className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                     placeholder="e.g. Nigeria, United Kingdom, etc."
                   />
                   <p className="font-caption text-xs text-[#6b7280] mt-1.5">
@@ -316,7 +316,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <div className="flex items-center justify-between pb-5 mb-6 border-b border-[#e5e7eb]">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-[#dce2f3]/60 text-[#1d4ed8] flex items-center justify-center font-semibold">
-                      <span className="material-symbols-outlined text-[20px]">school</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">school</span>
                     </div>
                     <div>
                       <h2 className="font-title text-base text-[#1a1a1e]">
@@ -363,7 +363,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       <div className="flex items-center justify-between w-full">
                         <span className="font-caption-strong text-xs">Bachelor's / Undergrad</span>
                         {educationLevel === 'bachelors' && (
-                          <span className="material-symbols-outlined text-[16px] text-[#1d4ed8]">check_circle</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-[#1d4ed8]">check_circle</span>
                         )}
                       </div>
                       <span className="font-caption text-xs text-[#6b7280]">BSc, BA, BEng, BTech, LL.B</span>
@@ -404,13 +404,13 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6b7280]">
-                      <span className="material-symbols-outlined text-[18px]">account_balance</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-[18px]">account_balance</span>
                     </span>
                     <input
                       type="text"
                       value={institution}
                       onChange={(e) => setInstitution(e.target.value)}
-                      className="w-full h-11 pl-10 pr-24 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] transition-all"
+                      className="w-full h-11 pl-10 pr-24 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8] transition-all"
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5 pointer-events-none">
                     </div>
@@ -429,7 +429,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     <select
                       value={gradingScale}
                       onChange={(e) => setGradingScale(e.target.value as GradingScale)}
-                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                     >
                       <option value="gpa_4_0">4.0 Scale (US / International Standard)</option>
                       <option value="gpa_5_0">5.0 Scale (Nigeria / Singapore / Eastern Europe)</option>
@@ -452,7 +452,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         max="100"
                         value={gpa}
                         onChange={(e) => setGpa(parseFloat(e.target.value) || 0)}
-                        className="w-full h-11 pl-3.5 pr-16 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-lg font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+                        className="w-full h-11 pl-3.5 pr-16 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-lg font-semibold focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                       />
                       <span className="absolute right-3 font-caption-strong text-xs text-[#6b7280]">
                         / {gradingScale === 'gpa_5_0' ? '5.00' : gradingScale === 'percentage' ? '100' : '4.00'}
@@ -467,7 +467,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     <select
                       value={graduationYear}
                       onChange={(e) => setGraduationYear(e.target.value)}
-                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                     >
                       <option value="2024 or earlier">2024 or earlier</option>
                       <option value="2025">2025</option>
@@ -480,7 +480,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
 
                 {/* Academic Conversion Callout Banner */}
                 <div className="flex items-start gap-3 p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-[#1a1a1e]">
-                  <span className="material-symbols-outlined text-[18px] text-[#1d4ed8] mt-0.5 shrink-0">info</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-[#1d4ed8] mt-0.5 shrink-0">info</span>
                   <div className="font-caption text-xs leading-relaxed">
                     <span className="font-caption-strong text-[#1a1a1e]">Equivalency Standardization: </span>
                     ScholarFind standardizes your {gpa} GPA internally using official WES, UK-ENIC, and DAAD equivalence rubrics ({equivalencyLabel}).
@@ -493,7 +493,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <div className="flex items-center justify-between pb-5 mb-6 border-b border-[#e5e7eb]">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-[#dce2f3]/60 text-[#1d4ed8] flex items-center justify-center font-semibold">
-                      <span className="material-symbols-outlined text-[20px]">psychology</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">psychology</span>
                     </div>
                     <div>
                       <h2 className="font-title text-base text-[#1a1a1e]">
@@ -516,16 +516,16 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                   </label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6b7280]">
-                      <span className="material-symbols-outlined text-[18px]">hub</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-[18px]">hub</span>
                     </span>
                     <input
                       type="text"
                       value={primaryField}
                       onChange={(e) => setPrimaryField(e.target.value)}
-                      className="w-full h-11 pl-10 pr-10 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+                      className="w-full h-11 pl-10 pr-10 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                     />
                     <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#6b7280]">
-                      <span className="material-symbols-outlined text-[18px]">search</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-[18px]">search</span>
                     </span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 mt-2 font-caption text-xs text-[#6b7280]">
@@ -572,7 +572,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                           onClick={() => removeFacultyTag(tag)}
                           className="text-[#6b7280] hover:text-[#1a1a1e] ml-0.5"
                         >
-                          <span className="material-symbols-outlined text-[14px]">close</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-[14px]">close</span>
                         </button>
                       </span>
                     ))}
@@ -583,7 +583,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                           value={newTagInput}
                           onChange={(e) => setNewTagInput(e.target.value)}
                           placeholder="e.g. Bioethics"
-                          className="h-8 px-2.5 rounded-lg border border-[#e5e7eb] text-xs focus:outline-none focus:ring-1 focus:ring-[#1d4ed8]"
+                          className="h-8 px-2.5 rounded-lg border border-[#e5e7eb] text-xs focus:outline-none focus-visible:ring-1 focus:ring-[#1d4ed8]"
                           onKeyDown={(e) => e.key === 'Enter' && addFacultyTag()}
                         />
                         <button
@@ -600,7 +600,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         onClick={() => setShowAddTag(true)}
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#f3f4f3] hover:bg-[#eeeeed] font-caption text-xs text-[#1d4ed8] transition-colors"
                       >
-                        <span className="material-symbols-outlined text-[15px]">add</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-[15px]">add</span>
                         Add Sub-discipline
                       </button>
                     )}
@@ -624,7 +624,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                           onClick={() => removeKeyword(kw)}
                           className="text-[#6b7280] hover:text-[#ba1a1a]"
                         >
-                          <span className="material-symbols-outlined text-[14px]">close</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-[14px]">close</span>
                         </button>
                       </span>
                     ))}
@@ -635,7 +635,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                           value={newKeywordInput}
                           onChange={(e) => setNewKeywordInput(e.target.value)}
                           placeholder="e.g. Algorithmic Justice"
-                          className="h-8 px-2.5 rounded-lg border border-[#e5e7eb] text-xs focus:outline-none focus:ring-1 focus:ring-[#1d4ed8]"
+                          className="h-8 px-2.5 rounded-lg border border-[#e5e7eb] text-xs focus:outline-none focus-visible:ring-1 focus:ring-[#1d4ed8]"
                           onKeyDown={(e) => e.key === 'Enter' && addKeyword()}
                         />
                         <button
@@ -652,7 +652,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         onClick={() => setShowAddKeyword(true)}
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#f3f4f3] hover:bg-[#eeeeed] text-[#1d4ed8] font-caption-strong text-xs transition-colors"
                       >
-                        <span className="material-symbols-outlined text-[15px]">add</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-[15px]">add</span>
                         Add Keyword
                       </button>
                     )}
@@ -773,7 +773,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <div className="flex items-center justify-between pb-5 mb-6 border-b border-[#e5e7eb]">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-[#dce2f3]/60 text-[#1d4ed8] flex items-center justify-center font-semibold">
-                      <span className="material-symbols-outlined text-[20px]">public</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">public</span>
                     </div>
                     <div>
                       <h2 className="font-title text-base text-[#1a1a1e]">
@@ -804,7 +804,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="text-xl">🇬🇧 🇩🇪 🇫🇷 🇳🇱 🇸🇪</span>
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">Western &amp; Northern Europe</span>
                       </div>
-                      <span className={`material-symbols-outlined text-[20px] ${
+                      <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
                         targetRegions.includes('Western & Northern Europe') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
                       }`}>
                         {targetRegions.includes('Western & Northern Europe') ? 'check_circle' : 'radio_button_unchecked'}
@@ -834,7 +834,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="text-xl">🇺🇸 🇨🇦</span>
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">North America</span>
                       </div>
-                      <span className={`material-symbols-outlined text-[20px] ${
+                      <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
                         targetRegions.includes('North America') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
                       }`}>
                         {targetRegions.includes('North America') ? 'check_circle' : 'radio_button_unchecked'}
@@ -864,7 +864,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="text-xl">🇯🇵 🇰🇷 🇦🇺 🇳🇿</span>
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">East Asia &amp; Oceania</span>
                       </div>
-                      <span className={`material-symbols-outlined text-[20px] ${
+                      <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
                         targetRegions.includes('East Asia & Oceania') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
                       }`}>
                         {targetRegions.includes('East Asia & Oceania') ? 'check_circle' : 'radio_button_unchecked'}
@@ -894,7 +894,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="text-xl">🇧🇷 🇲🇽 🇦🇪 🇸🇦</span>
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">Latin America &amp; Middle East</span>
                       </div>
-                      <span className={`material-symbols-outlined text-[20px] ${
+                      <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
                         targetRegions.includes('Latin America & Middle East') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
                       }`}>
                         {targetRegions.includes('Latin America & Middle East') ? 'check_circle' : 'radio_button_unchecked'}
@@ -930,7 +930,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                           onClick={() => removeCountry(country)}
                           className="text-[#6b7280] hover:text-[#ba1a1a]"
                         >
-                          <span className="material-symbols-outlined text-[14px]">close</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-[14px]">close</span>
                         </button>
                       </span>
                     ))}
@@ -1020,7 +1020,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     <select
                       value={englishTestType}
                       onChange={(e) => setEnglishTestType(e.target.value as any)}
-                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8]"
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                     >
                       <option value="none">None / Pending Upload</option>
                       <option value="ielts">IELTS Academic</option>
@@ -1039,7 +1039,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       onChange={(e) => setEnglishScore(e.target.value)}
                       placeholder="e.g. 7.5 or 105"
                       disabled={englishTestType === 'none'}
-                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] disabled:opacity-50"
+                      className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8] disabled:opacity-50"
                     />
                   </div>
                 </div>
@@ -1093,7 +1093,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       Standardized Score: <span className="font-bold text-[#1a1a1e]">{normalizedGpaScore.toFixed(1)}%</span> • {equivalencyLabel}
                     </p>
                     <p className="font-caption text-xs text-[#047857] flex items-center gap-1 mt-0.5">
-                      <span className="material-symbols-outlined text-[14px]">verified</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-[14px]">verified</span>
                       Institutional record on file
                     </p>
                   </div>
@@ -1140,7 +1140,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
               onClick={handlePrev}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#f3f4f3] hover:bg-[#eeeeed] text-[#1a1a1e] font-caption-strong text-xs transition-all cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">arrow_back</span>
               {step === 1 ? 'Cancel' : 'Previous Step'}
             </button>
 
@@ -1163,7 +1163,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1d4ed8] hover:bg-[#2563eb] text-white font-body-strong text-xs sm:text-sm shadow-sm transition-all transform active:scale-95 cursor-pointer text-center"
               >
                 <span className="truncate">{step === 4 ? 'Save Profile & Explore Matches' : 'Continue to Next Step'}</span>
-                <span className="material-symbols-outlined text-[18px] shrink-0">arrow_forward</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px] shrink-0">arrow_forward</span>
               </button>
             </div>
           </div>

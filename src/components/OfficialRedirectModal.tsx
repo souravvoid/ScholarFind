@@ -62,12 +62,12 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
           className="absolute top-3 right-3 sm:top-5 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors cursor-pointer"
           aria-label="Close redirect confirmation"
         >
-          <span className="material-symbols-outlined text-[20px]">close</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
         </button>
 
         {/* Header Icon */}
         <div className="w-12 h-12 rounded-xl bg-[#dce2f3] text-[#0037b0] flex items-center justify-center mb-5">
-          <span className="material-symbols-outlined text-[26px]">open_in_new</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[26px]">open_in_new</span>
         </div>
 
         <h3 id="redirect-dialog-title" className="font-headline-sm text-headline-sm text-[#1a1a1e] mb-2">
@@ -91,14 +91,14 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
             <span className={`inline-flex items-center gap-1 lowercase font-normal ${
               gate === 'verified' ? 'text-[#047857]' : gate === 'mismatch' ? 'text-[#b45309]' : 'text-[#be123c]'
             }`}>
-              <span className="material-symbols-outlined text-[14px]">
+              <span aria-hidden="true" className="material-symbols-outlined text-[14px]">
                 {gate === 'verified' ? 'lock' : gate === 'mismatch' ? 'warning' : 'gpp_bad'}
               </span>
               {gate === 'verified' ? 'https verified' : gate === 'mismatch' ? 'https · origin differs' : 'cannot verify origin'}
             </span>
           </div>
           <div className="flex items-center gap-2 font-mono text-sm text-[#1a1a1e] bg-white p-2 rounded-lg border border-[#e5e7eb] break-all">
-            <span className={`material-symbols-outlined text-[18px] ${
+            <span aria-hidden="true" className={`material-symbols-outlined text-[18px] ${
               gate === 'verified' ? 'text-[#0037b0]' : gate === 'mismatch' ? 'text-[#b45309]' : 'text-[#be123c]'
             }`}>
               {gate === 'verified' ? 'verified' : gate === 'mismatch' ? 'help' : 'gpp_bad'}
@@ -150,7 +150,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
             }`}
           >
             <span>Continue to Official Application</span>
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">arrow_forward</span>
           </button>
         </div>
       </div>

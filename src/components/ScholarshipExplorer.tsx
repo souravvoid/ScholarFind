@@ -143,7 +143,7 @@ export const ScholarshipExplorer: React.FC<{
               <h1 className="font-ui-display text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-tight tracking-[-0.02em] text-ink">
                 Explore verified scholarships
               </h1>
-              <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-muted">
+              <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-muted" aria-live="polite">
                 {filteredScholarships.length} of {scholarships.length} records match.{' '}
                 {profile ? `${eligibleCount} likely eligible for your profile.` : 'Build a profile to see eligibility.'}
               </p>
