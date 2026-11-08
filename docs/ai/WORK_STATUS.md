@@ -25,6 +25,7 @@ Remaining steps: 2 Landing, 3 Explorer, 4 Detail route, 5 Tracker, 6 Sources, 7 
 | 2026-11-08 | Step 3 — explorer dense rows, filters wired, URL params, empty state, save toggle | Step 3 commit |
 | 2026-11-08 | Step 4 — detail route + provenance + gate; details modal retired | Step 4 commit |
 | 2026-11-08 | Step 5 — tracker rebuilt; dead-ends/ghost/empty state fixed | Step 5 commit |
+| 2026-11-08 | Step 6 — sources informational provenance; fake audit removed | Step 6 commit |
 
 Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 ·
 8/9 catalogue URLs gate `verified`, gates-cambridge `mismatch` (allied portal, warns).
