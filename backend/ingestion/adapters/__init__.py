@@ -32,60 +32,10 @@ class CommonwealthAdapter:
         }]
 
 
-class DAADScholarshipAdapter:
-    source_id = "src_daad_de"
-    source_name = "DAAD German Academic Exchange Service"
-    origin_agency = "Federal Foreign Office of Germany"
+from backend.ingestion.adapters.csc_uk import CSCCommonwealthAdapter
+from backend.ingestion.adapters.daad_de import DAADHelmutSchmidtAdapter
+from backend.ingestion.adapters.fulbright_us import FulbrightProgramAdapter
 
-    def collect(self) -> List[Dict[str, Any]]:
-        return [{
-            "source_record_id": "daad-helmut-schmidt-2026",
-            "title": "DAAD Helmut-Schmidt Programme (PPGG)",
-            "provider_name": "Federal Foreign Office",
-            "provider_category": "Government Endowment",
-            "country_destinations": ["Germany"],
-            "study_levels": ["masters"],
-            "academic_fields": ["Public Policy", "Economics", "Governance", "Social Sciences"],
-            "award_summary": "Full funding + €934/mo + health insurance",
-            "award_usd": 42000.0,
-            "deadline_iso": "2026-11-30T23:59:00",
-            "official_source_url": "https://www.daad.de",
-            "official_apply_url": "https://www.daad.de/en/study-and-research-in-germany/scholarships/helmut-schmidt-programme/",
-            "academic_cycle": "2026/2027",
-            "eligibility_clauses": [
-                {"type": "citizenship", "mandatory": True, "dac_countries_only": True},
-                {"type": "field_of_study", "mandatory": True, "allowed_fields": ["Public Policy", "Economics", "Law"]}
-            ],
-            "required_documents": ["DAAD Form", "Europass CV", "Motivation Letter", "Graduation Transcripts"]
-        }]
-
-
-class FulbrightAdapter:
-    source_id = "src_fulbright_us"
-    source_name = "Fulbright Foreign Student Program"
-    origin_agency = "U.S. Department of State / IIE"
-
-    def collect(self) -> List[Dict[str, Any]]:
-        return [{
-            "source_record_id": "fulbright-foreign-student-2026",
-            "title": "Fulbright Foreign Student Program",
-            "provider_name": "U.S. Department of State / IIE",
-            "provider_category": "Government Endowment",
-            "country_destinations": ["United States"],
-            "study_levels": ["masters", "phd"],
-            "academic_fields": ["All fields excluding clinical medical patient contact"],
-            "award_summary": "Full tuition, monthly stipend, health & flights",
-            "award_usd": 72000.0,
-            "deadline_iso": "2026-06-01T23:59:00",
-            "official_source_url": "https://foreign.fulbrightonline.org",
-            "official_apply_url": "https://foreign.fulbrightonline.org/about/foreign-student-program",
-            "academic_cycle": "2026/2027",
-            "eligibility_clauses": [
-                {"type": "citizenship", "mandatory": True, "non_us_only": True},
-                {"type": "academic_score", "mandatory": True, "min_gpa_normalized": 78.0}
-            ],
-            "required_documents": ["Transcripts", "Study Objective", "Personal Statement", "Three References"]
-        }]
 
 
 class ErasmusMundusAdapter:
@@ -283,12 +233,11 @@ class RotaryFellowshipAdapter:
             "required_documents": ["Resume / CV", "Essays on peace", "Two recommendations", "Transcripts"]
         }]
 
-from backend.ingestion.adapters.csc_uk import CSCCommonwealthAdapter
 
 ADAPTER_REGISTRY = {
     "src_csc_uk": CSCCommonwealthAdapter(),
-    "src_daad_de": DAADScholarshipAdapter(),
-    "src_fulbright_us": FulbrightAdapter(),
+    "src_daad_de": DAADHelmutSchmidtAdapter(),
+    "src_fulbright_us": FulbrightProgramAdapter(),
     "src_erasmus_eu": ErasmusMundusAdapter(),
     "src_chevening_uk": CheveningAdapter(),
     "src_mext_jp": MEXTAdapter(),
@@ -297,3 +246,4 @@ ADAPTER_REGISTRY = {
     "src_vanier_ca": VanierAdapter(),
     "src_rotary_global": RotaryFellowshipAdapter(),
 }
+

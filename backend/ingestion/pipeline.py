@@ -187,49 +187,109 @@ class IngestionPipeline:
 
         raise RuntimeError(f"All {max_retries} fetch attempts failed for adapter {self.source_id}.")
 
+    # Static exchange rates to USD for estimated parity comparisons
+    EXCHANGE_RATES_TO_USD: Dict[str, float] = {
+        "USD": 1.0,
+        "GBP": 1.30,
+        "EUR": 1.08,
+        "CAD": 0.74,
+        "AUD": 0.66,
+        "JPY": 0.0067,
+        "SEK": 0.095,
+        "NZD": 0.60,
+        "CHF": 1.15
+    }
+
+    # Canonical Country Normalization Dictionary
+    CANONICAL_COUNTRIES: Dict[str, str] = {
+        "uk": "United Kingdom",
+        "united kingdom": "United Kingdom",
+        "great britain": "United Kingdom",
+        "england": "United Kingdom",
+        "scotland": "United Kingdom",
+        "wales": "United Kingdom",
+        "us": "United States",
+        "usa": "United States",
+        "united states": "United States",
+        "united states of america": "United States",
+        "germany": "Germany",
+        "deutschland": "Germany",
+        "de": "Germany",
+        "canada": "Canada",
+        "ca": "Canada",
+        "australia": "Australia",
+        "au": "Australia",
+        "japan": "Japan",
+        "jp": "Japan",
+        "sweden": "Sweden",
+        "se": "Sweden",
+        "france": "France",
+        "fr": "France"
+    }
+
     def _normalize_record(self, raw: RawScholarshipRecord) -> NormalizedScholarshipRecord:
         natural_key = f"{self.source_id}:{raw.source_record_id}".lower()
         slug = raw.source_record_id.lower().replace(" ", "-").replace("_", "-")
 
-        # Normalize study levels
+        # 1. Normalize Education / Study Levels
         normalized_levels: List[str] = []
         for lvl in raw.study_levels:
             lvl_lower = lvl.lower()
-            if "master" in lvl_lower or "msc" in lvl_lower or "ma" in lvl_lower:
+            if any(term in lvl_lower for term in ["master", "msc", "ma", "mres", "mpp", "meng", "taught master"]):
                 normalized_levels.append("masters")
-            elif "phd" in lvl_lower or "doctor" in lvl_lower or "dphil" in lvl_lower:
+            elif any(term in lvl_lower for term in ["phd", "doctor", "dphil", "doctoral", "postgraduate research"]):
                 normalized_levels.append("phd")
-            elif "bachelor" in lvl_lower:
+            elif any(term in lvl_lower for term in ["bachelor", "undergraduate", "bsc", "ba", "beng"]):
                 normalized_levels.append("bachelors")
-            elif "postdoc" in lvl_lower:
+            elif any(term in lvl_lower for term in ["postdoc", "fellowship", "post-doctoral"]):
                 normalized_levels.append("postdoc")
             else:
                 normalized_levels.append(lvl_lower)
 
-        # Remove duplicates while preserving order
         unique_levels = list(dict.fromkeys(normalized_levels)) or ["masters"]
 
-        # Parse deadline
+        # 2. Normalize Destination Countries
+        normalized_countries: List[str] = []
+        for c in raw.destination_countries:
+            c_clean = c.strip().lower()
+            canonical = self.CANONICAL_COUNTRIES.get(c_clean, c.strip())
+            normalized_countries.append(canonical)
+        unique_countries = list(dict.fromkeys(normalized_countries))
+
+        # 3. Normalize Application Deadlines (UTC ISO 8601)
         deadline_iso = None
         days_rem = None
         if raw.raw_deadline:
             try:
-                clean_deadline = raw.raw_deadline.replace("Z", "+00:00")
-                dt = datetime.fromisoformat(clean_deadline)
+                clean_deadline = raw.raw_deadline.strip().replace("Z", "+00:00")
+                if " " in clean_deadline and "T" not in clean_deadline:
+                    dt = datetime.strptime(clean_deadline, "%Y-%m-%d %H:%M:%S")
+                else:
+                    dt = datetime.fromisoformat(clean_deadline)
                 deadline_iso = dt.isoformat()
                 now = datetime.utcnow()
                 dt_naive = dt.replace(tzinfo=None)
                 days_rem = max(0, (dt_naive - now).days)
-            except Exception:
+            except Exception as parse_err:
+                logger.warning(f"Could not parse ISO deadline '{raw.raw_deadline}': {parse_err}")
                 deadline_iso = raw.raw_deadline
 
-        # Domain extraction
-        domain = "gov.uk"
-        if raw.official_source_url:
-            domain_parts = raw.official_source_url.split("//")[-1].split("/")
-            domain = domain_parts[0] if domain_parts else "gov.uk"
+        # 4. Normalize Currencies and Compute USD Parity Value
+        currency_code = (raw.raw_award_currency or "USD").upper().strip()
+        raw_amt = raw.raw_award_amount or 0.0
+        rate = self.EXCHANGE_RATES_TO_USD.get(currency_code, 1.0)
+        estimated_usd = round(raw_amt * rate, 2) if raw_amt > 0 else 0.0
 
-        # Transform clauses to NormalizedRules
+        # 5. Extract and Validate Official Source Domain
+        domain = "official.portal"
+        if raw.official_source_url:
+            try:
+                domain_parts = raw.official_source_url.split("//")[-1].split("/")
+                domain = domain_parts[0] if domain_parts else "official.portal"
+            except Exception:
+                domain = "official.portal"
+
+        # 6. Transform Eligibility Clauses into NormalizedRule entities
         rules: List[NormalizedRule] = []
         for idx, clause in enumerate(raw.eligibility_clauses):
             rules.append(NormalizedRule(
@@ -242,6 +302,19 @@ class IngestionPipeline:
                 parameters=clause.parameters
             ))
 
+        # 7. Construct Complete Provenance Metadata Block
+        provenance = {
+            "adapter": self.adapter.__class__.__name__,
+            "source_id": self.source_id,
+            "source_name": getattr(self.adapter, "source_name", self.source_id),
+            "origin_agency": getattr(self.adapter, "origin_agency", "Statutory Agency"),
+            "license": getattr(self.adapter, "license_type", "Open Government Access"),
+            "provenance_url": getattr(self.adapter, "provenance_url", raw.official_source_url),
+            "access_method": getattr(self.adapter, "access_method", "Official Gazette"),
+            "checksum": raw.raw_payload_checksum,
+            "ingested_at_utc": datetime.utcnow().isoformat()
+        }
+
         return NormalizedScholarshipRecord(
             natural_key=natural_key,
             source_id=self.source_id,
@@ -250,15 +323,15 @@ class IngestionPipeline:
             slug=slug,
             provider_name=raw.provider_name,
             provider_category=raw.provider_category,
-            destination_countries=raw.destination_countries,
+            destination_countries=unique_countries,
             host_institutions=raw.host_institutions,
             study_levels=unique_levels,
             academic_fields=raw.academic_fields,
             award_summary=raw.award_summary,
             award_details=raw.award_details,
-            currency_code=raw.raw_award_currency,
+            currency_code=currency_code,
             total_award_amount=raw.raw_award_amount,
-            estimated_usd_value=raw.raw_award_amount or 0.0,
+            estimated_usd_value=estimated_usd,
             deadline_iso=deadline_iso,
             days_remaining=days_rem,
             academic_cycle=raw.academic_cycle,
@@ -269,11 +342,7 @@ class IngestionPipeline:
             application_instructions=raw.application_instructions,
             rules=rules,
             collection_timestamp=datetime.utcnow().isoformat(),
-            provenance_metadata={
-                "adapter": self.adapter.__class__.__name__,
-                "license": getattr(self.adapter, "license_type", "Open Government Licence v3.0"),
-                "provenance_url": getattr(self.adapter, "provenance_url", raw.official_source_url)
-            }
+            provenance_metadata=provenance
         )
 
     def _validate_record(self, record: NormalizedScholarshipRecord) -> None:

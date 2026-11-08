@@ -142,5 +142,94 @@ class TestIngestionPipelineStages(unittest.TestCase):
             self.pipeline._validate_record(norm)
 
 
+class TestDiverseSourcesIngestion(unittest.TestCase):
+    """
+    Validates the 3 diverse scholarship data sources:
+    1. UK FCDO Commonwealth Scholarship (GBP currency, UK destination)
+    2. Germany DAAD Helmut-Schmidt Programme (EUR currency, Germany destination)
+    3. US Dept of State Fulbright Foreign Student (USD currency, US destination)
+    """
+    def setUp(self):
+        from backend.ingestion.adapters.daad_de import DAADHelmutSchmidtAdapter
+        from backend.ingestion.adapters.fulbright_us import FulbrightProgramAdapter
+        self.csc_adapter = CSCCommonwealthAdapter()
+        self.daad_adapter = DAADHelmutSchmidtAdapter()
+        self.fulbright_adapter = FulbrightProgramAdapter()
+        self.storage = IngestionStorageRepository()
+
+    def test_all_three_sources_access_conditions_and_limitations(self):
+        for adapter in [self.csc_adapter, self.daad_adapter, self.fulbright_adapter]:
+            cond = adapter.get_access_conditions()
+            self.assertIn("source_id", cond)
+            self.assertIn("license", cond)
+            self.assertIn("provenance_url", cond)
+            self.assertIn("limitations", cond)
+            self.assertGreaterEqual(len(cond["limitations"]), 2)
+            self.assertTrue(cond["provenance_url"].startswith("https://"))
+
+    def test_daad_adapter_ingestion_and_normalization(self):
+        pipeline = IngestionPipeline(source_id="src_daad_de", adapter_instance=self.daad_adapter, storage=self.storage)
+        result = pipeline.run_job()
+        self.assertEqual(result["status"], "success")
+        self.assertGreaterEqual(result["records_stored_new"], 1)
+
+        # Check normalization specifics for DAAD
+        records = [r for r in self.storage.all() if r.source_id == "src_daad_de"]
+        self.assertGreater(len(records), 0)
+        rec = records[0]
+        self.assertEqual(rec.currency_code, "EUR")
+        self.assertIn("Germany", rec.destination_countries)
+        self.assertIn("masters", rec.study_levels)
+        self.assertIn("daad.de", rec.source_domain)
+        self.assertEqual(rec.provenance_metadata["license"], "German Open Government Data (§ 12a EGovG)")
+        self.assertGreater(rec.estimated_usd_value, 0)
+
+    def test_fulbright_adapter_ingestion_and_normalization(self):
+        pipeline = IngestionPipeline(source_id="src_fulbright_us", adapter_instance=self.fulbright_adapter, storage=self.storage)
+        result = pipeline.run_job()
+        self.assertEqual(result["status"], "success")
+        self.assertGreaterEqual(result["records_stored_new"], 1)
+
+        # Check normalization specifics for Fulbright
+        records = [r for r in self.storage.all() if r.source_id == "src_fulbright_us"]
+        self.assertGreater(len(records), 0)
+        rec = records[0]
+        self.assertEqual(rec.currency_code, "USD")
+        self.assertIn("United States", rec.destination_countries)
+        self.assertTrue(any(lvl in ["masters", "phd"] for lvl in rec.study_levels))
+        self.assertIn("fulbrightonline.org", rec.source_domain)
+        self.assertIn("Fulbright-Hays Act", rec.provenance_metadata["license"])
+        self.assertGreater(rec.estimated_usd_value, 50000.0)
+
+    def test_multi_source_deduplication_and_idempotency(self):
+        """Run all 3 sources in sequence, verify storage count, then re-run to confirm zero duplicates."""
+        adapters = [
+            ("src_csc_uk", self.csc_adapter),
+            ("src_daad_de", self.daad_adapter),
+            ("src_fulbright_us", self.fulbright_adapter)
+        ]
+
+        # Initial ingestion cycle
+        for src_id, adapter in adapters:
+            pipe = IngestionPipeline(source_id=src_id, adapter_instance=adapter, storage=self.storage)
+            res = pipe.run_job()
+            self.assertEqual(res["status"], "success")
+            self.assertGreater(res["records_stored_new"], 0)
+
+        initial_count = self.storage.count()
+        self.assertGreaterEqual(initial_count, 4)
+
+        # Re-run identical cycle
+        for src_id, adapter in adapters:
+            pipe = IngestionPipeline(source_id=src_id, adapter_instance=adapter, storage=self.storage)
+            res = pipe.run_job()
+            self.assertEqual(res["status"], "success")
+            self.assertEqual(res["records_stored_new"], 0, "No duplicate records should be inserted on re-run.")
+            self.assertGreater(res["duplicates_prevented"], 0, "All re-ingested records must be identified as duplicates.")
+
+        self.assertEqual(self.storage.count(), initial_count, "Storage count must remain strictly constant.")
+
+
 if __name__ == "__main__":
     unittest.main()
+
