@@ -10,7 +10,7 @@ test('hero renders display quote', async ({ page }) => {
 
 test('Get Started opens profile builder', async ({ page }) => {
   await page.getByRole('button', { name: 'Get Started' }).first().click();
-  await expect(page.getByText('Step 2 of 4')).toBeVisible();
+  await expect(page.getByText('Step 1 of 4')).toBeVisible();
 });
 
 test('Explore button navigates to explorer', async ({ page }) => {

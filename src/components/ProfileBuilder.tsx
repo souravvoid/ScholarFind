@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { DegreeLevel, GradingScale } from '../types';
 import { normalizeGpa, getEquivalentDegreeLabel } from '../utils/eligibilityEngine';
-import { SaveResumeModal } from './SaveResumeModal';
 
 interface ProfileBuilderProps {
   onClose: () => void;
@@ -10,9 +9,8 @@ interface ProfileBuilderProps {
 }
 
 export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinished }) => {
-  const { profile, updateProfile } = useAuth();
-  const [step, setStep] = useState<number>(2); // Start on Academic step (matching screenshot)
-  const [showSaveModal, setShowSaveModal] = useState<boolean>(false);
+  const { profile, currentUser, updateProfile } = useAuth();
+  const [step, setStep] = useState<number>(1); // Start on step 1
 
   // Form states initialized from profile
   const [citizenship, setCitizenship] = useState(profile?.citizenship || 'Nigeria');
@@ -164,10 +162,10 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
           </button>
           <span className="font-title text-base text-[#1a1a1e] font-semibold truncate px-2">ScholarFind</span>
           <button
-            onClick={() => setShowSaveModal(true)}
+            onClick={onClose}
             className="font-caption-strong text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
           >
-            Save &amp; Exit
+            Close
           </button>
         </div>
       </header>
@@ -415,9 +413,6 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       className="w-full h-11 pl-10 pr-24 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] transition-all"
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5 pointer-events-none">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-caption-strong text-[#047857] bg-[#ecfdf5] border border-[#a7f3d0] px-2 py-0.5 rounded-full">
-                        <span className="material-symbols-outlined text-[13px]">verified</span> WHED Listed
-                      </span>
                     </div>
                   </div>
                   <p className="font-caption text-xs text-[#6b7280] mt-1.5">
@@ -1099,16 +1094,16 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     </p>
                     <p className="font-caption text-xs text-[#047857] flex items-center gap-1 mt-0.5">
                       <span className="material-symbols-outlined text-[14px]">verified</span>
-                      WHED Accredited Registry
+                      Institutional record on file
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <span className="block font-headline-md text-[#1d4ed8] font-bold">
-                    842 Grants
+                    Profile complete
                   </span>
                   <span className="font-label-sm text-[11px] text-[#047857] bg-[#ecfdf5] border border-[#a7f3d0] px-2 py-0.5 rounded-full">
-                    High Fit Index
+                    Ready to match
                   </span>
                 </div>
               </div>
@@ -1151,15 +1146,17 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
 
             <div className="flex items-center gap-2 font-caption text-xs text-[#6b7280] truncate">
               <span className="w-2 h-2 rounded-full bg-[#047857] shrink-0"></span>
-              <span className="truncate">Auto-saved to Firestore candidate session</span>
+              <span className="truncate">
+                {currentUser ? 'Saved to your account' : 'Saved on this device'}
+              </span>
             </div>
 
             <div className="flex items-center gap-3 w-full sm:w-auto justify-end min-w-0">
               <button
-                onClick={() => setShowSaveModal(true)}
+                onClick={onClose}
                 className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-[#f3f4f3] hover:bg-[#eeeeed] text-[#1a1a1e] font-caption-strong text-xs transition-colors cursor-pointer text-center"
               >
-                Save &amp; Exit
+                Close
               </button>
               <button
                 onClick={handleNext}
@@ -1172,17 +1169,6 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
           </div>
         </div>
       </main>
-
-      {/* Save & Resume Modal */}
-      <SaveResumeModal
-        isOpen={showSaveModal}
-        onClose={() => setShowSaveModal(false)}
-        onComplete={() => {
-          setShowSaveModal(false);
-          onClose();
-        }}
-        matchedCount={842}
-      />
     </div>
   );
 };
