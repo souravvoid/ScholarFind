@@ -1,14 +1,6 @@
 import { 
   collection, 
-  getDocs, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  addDoc, 
-  updateDoc, 
-  query, 
-  orderBy, 
-  limit 
+  getDocs
 } from 'firebase/firestore';
 import { db, testConnection } from '../firebase';
 import { Scholarship, IngestionSource } from '../types';
@@ -91,46 +83,28 @@ export function normalizeScholarshipWithCurrentDates(scholarship: Scholarship): 
   };
 }
 
-/**
- * Seed database with approved official scholarships if empty
- */
-async function seedScholarshipsIfEmpty(): Promise<Scholarship[]> {
-  const seededList: Scholarship[] = [];
-  for (const item of SCHOLARSHIPS_DATA) {
-    const normalized = normalizeScholarshipWithCurrentDates(item);
-    try {
-      const docRef = doc(db, 'scholarships', normalized.id);
-      await setDoc(docRef, normalized, { merge: true });
-      seededList.push(normalized);
-    } catch (e) {
-      console.warn(`Failed seeding scholarship ${normalized.id} to Firestore:`, e);
-      seededList.push(normalized);
-    }
-  }
-  return seededList;
+/** Minimal shape validation: Firestore docs are untrusted input (cast is not validation). */
+function isValidScholarship(item: Partial<Scholarship> | undefined): item is Scholarship {
+  return !!(item &&
+    typeof item.id === 'string' && item.id.length > 0 &&
+    typeof item.title === 'string' && item.title.length > 0 &&
+    typeof item.officialSourceUrl === 'string' &&
+    typeof item.applicationDeadline === 'string' &&
+    typeof item.overview === 'string' &&
+    Array.isArray(item.fieldsOfStudy ?? item.criteria));
 }
 
-/**
- * Seed database with approved sources if empty
- */
-async function seedSourcesIfEmpty(): Promise<IngestionSource[]> {
-  const seededList: IngestionSource[] = [];
-  for (const src of INGESTION_SOURCES) {
-    try {
-      const docRef = doc(db, 'scholarship_sources', src.id);
-      await setDoc(docRef, src, { merge: true });
-      seededList.push(src);
-    } catch (e) {
-      console.warn(`Failed seeding source ${src.id} to Firestore:`, e);
-      seededList.push(src);
-    }
-  }
-  return seededList;
+function isValidSource(item: Partial<IngestionSource> | undefined): item is IngestionSource {
+  return !!(item &&
+    typeof item.id === 'string' && item.id.length > 0 &&
+    typeof item.name === 'string' && item.name.length > 0 &&
+    typeof item.provenanceUrl === 'string');
 }
 
 /**
  * Fetches all verified scholarships directly from the live Firestore database.
- * Falls back safely to verified static baseline if connection fails.
+ * Falls back safely to the verified static baseline when the collection is empty
+ * or unreachable (catalogue writes happen via a service identity, not this client).
  */
 export async function getScholarshipsFromDatabase(): Promise<{
   data: Scholarship[];
@@ -142,16 +116,30 @@ export async function getScholarshipsFromDatabase(): Promise<{
     const snapshot = await getDocs(colRef);
 
     if (snapshot.empty) {
-      console.info('Scholarships collection empty in Firestore. Seeding verified records...');
-      const seeded = await seedScholarshipsIfEmpty();
-      return { data: seeded, fromDatabase: true };
+      return {
+        data: SCHOLARSHIPS_DATA.map(normalizeScholarshipWithCurrentDates),
+        fromDatabase: false,
+        error: 'Catalogue collection is empty; using verified static baseline.'
+      };
     }
 
     const list: Scholarship[] = [];
     snapshot.forEach((docSnap) => {
-      const item = docSnap.data() as Scholarship;
-      list.push(normalizeScholarshipWithCurrentDates(item));
+      const item = docSnap.data();
+      if (isValidScholarship(item)) {
+        list.push(normalizeScholarshipWithCurrentDates(item));
+      } else {
+        console.warn(`Skipping malformed scholarship document "${docSnap.id}" (failed shape validation).`);
+      }
     });
+
+    if (list.length === 0) {
+      return {
+        data: SCHOLARSHIPS_DATA.map(normalizeScholarshipWithCurrentDates),
+        fromDatabase: false,
+        error: 'No valid catalogue documents; using verified static baseline.'
+      };
+    }
 
     return { data: list, fromDatabase: true };
   } catch (error) {
@@ -166,7 +154,7 @@ export async function getScholarshipsFromDatabase(): Promise<{
 }
 
 /**
- * Fetches the 10 approved sources from Firestore database.
+ * Fetches the approved sources from Firestore database with static fallback.
  */
 export async function getSourcesFromDatabase(): Promise<{
   data: IngestionSource[];
@@ -178,15 +166,22 @@ export async function getSourcesFromDatabase(): Promise<{
     const snapshot = await getDocs(colRef);
 
     if (snapshot.empty) {
-      console.info('Sources collection empty in Firestore. Seeding 10 approved sources...');
-      const seeded = await seedSourcesIfEmpty();
-      return { data: seeded, fromDatabase: true };
+      return { data: INGESTION_SOURCES, fromDatabase: false };
     }
 
     const list: IngestionSource[] = [];
     snapshot.forEach((docSnap) => {
-      list.push(docSnap.data() as IngestionSource);
+      const item = docSnap.data();
+      if (isValidSource(item)) {
+        list.push(item);
+      } else {
+        console.warn(`Skipping malformed source document "${docSnap.id}" (failed shape validation).`);
+      }
     });
+
+    if (list.length === 0) {
+      return { data: INGESTION_SOURCES, fromDatabase: false };
+    }
 
     return { data: list, fromDatabase: true };
   } catch (error) {
@@ -200,8 +195,9 @@ export async function getSourcesFromDatabase(): Promise<{
 }
 
 /**
- * Executes a real database ingestion sync for an approved source adapter.
- * Creates an immutable audit record in `ingestion_logs` and updates `scholarship_sources`.
+ * Local registry audit for a source. This client has no write access to the
+ * catalogue/sources/logs collections (firestore.rules); real ingestion runs
+ * server-side. Returns a checked timestamp without fabricating an audit trail.
  */
 export async function triggerLiveSourceSync(sourceId: string): Promise<{
   success: boolean;
@@ -211,58 +207,11 @@ export async function triggerLiveSourceSync(sourceId: string): Promise<{
   error?: string;
 }> {
   const nowIso = new Date().toISOString();
-  try {
-    // 1. Fetch current source details
-    const sourceRef = doc(db, 'scholarship_sources', sourceId);
-    const sourceSnap = await getDoc(sourceRef);
-    const sourceData = sourceSnap.exists() ? (sourceSnap.data() as IngestionSource) : null;
-    const currentCount = sourceData?.scholarshipCount || 150;
-
-    // 2. Append real audit record to ingestion_logs
-    const logsCol = collection(db, 'ingestion_logs');
-    const logDoc = await addDoc(logsCol, {
-      sourceId,
-      sourceName: sourceData?.name || sourceId,
-      status: 'verified',
-      itemsIngested: currentCount,
-      lastCheckedAt: nowIso,
-      provenanceUrl: sourceData?.provenanceUrl || 'https://scholarfind.org/provenance',
-      createdAt: nowIso
-    });
-
-    // 3. Update source in database with updated lastIngested timestamp
-    if (sourceSnap.exists()) {
-      await updateDoc(sourceRef, {
-        lastIngested: nowIso,
-        status: 'verified'
-      });
-    } else {
-      // Find from static sources and set
-      const found = INGESTION_SOURCES.find(s => s.id === sourceId);
-      if (found) {
-        await setDoc(sourceRef, {
-          ...found,
-          lastIngested: nowIso,
-          status: 'verified'
-        });
-      }
-    }
-
-    return {
-      success: true,
-      timestamp: nowIso,
-      itemsIngested: currentCount,
-      logId: logDoc.id
-    };
-  } catch (error) {
-    console.error(`Live source sync failed for ${sourceId}:`, error);
-    return {
-      success: false,
-      timestamp: nowIso,
-      itemsIngested: 0,
-      error: error instanceof Error ? error.message : String(error)
-    };
+  const known = INGESTION_SOURCES.find(s => s.id === sourceId);
+  if (!known) {
+    return { success: false, timestamp: nowIso, itemsIngested: 0, error: `Unknown source "${sourceId}"` };
   }
+  return { success: true, timestamp: nowIso, itemsIngested: known.scholarshipCount ?? 0 };
 }
 
 /**

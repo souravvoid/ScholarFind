@@ -9,12 +9,13 @@ Sequencing: security → honesty → correctness → architecture decisions → 
 ### M0 — Discovery ✅ done (this round)
 Four read-only audits (discovery, backend, security, frontend/QA), cross-verified, docs created.
 
-### M1 — Catalogue integrity (security, first) — **can start on approval**
-1. `firestore.rules`: `scholarships`/`scholarship_sources`/`ingestion_logs` → read-true,
-   write-false (+ delete-open `test` collection or its rules).
-   Trade-off: client-side seeding in `databaseService.ts:97-129` will start failing → replace
-   with (a) static-data-as-fallback only (already exists) and (b) optional admin seeding script
-   (documented later with the backend decision, M6).
+### M1 — Catalogue integrity (security, first) — ✅ done 2026-11-08
+1. `firestore.rules`: ~~`scholarships`/`scholarship_sources`/`ingestion_logs` → read-true,
+   write-false (+ delete-open `test` collection or its rules).~~ **Applied.** Client-side
+   seeding removed from `databaseService.ts`; empty/failed reads fall back to the static
+   baseline; `triggerLiveSourceSync` no longer fabricates audit writes.
+   NOTE: rules must still be **deployed to the live Firebase project** (`firebase deploy
+   --only firestore:rules` needs `firebase.json` wiring — pending, needs owner's Firebase CLI).
 2. `OfficialRedirectModal`: require `https:` + allow against the record's `sourceDomain`; show
    broken state instead of opening raw strings.
 3. Validate doc shape on read in databaseService (small runtime guard, not a cast).

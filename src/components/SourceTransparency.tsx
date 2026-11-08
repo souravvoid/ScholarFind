@@ -30,7 +30,7 @@ export const SourceTransparency: React.FC = () => {
 
   const handleRunIngestion = async (sourceId: string) => {
     setRunningJobId(sourceId);
-    setSyncFeedback(prev => ({ ...prev, [sourceId]: 'Contacting official registry & executing pipeline...' }));
+    setSyncFeedback(prev => ({ ...prev, [sourceId]: 'Running registry audit (local check)...' }));
 
     const result = await triggerLiveSourceSync(sourceId);
 
@@ -47,7 +47,7 @@ export const SourceTransparency: React.FC = () => {
       }));
       setSyncFeedback(prev => ({
         ...prev,
-        [sourceId]: `Audit verified! Stored in Firestore (Log: ${result.logId?.slice(0, 8)}...)`
+        [sourceId]: `Audit checked — no records ingested (live ingestion is service-side). Checked at ${new Date(result.timestamp).toLocaleTimeString()}.`
       }));
     } else {
       setSyncFeedback(prev => ({
