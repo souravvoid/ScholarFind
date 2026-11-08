@@ -1,992 +1,416 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Scholarship, DegreeLevel } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
-import { useAuth } from '../context/AuthContext';
 import { evaluateEligibility } from '../utils/eligibilityEngine';
-import { 
-  getScholarshipsFromDatabase, 
-  getDeadlineDisplay, 
-  calculateDaysRemaining 
-} from '../services/databaseService';
+import { getDeadlineDisplay } from '../services/databaseService';
+import { useAuth } from '../context/AuthContext';
+import { Container } from './ui/Container';
+import { Button } from './ui/Button';
+import { Icon } from './ui/Icon';
+import { Chip } from './ui/Chip';
+import { Badge } from './ui/Badge';
+import { EmptyState } from './ui/EmptyState';
+import { SkeletonRows } from './ui/Skeleton';
+import { ErrorPanel } from './ui/ErrorPanel';
 
-interface ScholarshipExplorerProps {
-  onSelectScholarship: (scholarship: Scholarship) => void;
+export const ScholarshipExplorer: React.FC<{
+  onSelectScholarship: (s: Scholarship) => void;
   onOpenProfileBuilder: () => void;
-}
-
-export const ScholarshipCardSkeleton: React.FC = () => {
-  return (
-    <article 
-      className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-[#e5e7eb] w-full min-w-0 animate-pulse"
-      aria-hidden="true"
-    >
-      <div className="flex flex-col space-y-4 w-full min-w-0">
-        {/* Header Strip Skeleton */}
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 w-full min-w-0">
-          <div className="flex items-start gap-3 min-w-0 flex-1 w-full sm:w-auto">
-            <div className="w-10 h-10 rounded-lg bg-[#eeeeed] shrink-0 mt-0.5"></div>
-            <div className="min-w-0 flex-1 space-y-2">
-              <div className="h-3 w-32 bg-[#eeeeed] rounded"></div>
-              <div className="h-5 w-4/5 sm:w-3/5 bg-[#eeeeed] rounded"></div>
-            </div>
-          </div>
-          <div className="h-6 w-36 bg-[#eeeeed] rounded-full shrink-0"></div>
-        </div>
-
-        {/* Triple Bento Box Strip Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] w-full min-w-0">
-          <div className="space-y-1.5 min-w-0">
-            <div className="h-2.5 w-16 bg-[#e5e7eb] rounded"></div>
-            <div className="h-3.5 w-28 bg-[#e5e7eb] rounded"></div>
-          </div>
-          <div className="space-y-1.5 min-w-0">
-            <div className="h-2.5 w-20 bg-[#e5e7eb] rounded"></div>
-            <div className="h-3.5 w-24 bg-[#e5e7eb] rounded"></div>
-          </div>
-          <div className="space-y-1.5 min-w-0">
-            <div className="h-2.5 w-24 bg-[#e5e7eb] rounded"></div>
-            <div className="h-3.5 w-32 bg-[#e5e7eb] rounded"></div>
-          </div>
-        </div>
-
-        {/* Rubric Preview Badges Skeleton */}
-        <div className="py-1 flex flex-wrap items-center gap-3 w-full min-w-0">
-          <div className="h-3 w-28 bg-[#eeeeed] rounded-full"></div>
-          <div className="h-3 w-36 bg-[#eeeeed] rounded-full"></div>
-          <div className="h-3 w-32 bg-[#eeeeed] rounded-full"></div>
-        </div>
-
-        {/* Bottom Verification & Action Row Skeleton */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-t border-[#e5e7eb] w-full min-w-0">
-          <div className="h-3 w-48 bg-[#eeeeed] rounded"></div>
-          <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
-            <div className="w-9 h-9 rounded-lg bg-[#eeeeed] shrink-0"></div>
-            <div className="h-9 w-40 rounded-full bg-[#eeeeed] shrink-0"></div>
-          </div>
-        </div>
-      </div>
-    </article>
-  );
-};
-
-export const ScholarshipExplorer: React.FC<ScholarshipExplorerProps> = ({
-  onSelectScholarship,
-  onOpenProfileBuilder
-}) => {
+}> = ({ onSelectScholarship, onOpenProfileBuilder }) => {
   const { profile, isSaved, saveScholarship, unsaveScholarship } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Database-backed state
-  const [scholarships, setScholarships] = useState<Scholarship[]>(SCHOLARSHIPS_DATA);
-  const [loadingFromDB, setLoadingFromDB] = useState<boolean>(true);
-  const [isDatabaseConnected, setIsDatabaseConnected] = useState<boolean>(true);
-  const [lastRefreshedAt, setLastRefreshedAt] = useState<string>('');
-  const [dbErrorMessage, setDbErrorMessage] = useState<string | null>(null);
+  const [scholarships] = useState<Scholarship[]>(SCHOLARSHIPS_DATA);
+  const [loadingFromDB] = useState<boolean>(false);
+  const [dbErrorMessage] = useState<string | null>(null);
 
-  // Fetch real database records on mount
-  useEffect(() => {
-    let isMounted = true;
-    async function loadData() {
-      setLoadingFromDB(true);
-      const result = await getScholarshipsFromDatabase();
-      if (isMounted) {
-        setScholarships(result.data);
-        setIsDatabaseConnected(result.fromDatabase);
-        setDbErrorMessage(result.error || null);
-        setLastRefreshedAt(new Date().toLocaleTimeString());
-        setLoadingFromDB(false);
-      }
-    }
-    loadData();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  // Filters — no defaults: first visit shows everything (decision 12).
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') ?? '');
+  const [selectedSort, setSelectedSort] = useState(searchParams.get('sort') ?? 'deadline');
+  const [matchMode] = useState<'profile' | 'all'>('profile');
 
-  const handleRefreshFromDB = async () => {
-    setLoadingFromDB(true);
-    const result = await getScholarshipsFromDatabase();
-    setScholarships(result.data);
-    setIsDatabaseConnected(result.fromDatabase);
-    setDbErrorMessage(result.error || null);
-    setLastRefreshedAt(new Date().toLocaleTimeString());
-    setLoadingFromDB(false);
-  };
-
-  // Search & Filter state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSort, setSelectedSort] = useState('deadline');
-  const [matchMode, setMatchMode] = useState<'profile' | 'all'>('profile');
-
-  // Sidebar filters
-  const [selectedCountries, setSelectedCountries] = useState<string[]>(['United Kingdom', 'Germany']);
-  const [selectedCitizenship, setSelectedCitizenship] = useState<string>(profile?.citizenship || 'Nigeria');
-  const [selectedLevels, setSelectedLevels] = useState<DegreeLevel[]>(['masters']);
-  const [selectedCoverage, setSelectedCoverage] = useState<string[]>(['full_ride']);
-  const [minAwardUSD, setMinAwardUSD] = useState<number>(25000);
-  const [deadlineWindow, setDeadlineWindow] = useState<string>('1_3_months');
-  const [verifiedRecentOnly, setVerifiedRecentOnly] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(
+    searchParams.get('country') ? searchParams.get('country')!.split(',') : [],
+  );
+  const [selectedLevels, setSelectedLevels] = useState<DegreeLevel[]>(
+    searchParams.get('degree') ? (searchParams.get('degree')!.split(',') as DegreeLevel[]) : [],
+  );
+  const [minAwardUSD, setMinAwardUSD] = useState<number>(0);
+  const [deadlineWindow, setDeadlineWindow] = useState<string>(searchParams.get('deadline') ?? 'all');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
-  // Evaluate all scholarships against active profile
+  // Sync filter state → URL (shareable, refresh-safe).
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set('q', searchQuery.trim());
+    if (selectedCountries.length) params.set('country', selectedCountries.join(','));
+    if (selectedLevels.length) params.set('degree', selectedLevels.join(','));
+    if (deadlineWindow && deadlineWindow !== 'all') params.set('deadline', deadlineWindow);
+    if (selectedSort && selectedSort !== 'deadline') params.set('sort', selectedSort);
+    setSearchParams(params, { replace: true });
+  }, [searchQuery, selectedCountries, selectedLevels, deadlineWindow, selectedSort, setSearchParams]);
+
   const scholarshipsWithEvaluation = useMemo(() => {
-    return scholarships.map(sch => {
-      const evaluation = evaluateEligibility(sch, matchMode === 'profile' ? profile : null);
-      return {
-        scholarship: sch,
-        evaluation
-      };
-    });
-  }, [scholarships, profile, matchMode]);
+    return scholarships.map((sch) => ({
+      scholarship: sch,
+      evaluation: evaluateEligibility(sch, profile),
+    }));
+  }, [scholarships, profile]);
 
-  // Filter logic
   const filteredScholarships = useMemo(() => {
-    return scholarshipsWithEvaluation.filter(({ scholarship, evaluation }) => {
-      // Search query
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchesTitle = scholarship.title.toLowerCase().includes(q);
-        const matchesProvider = scholarship.providerName.toLowerCase().includes(q);
-        const matchesCountry = scholarship.destinationCountries.some(c => c.toLowerCase().includes(q));
-        const matchesField = scholarship.fieldsOfStudy.some(f => f.toLowerCase().includes(q));
-        if (!matchesTitle && !matchesProvider && !matchesCountry && !matchesField) {
-          return false;
+    return scholarshipsWithEvaluation
+      .filter(({ scholarship }) => {
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const matches =
+            scholarship.title.toLowerCase().includes(q) ||
+            scholarship.providerName.toLowerCase().includes(q) ||
+            scholarship.destinationCountries.some((c) => c.toLowerCase().includes(q)) ||
+            scholarship.fieldsOfStudy.some((f) => f.toLowerCase().includes(q));
+          if (!matches) return false;
         }
-      }
-
-      // Countries
-      if (selectedCountries.length > 0) {
-        const matchesDest = scholarship.destinationCountries.some(c => selectedCountries.includes(c));
-        if (!matchesDest) return false;
-      }
-
-      // Study Levels
-      if (selectedLevels.length > 0) {
-        const matchesLevel = scholarship.studyLevels.some(l => selectedLevels.includes(l));
-        if (!matchesLevel) return false;
-      }
-
-      // Minimum award value
-      if (scholarship.estimatedUSDValue < minAwardUSD) {
-        return false;
-      }
-
-      // Deadline filter
-      if (deadlineWindow === 'urgent_30d' && scholarship.daysRemaining > 30) return false;
-      if (deadlineWindow === '1_3_months' && (scholarship.daysRemaining < 30 || scholarship.daysRemaining > 90)) return false;
-      if (deadlineWindow === '3_6_months' && (scholarship.daysRemaining < 90 || scholarship.daysRemaining > 180)) return false;
-
-      return true;
-    }).sort((a, b) => {
-      if (selectedSort === 'deadline') {
-        return a.scholarship.daysRemaining - b.scholarship.daysRemaining;
-      } else if (selectedSort === 'funding') {
-        return b.scholarship.estimatedUSDValue - a.scholarship.estimatedUSDValue;
-      } else if (selectedSort === 'match') {
-        return b.evaluation.matchScore - a.evaluation.matchScore;
-      }
-      return 0;
-    });
+        if (selectedCountries.length > 0) {
+          if (!scholarship.destinationCountries.some((c) => selectedCountries.includes(c))) return false;
+        }
+        if (selectedLevels.length > 0) {
+          if (!scholarship.studyLevels.some((l) => selectedLevels.includes(l))) return false;
+        }
+        if (scholarship.estimatedUSDValue < minAwardUSD) return false;
+        if (deadlineWindow === 'urgent_30d' && scholarship.daysRemaining > 30) return false;
+        if (deadlineWindow === '1_3_months' && (scholarship.daysRemaining < 30 || scholarship.daysRemaining > 90)) return false;
+        if (deadlineWindow === '3_6_months' && (scholarship.daysRemaining < 90 || scholarship.daysRemaining > 180)) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        if (selectedSort === 'deadline') return a.scholarship.daysRemaining - b.scholarship.daysRemaining;
+        if (selectedSort === 'funding') return b.scholarship.estimatedUSDValue - a.scholarship.estimatedUSDValue;
+        if (selectedSort === 'match') return b.evaluation.matchScore - a.evaluation.matchScore;
+        return 0;
+      });
   }, [scholarshipsWithEvaluation, searchQuery, selectedCountries, selectedLevels, minAwardUSD, deadlineWindow, selectedSort]);
 
-  // Overall match meta stats
-  const eligibleCount = scholarshipsWithEvaluation.filter(item => item.evaluation.status === 'likely_eligible').length;
-  const potentialCount = scholarshipsWithEvaluation.filter(item => item.evaluation.status === 'more_info_needed').length;
+  const eligibleCount = scholarshipsWithEvaluation.filter((i) => i.evaluation.status === 'likely_eligible').length;
 
   const toggleCountry = (country: string) => {
-    setSelectedCountries(prev => 
-      prev.includes(country) ? prev.filter(c => c !== country) : [...prev, country]
-    );
-    setCurrentPage(1);
+    setSelectedCountries((prev) => (prev.includes(country) ? prev.filter((c) => c !== country) : [...prev, country]));
   };
-
   const toggleLevel = (level: DegreeLevel) => {
-    setSelectedLevels(prev => 
-      prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]
-    );
-    setCurrentPage(1);
+    setSelectedLevels((prev) => (prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]));
   };
-
   const clearAllFilters = () => {
+    setSearchQuery('');
     setSelectedCountries([]);
     setSelectedLevels([]);
-    setSelectedCoverage([]);
     setMinAwardUSD(0);
-    setSearchQuery('');
     setDeadlineWindow('all');
-    setVerifiedRecentOnly(false);
-    setCurrentPage(1);
   };
 
-  // Compile active filters as manageable, removable tags
-  const activeFilters = useMemo(() => {
-    const list: {
-      id: string;
-      category: string;
-      label: string;
-      icon: string;
-      onRemove: () => void;
-    }[] = [];
+  const activeFilters: { id: string; label: string; onRemove: () => void }[] = [];
+  if (searchQuery.trim()) activeFilters.push({ id: 'q', label: `“${searchQuery.trim()}”`, onRemove: () => setSearchQuery('') });
+  selectedCountries.forEach((c) => activeFilters.push({ id: `c-${c}`, label: c, onRemove: () => toggleCountry(c) }));
+  selectedLevels.forEach((l) => activeFilters.push({ id: `l-${l}`, label: l, onRemove: () => toggleLevel(l) }));
+  if (minAwardUSD > 0) activeFilters.push({ id: 'award', label: `≥ $${minAwardUSD.toLocaleString()}`, onRemove: () => setMinAwardUSD(0) });
+  if (deadlineWindow !== 'all') {
+    const labels: Record<string, string> = { urgent_30d: 'Due in 30 days', '1_3_months': '1–3 months', '3_6_months': '3–6 months' };
+    activeFilters.push({ id: 'deadline', label: labels[deadlineWindow] ?? deadlineWindow, onRemove: () => setDeadlineWindow('all') });
+  }
 
-    // Search query tag
-    if (searchQuery.trim()) {
-      list.push({
-        id: 'search-query',
-        category: 'Keyword',
-        label: `"${searchQuery.trim()}"`,
-        icon: 'search',
-        onRemove: () => {
-          setSearchQuery('');
-          setCurrentPage(1);
-        }
+  const countries = Array.from(new Set(scholarships.flatMap((s) => s.destinationCountries))).sort();
+  const levels: DegreeLevel[] = ['bachelors', 'masters', 'phd'];
+
+  const handleSaveToggle = async (scholarship: Scholarship) => {
+    if (isSaved(scholarship.id)) {
+      await unsaveScholarship(scholarship.id);
+    } else {
+      await saveScholarship(scholarship.id, {
+        title: scholarship.title,
+        provider: scholarship.providerName,
+        destination: scholarship.destinationCountries.join(', '),
+        awardValue: scholarship.totalAwardValue,
+        deadline: scholarship.applicationDeadline,
       });
     }
-
-    // Destination country tags
-    selectedCountries.forEach(country => {
-      list.push({
-        id: `country-${country}`,
-        category: 'Destination',
-        label: country,
-        icon: 'public',
-        onRemove: () => toggleCountry(country)
-      });
-    });
-
-    // Degree level tags
-    const levelLabels: Record<string, string> = {
-      masters: "Master's Degree",
-      phd: 'Doctoral / PhD',
-      bachelors: "Bachelor's Degree",
-      postdoc: 'Postdoc Fellowship'
-    };
-    selectedLevels.forEach(lvl => {
-      list.push({
-        id: `level-${lvl}`,
-        category: 'Degree',
-        label: levelLabels[lvl] || lvl,
-        icon: 'school',
-        onRemove: () => toggleLevel(lvl)
-      });
-    });
-
-    // Minimum award tag
-    if (minAwardUSD > 0) {
-      list.push({
-        id: 'min-award',
-        category: 'Min Award',
-        label: `$${minAwardUSD.toLocaleString()}+`,
-        icon: 'payments',
-        onRemove: () => {
-          setMinAwardUSD(0);
-          setCurrentPage(1);
-        }
-      });
-    }
-
-    // Deadline window tag
-    if (deadlineWindow !== 'all') {
-      const windowLabels: Record<string, string> = {
-        urgent_30d: 'Next 30 days (Urgent)',
-        '1_3_months': '1 – 3 months',
-        '3_6_months': '3 – 6 months'
-      };
-      list.push({
-        id: 'deadline-window',
-        category: 'Deadline',
-        label: windowLabels[deadlineWindow] || deadlineWindow,
-        icon: 'calendar_month',
-        onRemove: () => {
-          setDeadlineWindow('all');
-          setCurrentPage(1);
-        }
-      });
-    }
-
-    // Verified recent tag
-    if (verifiedRecentOnly) {
-      list.push({
-        id: 'verified-recent',
-        category: 'Verification',
-        label: 'Recent (within 30d)',
-        icon: 'verified',
-        onRemove: () => {
-          setVerifiedRecentOnly(false);
-          setCurrentPage(1);
-        }
-      });
-    }
-
-    return list;
-  }, [searchQuery, selectedCountries, selectedLevels, minAwardUSD, deadlineWindow, verifiedRecentOnly]);
-
-  // Pagination (4 items per page)
-  const pageSize = 4;
-  const totalItems = filteredScholarships.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-  const currentItems = filteredScholarships.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  };
 
   return (
-    <div className="w-full max-w-full pt-6 pb-20 min-w-0">
-      <div className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 min-w-0">
-        {/* Page Header & Key Metrics Bento Strip */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 w-full min-w-0">
-          <div className="space-y-2 max-w-2xl min-w-0">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider font-semibold max-w-full min-w-0">
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isDatabaseConnected ? 'bg-[#047857]' : 'bg-[#b45309]'}`}></span>
-              <span className="truncate">
-                {isDatabaseConnected ? 'Live Firestore Database' : 'Local Verified Fallback'}
-                {lastRefreshedAt ? ` • Synced at ${lastRefreshedAt}` : ''}
-              </span>
+    <div className="w-full max-w-full">
+      <div className="border-b border-hairline bg-paper">
+        <Container className="py-10 md:py-14">
+          <p className="font-data text-[11px] uppercase tracking-[0.14em] text-ink-muted">Catalogue</p>
+          <div className="mt-2 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="min-w-0">
+              <h1 className="font-ui-display text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-tight tracking-[-0.02em] text-ink">
+                Explore verified scholarships
+              </h1>
+              <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-muted">
+                {filteredScholarships.length} of {scholarships.length} records match.{' '}
+                {profile ? `${eligibleCount} likely eligible for your profile.` : 'Build a profile to see eligibility.'}
+              </p>
             </div>
-            <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight break-words">
-              Explore Verified Global Scholarships
-            </h1>
-            <p className="font-body-lead text-[#6b7280]">
-              {scholarships.length} verified opportunities fetched from official institutional and government endowments.
-            </p>
-          </div>
-
-          {/* Quick Match Meta Stats & Database Refresh */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-2 sm:gap-4 p-2 rounded-xl bg-white border border-[#e5e7eb] shadow-xs w-full sm:w-auto min-w-0">
-            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 min-w-0 flex-1 sm:flex-initial">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#047857] shrink-0"></div>
-              <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
-                {eligibleCount} Likely Eligible
-              </span>
-            </div>
-            <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
-            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 min-w-0 flex-1 sm:flex-initial">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#b45309] shrink-0"></div>
-              <span className="font-caption-strong text-xs text-[#1a1a1e] truncate">
-                {potentialCount} More Info Needed
-              </span>
-            </div>
-            <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
-            <button
-              onClick={handleRefreshFromDB}
-              disabled={loadingFromDB}
-              title="Refresh from database"
-              className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#434655] hover:text-[#1a1a1e] transition-colors cursor-pointer px-2 sm:px-3 py-1 shrink-0 disabled:opacity-50"
-            >
-              <span className={`material-symbols-outlined text-[15px] sm:text-[16px] ${loadingFromDB ? 'animate-spin text-[#0037b0]' : ''}`}>
-                sync
-              </span>
-              <span>{loadingFromDB ? 'Syncing...' : 'Refresh'}</span>
-            </button>
-            <div className="hidden sm:block w-px h-5 bg-[#e8e8e7]"></div>
-            <button
-              onClick={onOpenProfileBuilder}
-              className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#0037b0] hover:text-[#2563eb] transition-colors cursor-pointer px-2 sm:px-3 py-1 shrink-0"
-            >
-              <span>Profile</span>
-              <span className="material-symbols-outlined text-[15px] sm:text-[16px]">arrow_forward</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Quick Search Bar & Controls Surface */}
-        <div className="w-full bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-[#e5e7eb] mb-4 min-w-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-center w-full min-w-0">
-            {/* Search Input */}
-            <div className="sm:col-span-2 lg:col-span-6 relative flex items-center w-full min-w-0">
-              <span className="material-symbols-outlined absolute left-3.5 text-[#6b7280] text-[20px] pointer-events-none">
-                search
-              </span>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setCurrentPage(1);
-                }}
-                placeholder="Search by scholarship name, university, or keyword..."
-                className="w-full pl-11 pr-4 py-2.5 bg-[#f3f4f3] rounded-lg font-body-default text-sm text-[#1a1a1e] placeholder:text-[#6b7280] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1d4ed8] transition-all min-h-[42px] min-w-0"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 text-[#6b7280] hover:text-[#1a1a1e] p-1"
-                  aria-label="Clear search query"
+            <div className="flex shrink-0 items-center gap-3">
+              <label className="flex items-center gap-2 text-sm text-ink-muted">
+                Sort
+                <select
+                  value={selectedSort}
+                  onChange={(e) => setSelectedSort(e.target.value)}
+                  className="min-h-11 rounded-control border border-hairline bg-paper-raised px-3 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
                 >
-                  <span className="material-symbols-outlined text-[18px]">close</span>
-                </button>
-              )}
-            </div>
-
-            {/* Sort Select */}
-            <div className="sm:col-span-1 lg:col-span-3 relative w-full min-w-0">
-              <div className="flex items-center bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px] w-full min-w-0">
-                <span className="material-symbols-outlined text-[#6b7280] text-[18px] mr-2 shrink-0">sort</span>
-                <div className="flex flex-col min-w-0 flex-1">
-                  <span className="font-label-sm text-[10px] text-[#6b7280] uppercase">Sort by</span>
-                  <select
-                    value={selectedSort}
-                    onChange={(e) => setSelectedSort(e.target.value)}
-                    className="bg-transparent font-caption-strong text-xs text-[#1a1a1e] focus:outline-none cursor-pointer pr-4 truncate w-full min-w-0"
-                  >
-                    <option value="deadline">Deadline (Soonest first)</option>
-                    <option value="funding">Funding Value (Highest)</option>
-                    <option value="match">Match Percentage</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Match Mode Toggle */}
-            <div className="sm:col-span-1 lg:col-span-3 flex items-center justify-between bg-[#f3f4f3] rounded-lg px-3.5 py-2 min-h-[42px] w-full min-w-0 gap-2">
-              <div className="flex flex-col min-w-0 flex-1 pr-1">
-                <span className="font-label-sm text-[10px] text-[#6b7280] uppercase truncate">Match Mode</span>
-                <span className="font-caption-strong text-xs text-[#1a1a1e] truncate block">
-                  {matchMode === 'profile' ? `Active Profile (${profile?.displayName || 'Amara'})` : 'Showing all criteria'}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMatchMode(matchMode === 'profile' ? 'all' : 'profile')}
-                className="px-2.5 py-1 rounded bg-white shadow-xs font-label-sm text-xs text-[#0037b0] hover:bg-[#dce1ff] transition-colors whitespace-nowrap cursor-pointer font-semibold shrink-0"
-              >
-                {matchMode === 'profile' ? 'View Unmatched' : 'Apply Profile'}
-              </button>
+                  <option value="deadline">Deadline</option>
+                  <option value="funding">Funding</option>
+                  <option value="match">Match score</option>
+                </select>
+              </label>
+              <Button variant="secondary" size="md" onClick={() => setMobileFiltersOpen((o) => !o)} className="lg:hidden">
+                <Icon name="filters" size={16} />
+                Filters
+              </Button>
             </div>
           </div>
-        </div>
 
-        {/* Active Filter Tags Panel (Removable Tags just below Search Bar) */}
-        <div className="w-full bg-white rounded-xl p-3 sm:p-4 shadow-xs border border-[#e5e7eb] mb-6 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[#e5e7eb] w-full min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="material-symbols-outlined text-[#0037b0] text-[18px] shrink-0">filter_alt</span>
-              <span className="font-caption-strong text-xs text-[#1a1a1e]">Active Filters</span>
-              <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#dce2f3] text-[#0037b0] shrink-0">
-                {activeFilters.length} active
-              </span>
-            </div>
-
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search title, provider, country, or field"
+              aria-label="Search scholarships"
+              className="min-h-11 flex-1 rounded-control border border-hairline bg-paper-raised px-3.5 text-[15px] text-ink placeholder:text-ink-muted/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
+            />
             {activeFilters.length > 0 ? (
-              <button
-                type="button"
-                onClick={clearAllFilters}
-                className="inline-flex items-center gap-1 font-caption-strong text-xs text-[#be123c] hover:text-[#9f1239] hover:underline transition-colors cursor-pointer self-start sm:self-auto min-h-[32px] sm:min-h-0"
-              >
-                <span className="material-symbols-outlined text-[15px]">clear_all</span>
-                <span>Clear all filters</span>
-              </button>
-            ) : (
-              <span className="font-caption text-xs text-[#6b7280]">
-                Showing all verified opportunities
-              </span>
-            )}
+              <Button variant="ghost" size="md" onClick={clearAllFilters}>
+                Clear all
+              </Button>
+            ) : null}
           </div>
 
           {activeFilters.length > 0 ? (
-            <div className="flex flex-wrap items-center gap-2 pt-3 w-full min-w-0">
-              {activeFilters.map((filter) => (
-                <span
-                  key={filter.id}
-                  className="inline-flex items-center gap-1.5 pl-2.5 pr-1 py-1 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-[#1a1a1e] font-caption text-xs shadow-xs hover:border-[#b7c4ff] hover:bg-[#f0f4ff] transition-all min-w-0 group"
-                >
-                  <span className="material-symbols-outlined text-[15px] text-[#0037b0] shrink-0">
-                    {filter.icon}
-                  </span>
-                  <span className="truncate max-w-[170px] sm:max-w-[240px]">
-                    <span className="text-[#6b7280] font-normal">{filter.category}: </span>
-                    <span className="font-semibold text-[#1a1a1e]">{filter.label}</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={filter.onRemove}
-                    aria-label={`Remove filter ${filter.category}: ${filter.label}`}
-                    title={`Remove ${filter.category} filter`}
-                    className="w-5 h-5 rounded flex items-center justify-center text-[#6b7280] hover:text-[#be123c] hover:bg-[#fee2e2] transition-colors cursor-pointer shrink-0 ml-0.5"
-                  >
-                    <span className="material-symbols-outlined text-[14px]">close</span>
-                  </button>
-                </span>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-ink-muted">Active:</span>
+              {activeFilters.map((f) => (
+                <Chip key={f.id} onRemove={f.onRemove}>
+                  {f.label}
+                </Chip>
               ))}
             </div>
-          ) : (
-            <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#6b7280] w-full min-w-0">
-              <span>No active filters applied. Search keywords or select criteria to narrow opportunities.</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedCountries(['United Kingdom', 'Germany']);
-                  setSelectedLevels(['masters']);
-                  setMinAwardUSD(25000);
-                  setDeadlineWindow('1_3_months');
-                  setVerifiedRecentOnly(true);
-                  setCurrentPage(1);
-                }}
-                className="inline-flex items-center gap-1 text-[#0037b0] hover:text-[#2563eb] font-caption-strong hover:underline cursor-pointer self-start sm:self-auto shrink-0"
-              >
-                <span className="material-symbols-outlined text-[14px]">tune</span>
-                <span>Restore recommended filters</span>
-              </button>
-            </div>
-          )}
-        </div>
+          ) : null}
+        </Container>
+      </div>
 
-        {/* Mobile Filter Toggle Button */}
-        <div className="lg:hidden w-full mb-4">
-          <button
-            type="button"
-            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white border border-[#e5e7eb] font-caption-strong text-xs text-[#1a1a1e] shadow-xs hover:bg-[#f3f4f3] transition-colors cursor-pointer min-h-[44px]"
+      <Container className="py-8">
+        {dbErrorMessage ? (
+          <ErrorPanel title="Catalogue unavailable" message={dbErrorMessage} className="mb-6" />
+        ) : null}
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <aside
+            className={`space-y-6 lg:col-span-4 xl:col-span-3 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}
           >
-            <span className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px] text-[#0037b0]">tune</span>
-              <span>Filter Criteria ({activeFilters.length} active)</span>
-            </span>
-            <span className="material-symbols-outlined text-[20px] text-[#6b7280]">
-              {mobileFiltersOpen ? 'expand_less' : 'expand_more'}
-            </span>
-          </button>
-        </div>
-
-        {/* Two-Column Primary Body */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full min-w-0">
-          {/* Left Filter Sidebar Panel */}
-          <aside className={`lg:col-span-4 xl:col-span-3 space-y-4 w-full min-w-0 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-[#e5e7eb] space-y-5 w-full min-w-0">
-              <div className="flex items-center justify-between pb-2 border-b border-[#e5e7eb] w-full min-w-0">
-                <h2 className="font-title text-base text-[#1a1a1e] flex items-center gap-2 min-w-0">
-                  <span className="material-symbols-outlined text-[20px] text-[#0037b0] shrink-0">tune</span>
-                  <span className="truncate">Filter Criteria</span>
-                  {activeFilters.length > 0 && (
-                    <span className="px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-[#dce2f3] text-[#0037b0]">
-                      {activeFilters.length}
-                    </span>
-                  )}
-                </h2>
-                <button 
-                  onClick={clearAllFilters}
-                  className="font-caption text-xs text-[#6b7280] hover:text-[#be123c] cursor-pointer shrink-0"
-                >
-                  Reset all
-                </button>
-              </div>
-
-              {/* Destination Countries Filter */}
-              <div className="space-y-2 w-full min-w-0">
-                <label className="block font-caption-strong text-xs text-[#1a1a1e]">Destination Countries</label>
-                <div className="space-y-2 pt-1 text-sm w-full min-w-0">
-                  {[
-                    { name: 'United Kingdom', count: 342 },
-                    { name: 'Germany', count: 215 },
-                    { name: 'United States', count: 184 },
-                    { name: 'Canada', count: 156 },
-                    { name: 'Australia', count: 112 },
-                    { name: 'Japan', count: 98 }
-                  ].map((dest) => (
-                    <label 
-                      key={dest.name}
-                      className="flex items-center justify-between text-[#1a1a1e] cursor-pointer hover:text-[#0037b0] transition-colors select-none w-full min-w-0"
-                    >
-                      <span className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedCountries.includes(dest.name)}
-                          onChange={() => toggleCountry(dest.name)}
-                          className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer shrink-0"
-                        />
-                        <span className="truncate">{dest.name}</span>
-                      </span>
-                      <span className="font-caption text-xs text-[#6b7280] shrink-0">{dest.count}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="h-px bg-[#e5e7eb] w-full" />
-
-              {/* Applicant Citizenship */}
-              <div className="space-y-2 w-full min-w-0">
-                <label className="block font-caption-strong text-xs text-[#1a1a1e]">Applicant Citizenship</label>
-                <select
-                  value={selectedCitizenship}
-                  onChange={(e) => setSelectedCitizenship(e.target.value)}
-                  className="w-full max-w-full px-3 py-2 bg-[#f3f4f3] rounded-lg text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0037b0] cursor-pointer min-w-0"
-                >
-                  <option value="Nigeria">Nigeria (Select your country)</option>
-                  <option value="Ghana">Ghana</option>
-                  <option value="Kenya">Kenya</option>
-                  <option value="India">India</option>
-                  <option value="Pakistan">Pakistan</option>
-                  <option value="Brazil">Brazil</option>
-                  <option value="South Africa">South Africa</option>
-                  <option value="United States">United States</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                </select>
-                <p className="font-caption text-xs text-[#6b7280]">
-                  Eligibility rubrics evaluate passport origin for bilateral agreements.
-                </p>
-              </div>
-
-              <div className="h-px bg-[#e5e7eb] w-full" />
-
-              {/* Study Level Filter */}
-              <div className="space-y-2 w-full min-w-0">
-                <label className="block font-caption-strong text-xs text-[#1a1a1e]">Study Level</label>
-                <div className="space-y-2 pt-1 text-sm w-full min-w-0">
-                  {[
-                    { id: 'masters', label: 'Master’s Degree' },
-                    { id: 'phd', label: 'Doctoral / PhD' },
-                    { id: 'bachelors', label: 'Bachelor’s Degree' },
-                    { id: 'postdoc', label: 'Non-degree / Postdoc Fellowship' }
-                  ].map((level) => (
-                    <label 
-                      key={level.id}
-                      className="flex items-center gap-2.5 text-[#1a1a1e] cursor-pointer select-none w-full min-w-0"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedLevels.includes(level.id as DegreeLevel)}
-                        onChange={() => toggleLevel(level.id as DegreeLevel)}
-                        className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer shrink-0"
-                      />
-                      <span className="truncate">{level.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="h-px bg-[#e5e7eb] w-full" />
-
-              {/* Minimum Award Range Slider */}
-              <div className="space-y-2 w-full min-w-0">
-                <div className="flex items-center justify-between text-xs w-full min-w-0">
-                  <label className="font-caption-strong text-[#1a1a1e] truncate pr-2">Minimum Award Value</label>
-                  <span className="font-caption-strong text-[#0037b0] shrink-0">
-                    ${minAwardUSD.toLocaleString()}+
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100000"
-                  step="5000"
-                  value={minAwardUSD}
-                  onChange={(e) => {
-                    setMinAwardUSD(parseInt(e.target.value) || 0);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full accent-[#0037b0] h-1.5 bg-[#eeeeed] rounded-lg cursor-pointer min-w-0"
-                />
-                <div className="flex justify-between font-label-sm text-[11px] text-[#6b7280] w-full min-w-0">
-                  <span>$0</span>
-                  <span>$50k</span>
-                  <span>$100k+</span>
-                </div>
-              </div>
-
-              <div className="h-px bg-[#e5e7eb] w-full" />
-
-              {/* Deadline Window */}
-              <div className="space-y-2 w-full min-w-0">
-                <label className="block font-caption-strong text-xs text-[#1a1a1e]">Deadline Window</label>
-                <div className="space-y-2 pt-1 text-sm w-full min-w-0">
-                  {[
-                    { id: 'urgent_30d', label: 'Next 30 days (Urgent)' },
-                    { id: '1_3_months', label: '1 – 3 months' },
-                    { id: '3_6_months', label: '3 – 6 months' },
-                    { id: 'all', label: 'Open year-round / Any' }
-                  ].map((win) => (
-                    <label 
-                      key={win.id}
-                      className="flex items-center gap-2.5 text-[#1a1a1e] cursor-pointer select-none w-full min-w-0"
-                    >
-                      <input
-                        type="radio"
-                        name="deadline_filter"
-                        checked={deadlineWindow === win.id}
-                        onChange={() => {
-                          setDeadlineWindow(win.id);
-                          setCurrentPage(1);
-                        }}
-                        className="w-4 h-4 accent-[#0037b0] cursor-pointer shrink-0"
-                      />
-                      <span className="truncate">{win.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="h-px bg-[#e5e7eb] w-full" />
-
-              {/* Verified Status Filter */}
-              <div className="pt-1 w-full min-w-0">
-                <label className="flex items-center gap-2.5 font-caption-strong text-xs text-[#1a1a1e] cursor-pointer select-none w-full min-w-0">
-                  <input
-                    type="checkbox"
-                    checked={verifiedRecentOnly}
-                    onChange={(e) => setVerifiedRecentOnly(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#0037b0] accent-[#0037b0] cursor-pointer shrink-0"
-                  />
-                  <span className="truncate">Verified within 30 days only</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Institutional Trust Snippet Card */}
-            <div className="p-4 rounded-xl bg-[#dce2f3]/50 border border-[#b7c4ff]/50 space-y-1.5 w-full min-w-0">
-              <div className="flex items-center gap-2 text-[#1a1a1e] w-full min-w-0">
-                <span className="material-symbols-outlined text-[18px] text-[#0037b0] shrink-0">verified_user</span>
-                <span className="font-caption-strong text-xs truncate">100% Direct Verification</span>
-              </div>
-              <p className="font-caption text-xs text-[#434655] leading-relaxed">
-                Every registry entry links directly to public government ministries or university senates. No scraped third-party spam.
-              </p>
-            </div>
-          </aside>
-
-          {/* Main Results Grid Area (Scholarship Cards) */}
-          <main className="lg:col-span-8 xl:col-span-9 space-y-4 w-full min-w-0">
-            {dbErrorMessage && (
-              <div className="p-3.5 rounded-xl bg-[#fffbeb] border border-[#fde68a] text-[#b45309] text-xs flex items-center justify-between gap-3 w-full min-w-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="material-symbols-outlined text-[18px] shrink-0">info</span>
-                  <span className="truncate">Database sync status: Using verified institutional offline cache ({dbErrorMessage}).</span>
-                </div>
-                <button 
-                  onClick={handleRefreshFromDB}
-                  className="font-semibold underline cursor-pointer hover:text-[#92400e] shrink-0"
-                >
-                  Retry Connection
-                </button>
-              </div>
-            )}
-
-            {loadingFromDB ? (
-              <div className="space-y-4 w-full min-w-0" role="status" aria-label="Loading scholarships from Firestore database">
-                <div className="p-3.5 rounded-xl bg-white border border-[#e5e7eb] shadow-xs flex items-center justify-between gap-3 text-xs text-[#434655] w-full min-w-0">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="material-symbols-outlined text-[18px] text-[#0037b0] animate-spin shrink-0">sync</span>
-                    <span className="truncate">Connecting to Firestore database... Synchronizing official endowments and calculating live deadlines.</span>
-                  </div>
-                  <span className="font-label-sm text-[11px] font-semibold text-[#0037b0] shrink-0 hidden sm:inline">Live Query</span>
-                </div>
-                {[1, 2, 3, 4].map((skeletonIndex) => (
-                  <ScholarshipCardSkeleton key={skeletonIndex} />
+            <div className="rounded-card border border-hairline bg-paper-raised p-5">
+              <h2 className="font-ui-display text-base font-semibold text-ink">Destination country</h2>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {countries.map((country) => (
+                  <button
+                    key={country}
+                    type="button"
+                    onClick={() => toggleCountry(country)}
+                    aria-pressed={selectedCountries.includes(country)}
+                    className={`min-h-9 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                      selectedCountries.includes(country)
+                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
+                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
+                    }`}
+                  >
+                    {country}
+                  </button>
                 ))}
               </div>
-            ) : currentItems.length === 0 ? (
-              <div className="p-8 sm:p-12 text-center bg-white rounded-xl border border-[#e5e7eb] w-full min-w-0">
-                <span className="material-symbols-outlined text-[48px] text-[#6b7280] mb-2">
-                  search_off
-                </span>
-                <h3 className="font-headline-sm text-lg text-[#1a1a1e] mb-1">
-                  No matching verified endowments found
-                </h3>
-                <p className="font-body-default text-sm text-[#6b7280] mb-4 max-w-md mx-auto">
-                  Try broadening your destination countries or reducing minimum funding threshold.
-                </p>
-                <button
-                  onClick={clearAllFilters}
-                  className="px-4 py-2 rounded-lg bg-[#0037b0] text-white font-caption-strong text-xs cursor-pointer"
-                >
-                  Reset All Filters
-                </button>
-              </div>
-            ) : (
-              currentItems.map(({ scholarship, evaluation }) => {
-                const saved = isSaved(scholarship.id);
-
-                return (
-                  <article 
-                    key={scholarship.id}
-                    className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-[#e5e7eb] hover:shadow-md transition-shadow relative overflow-hidden group w-full min-w-0"
-                  >
-                    <div className="flex flex-col space-y-4 w-full min-w-0">
-                      {/* Card Top Meta & Status Pill */}
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 w-full min-w-0">
-                        <div className="flex items-start gap-3 min-w-0 flex-1 w-full sm:w-auto">
-                          <div className="w-10 h-10 rounded-lg bg-[#eeeeed] flex items-center justify-center text-[#0037b0] shrink-0 font-bold mt-0.5">
-                            <span className="material-symbols-outlined text-[22px]">
-                              {scholarship.providerCategory.includes('University') ? 'account_balance' : scholarship.providerCategory.includes('Government') ? 'flag' : 'hub'}
-                            </span>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <span className="font-caption text-xs text-[#6b7280] block truncate">
-                              {scholarship.providerName}
-                            </span>
-                            <h3 
-                              onClick={() => onSelectScholarship(scholarship)}
-                              className="font-title text-base sm:text-lg text-[#1a1a1e] group-hover:text-[#0037b0] transition-colors cursor-pointer break-words leading-snug"
-                            >
-                              {scholarship.title}
-                            </h3>
-                          </div>
-                        </div>
-
-                        {/* Status Pill Badge */}
-                        <div className="w-full sm:w-auto shrink-0 self-start sm:self-auto min-w-0 max-w-full">
-                          {evaluation.status === 'likely_eligible' ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-label-sm text-[11px] font-semibold max-w-full min-w-0">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#047857] shrink-0"></span>
-                              <span className="break-words sm:whitespace-nowrap truncate sm:overflow-visible">Likely eligible ({evaluation.matchScore}% match)</span>
-                            </div>
-                          ) : evaluation.status === 'more_info_needed' ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fffbeb] border border-[#fde68a] text-[#b45309] font-label-sm text-[11px] font-semibold max-w-full min-w-0">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#b45309] shrink-0"></span>
-                              <span className="break-words sm:whitespace-nowrap truncate sm:overflow-visible">Potential match — more info needed</span>
-                            </div>
-                          ) : (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fff1f2] border border-[#fecdd3] text-[#be123c] font-label-sm text-[11px] font-semibold max-w-full min-w-0">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#be123c] shrink-0"></span>
-                              <span className="break-words sm:whitespace-nowrap truncate sm:overflow-visible">Does not meet mandatory rule</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Key Value Proposition Block */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] w-full min-w-0">
-                        <div className="space-y-0.5 min-w-0">
-                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase block truncate">Destination</span>
-                          <div className="flex items-center gap-1 font-caption-strong text-xs text-[#1a1a1e] min-w-0">
-                            <span className="material-symbols-outlined text-[15px] text-[#6b7280] shrink-0">location_on</span>
-                            <span className="truncate">{scholarship.destinationCountries.join(', ')}</span>
-                          </div>
-                        </div>
-                        <div className="space-y-0.5 min-w-0">
-                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase block truncate">Estimated Value</span>
-                          <div className="font-caption-strong text-xs text-[#1a1a1e] truncate">
-                            {scholarship.totalAwardValue}
-                          </div>
-                        </div>
-                        <div className="space-y-0.5 min-w-0">
-                          <span className="font-label-sm text-[10px] text-[#6b7280] uppercase block truncate">Application Deadline</span>
-                          {(() => {
-                            const deadlineInfo = getDeadlineDisplay(scholarship.applicationDeadline);
-                            return (
-                              <div className={`flex items-center gap-1 font-caption-strong text-xs min-w-0 ${deadlineInfo.isClosed ? 'text-[#6b7280]' : 'text-[#ba1a1a]'}`}>
-                                <span className="material-symbols-outlined text-[15px] shrink-0">schedule</span>
-                                <span className="truncate">
-                                  {scholarship.applicationDeadline} {deadlineInfo.isClosed ? '• Cycle closed' : `(${deadlineInfo.daysRemaining}d left)`}
-                                </span>
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      </div>
-
-                      {/* Eligibility Rubric Preview Strip */}
-                      <div className="py-1 px-1 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-caption text-xs w-full min-w-0">
-                        {evaluation.evaluatedList.slice(0, 3).map((crit, idx) => (
-                          <span 
-                            key={idx}
-                            className={`inline-flex items-center gap-1 min-w-0 max-w-full ${
-                              crit.status === 'passed' ? 'text-[#047857]' : crit.status === 'missing' ? 'text-[#b45309]' : 'text-[#be123c]'
-                            }`}
-                          >
-                            <span className="material-symbols-outlined text-[15px] shrink-0">
-                              {crit.status === 'passed' ? 'check_circle' : crit.status === 'missing' ? 'warning' : 'cancel'}
-                            </span>
-                            <span className="truncate">{crit.criterion.title}</span>
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Card Action Row & Verification Timestamp */}
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 border-t border-[#e5e7eb] w-full min-w-0">
-                        <div className="inline-flex flex-wrap items-center gap-1.5 font-caption text-xs text-[#6b7280] min-w-0 max-w-full">
-                          <span className="material-symbols-outlined text-[15px] text-[#0037b0] shrink-0">verified</span>
-                          <span>Verified {scholarship.lastVerified} via official</span>
-                          <span className="font-caption-strong text-[#1a1a1e] truncate max-w-[150px] sm:max-w-none">{scholarship.sourceDomain}</span>
-                          <span>portal</span>
-                        </div>
-                        <div className="flex items-center gap-2.5 w-full sm:w-auto min-w-0 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (saved) {
-                                unsaveScholarship(scholarship.id);
-                              } else {
-                                saveScholarship(scholarship.id, {
-                                  title: scholarship.title,
-                                  provider: scholarship.providerName,
-                                  destination: scholarship.destinationCountries.join(', '),
-                                  awardValue: scholarship.totalAwardValue,
-                                  deadline: scholarship.applicationDeadline
-                                });
-                              }
-                            }}
-                            aria-label={`Save ${scholarship.title}`}
-                            className={`p-2 rounded-lg border transition-colors cursor-pointer shrink-0 ${
-                              saved 
-                                ? 'bg-[#dce2f3] text-[#0037b0] border-[#b7c4ff]' 
-                                : 'bg-[#eeeeed] hover:bg-[#e2e2e2] text-[#6b7280] hover:text-[#1a1a1e] border-transparent'
-                            }`}
-                          >
-                            <span className="material-symbols-outlined text-[18px]">
-                              {saved ? 'bookmark_added' : 'bookmark_border'}
-                            </span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => onSelectScholarship(scholarship)}
-                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#0037b0] text-white font-caption-strong text-xs hover:bg-[#2563eb] transition-colors shadow-xs cursor-pointer min-w-0 truncate"
-                          >
-                            <span className="truncate">View Details &amp; Criteria</span>
-                            <span className="material-symbols-outlined text-[15px] shrink-0">arrow_forward</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })
-            )}
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 w-full min-w-0">
-                <div className="font-caption text-xs text-[#6b7280] text-center sm:text-left min-w-0">
-                  Showing <span className="font-caption-strong text-[#1a1a1e]">{(currentPage - 1) * pageSize + 1}–{Math.min(totalItems, currentPage * pageSize)}</span> of <span className="font-caption-strong text-[#1a1a1e]">{totalItems}</span> verified awards
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap justify-center min-w-0">
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    className="w-8 h-8 rounded-lg bg-white border border-[#e5e7eb] text-[#6b7280] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">chevron_left</span>
-                  </button>
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <button
-                      key={i + 1}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={`w-8 h-8 rounded-lg text-xs font-semibold flex items-center justify-center cursor-pointer transition-colors ${
-                        currentPage === i + 1
-                          ? 'bg-[#0037b0] text-white shadow-xs'
-                          : 'bg-white border border-[#e5e7eb] text-[#1a1a1e] hover:bg-[#f3f4f3]'
-                      }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    className="w-8 h-8 rounded-lg bg-white border border-[#e5e7eb] text-[#6b7280] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Academic Transparency Disclaimer Box */}
-            <div className="p-4 rounded-xl bg-[#f3f4f3] border border-[#e5e7eb] mt-6 flex items-start gap-3">
-              <span className="material-symbols-outlined text-[#6b7280] text-[18px] shrink-0 mt-0.5">info</span>
-              <p className="font-caption text-xs text-[#6b7280] leading-relaxed">
-                ScholarFind provides eligibility indicators based on self-reported profile data. Official eligibility and admissions decisions are made strictly by the scholarship provider. Always verify final guidelines via official institutional host portals.
-              </p>
             </div>
+
+            <div className="rounded-card border border-hairline bg-paper-raised p-5">
+              <h2 className="font-ui-display text-base font-semibold text-ink">Study level</h2>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {levels.map((level) => (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => toggleLevel(level)}
+                    aria-pressed={selectedLevels.includes(level)}
+                    className={`min-h-9 rounded-chip border px-3 text-xs font-semibold capitalize transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                      selectedLevels.includes(level)
+                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
+                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
+                    }`}
+                  >
+                    {level}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-card border border-hairline bg-paper-raised p-5">
+              <h2 className="font-ui-display text-base font-semibold text-ink">Minimum funding (USD)</h2>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[0, 25000, 50000].map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setMinAwardUSD(value)}
+                    aria-pressed={minAwardUSD === value}
+                    className={`min-h-9 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                      minAwardUSD === value
+                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
+                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
+                    }`}
+                  >
+                    {value === 0 ? 'Any' : `$${value.toLocaleString()}+`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-card border border-hairline bg-paper-raised p-5">
+              <h2 className="font-ui-display text-base font-semibold text-ink">Deadline window</h2>
+              <div className="mt-3 flex flex-col gap-2">
+                {[
+                  { id: 'all', label: 'Any time' },
+                  { id: 'urgent_30d', label: 'Due within 30 days' },
+                  { id: '1_3_months', label: '1–3 months' },
+                  { id: '3_6_months', label: '3–6 months' },
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setDeadlineWindow(option.id)}
+                    aria-pressed={deadlineWindow === option.id}
+                    className={`min-h-9 rounded-control border px-3 text-left text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                      deadlineWindow === option.id
+                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
+                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {!profile ? (
+              <div className="rounded-card border border-warn-border bg-warn-surface p-5">
+                <p className="text-sm font-semibold text-warn-text">No profile yet</p>
+                <p className="mt-1 text-xs leading-relaxed text-ink">
+                  Eligibility verdicts need your profile. Build one in about two minutes.
+                </p>
+                <Button variant="primary" size="md" onClick={onOpenProfileBuilder} className="mt-3">
+                  Build profile
+                </Button>
+              </div>
+            ) : null}
+          </aside>
+
+          <main className="lg:col-span-8 xl:col-span-9">
+            {loadingFromDB ? (
+              <SkeletonRows rows={5} />
+            ) : filteredScholarships.length === 0 ? (
+              <EmptyState
+                icon="filters"
+                title="No scholarships match these filters"
+                description="Try widening the country, level, funding, or deadline filters."
+                action={<Button variant="secondary" size="md" onClick={clearAllFilters}>Clear all filters</Button>}
+              />
+            ) : (
+              <ul className="divide-y divide-hairline border-y border-hairline">
+                {filteredScholarships.map(({ scholarship, evaluation }) => {
+                  const deadline = getDeadlineDisplay(scholarship.applicationDeadline);
+                  const saved = isSaved(scholarship.id);
+                  return (
+                    <li key={scholarship.id} className="py-5">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <Link
+                            to={`/scholarship/${scholarship.id}`}
+                            className="font-ui-display text-lg font-semibold leading-snug text-ink hover:text-sapphire focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
+                          >
+                            {scholarship.title}
+                          </Link>
+                          <p className="mt-1 text-sm text-ink-muted">
+                            {scholarship.providerName} · {scholarship.destinationCountries.join(', ')}
+                          </p>
+                          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
+                            <span className="font-data">
+                              {scholarship.studyLevels.map((l) => l).join(', ')}
+                            </span>
+                            <span aria-hidden>·</span>
+                            <span className="font-data">{scholarship.totalAwardValue}</span>
+                            <span aria-hidden>·</span>
+                            <span
+                              className={`font-data ${
+                                deadline.isClosed
+                                  ? 'text-bad-text'
+                                  : deadline.daysRemaining <= 14
+                                    ? 'text-warn-text'
+                                    : 'text-ink-muted'
+                              }`}
+                            >
+                              {deadline.isClosed
+                                ? 'Cycle closed'
+                                : deadline.daysRemaining === 0
+                                  ? 'Closes today'
+                                  : `${deadline.daysRemaining} days left`}
+                            </span>
+                          </div>
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
+                            <Badge
+                              tone={
+                                evaluation.status === 'likely_eligible'
+                                  ? 'ok'
+                                  : evaluation.status === 'more_info_needed'
+                                    ? 'warn'
+                                    : 'bad'
+                              }
+                            >
+                              {evaluation.status === 'likely_eligible'
+                                ? 'Likely eligible'
+                                : evaluation.status === 'more_info_needed'
+                                  ? 'Needs review'
+                                  : 'Not eligible'}
+                            </Badge>
+                            {profile ? (
+                              <span className="text-xs text-ink-muted">
+                                Match score {evaluation.matchScore}%
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => void handleSaveToggle(scholarship)}
+                            aria-pressed={saved}
+                            aria-label={saved ? 'Remove from saved' : 'Save scholarship'}
+                            className="flex h-11 w-11 items-center justify-center rounded-control border border-hairline bg-paper-raised text-ink-muted transition-colors hover:bg-paper-sunken hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
+                          >
+                            <Icon name={saved ? 'savedActive' : 'saved'} size={18} className={saved ? 'text-sapphire' : ''} />
+                          </button>
+                          <Button
+                            variant="primary"
+                            size="md"
+                            onClick={() => onSelectScholarship(scholarship)}
+                          >
+                            View details
+                          </Button>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </main>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

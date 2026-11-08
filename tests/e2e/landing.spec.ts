@@ -16,7 +16,7 @@ test('Get Started opens profile builder', async ({ page }) => {
 test('Explore button navigates to explorer', async ({ page }) => {
   await page.getByRole('button', { name: 'Explore Scholarships' }).first().click();
   await expect(
-    page.locator('h1.font-headline-lg')
+    page.getByRole('heading', { level: 1 }).first()
   ).toBeVisible();
 });
 
