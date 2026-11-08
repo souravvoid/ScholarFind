@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { INGESTION_SOURCES } from '../data/sourcesData';
+import React, { useEffect, useState } from 'react';
 import { IngestionSource } from '../types';
-import { getSourcesFromDatabase, triggerLiveSourceSync } from '../services/databaseService';
+import { INGESTION_SOURCES } from '../data/sourcesData';
+import { getSourcesFromDatabase } from '../services/databaseService';
+import { Container } from './ui/Container';
+import { Icon } from './ui/Icon';
+import { Badge } from './ui/Badge';
 
 export const SourceTransparency: React.FC = () => {
   const [sources, setSources] = useState<IngestionSource[]>(INGESTION_SOURCES);
-  const [runningJobId, setRunningJobId] = useState<string | null>(null);
-  const [syncFeedback, setSyncFeedback] = useState<{ [sourceId: string]: string }>({});
   const [isDatabaseConnected, setIsDatabaseConnected] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch actual sources from Firestore database on mount
   useEffect(() => {
     let isMounted = true;
-    async function loadSources() {
+    (async () => {
       setLoading(true);
       const res = await getSourcesFromDatabase();
       if (isMounted) {
@@ -21,193 +21,98 @@ export const SourceTransparency: React.FC = () => {
         setIsDatabaseConnected(res.fromDatabase);
         setLoading(false);
       }
-    }
-    loadSources();
+    })();
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const handleRunIngestion = async (sourceId: string) => {
-    setRunningJobId(sourceId);
-    setSyncFeedback(prev => ({ ...prev, [sourceId]: 'Running registry audit (local check)...' }));
-
-    const result = await triggerLiveSourceSync(sourceId);
-
-    if (result.success) {
-      setSources(prev => prev.map(s => {
-        if (s.id === sourceId) {
-          return {
-            ...s,
-            lastIngested: result.timestamp,
-            status: 'verified'
-          };
-        }
-        return s;
-      }));
-      setSyncFeedback(prev => ({
-        ...prev,
-        [sourceId]: `Audit checked — no records ingested (live ingestion is service-side). Checked at ${new Date(result.timestamp).toLocaleTimeString()}.`
-      }));
-    } else {
-      setSyncFeedback(prev => ({
-        ...prev,
-        [sourceId]: `Sync failed: ${result.error || 'Connection error'}`
-      }));
-    }
-    setRunningJobId(null);
-  };
+  const totalRecords = sources.reduce((sum, s) => sum + (s.scholarshipCount ?? 0), 0);
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden pt-8 pb-20 min-w-0">
-      <div className="w-full max-w-[1280px] mx-auto px-3.5 sm:px-4 md:px-8 lg:px-12 min-w-0">
-        {/* Header */}
-        <div className="mb-8 sm:mb-10 text-left w-full min-w-0">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eeeeed] text-[#434655] font-label-sm text-[11px] uppercase tracking-wider mb-2 font-semibold max-w-full">
-            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isDatabaseConnected ? 'bg-[#047857]' : 'bg-[#b45309]'}`}></span>
-            <span className="truncate">{isDatabaseConnected ? 'Live Firestore Database Audit Registry' : 'Offline / Cached Mode'}</span>
-          </div>
-          <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2 break-words">
-            Source Transparency &amp; Ingestion Pipeline
+    <div className="w-full max-w-full">
+      <div className="border-b border-hairline bg-paper">
+        <Container className="py-10 md:py-14">
+          <p className="font-data text-[11px] uppercase tracking-[0.14em] text-ink-muted">Provenance</p>
+          <h1 className="mt-2 font-ui-display text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-tight tracking-[-0.02em] text-ink">
+            Sources &amp; verification
           </h1>
-          <p className="font-body-lead text-[#6b7280] max-w-3xl">
-            ScholarFind operates under strict academic audit principles. We do not permit commercial lead generators, sponsored listings, or unverified scraper data. Every record maps directly to an audited public government gazette or university senate trust.
+          <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-muted">
+            ScholarFind is an independent index. Every record links to its official source and shows the date it
+            was last audited. Catalogue writes happen server-side; this client can only read.
           </p>
-        </div>
-
-        {/* 10 Sources Status Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12 w-full min-w-0">
-          {sources.map((src) => {
-            const isRunning = runningJobId === src.id;
-
-            return (
-              <div
-                key={src.id}
-                className="bg-white rounded-2xl p-4 sm:p-6 border border-[#e5e7eb] shadow-xs hover:shadow-md transition-all flex flex-col justify-between w-full min-w-0"
-              >
-                <div className="w-full min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-3 mb-3 w-full min-w-0">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-2xl shrink-0">{src.flag}</span>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-title text-base text-[#1a1a1e] truncate">
-                          {src.name}
-                        </h3>
-                        <span className="font-caption text-xs text-[#6b7280] block truncate">
-                          {src.originAgency} • {src.country}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-[11px] font-semibold self-start shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>
-                      {src.status}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2 text-xs text-[#434655] bg-[#f9f9f8] p-3 rounded-xl border border-[#e5e7eb] mb-4 w-full min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:justify-between gap-0.5">
-                      <span className="text-[#6b7280] shrink-0">Adapter Module:</span>
-                      <span className="font-mono text-[#0037b0] text-[11px] break-all">{src.adapterModule}</span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between gap-0.5">
-                      <span className="text-[#6b7280] shrink-0">Access Method:</span>
-                      <span className="font-medium text-[#1a1a1e] truncate">{src.accessMethod}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#6b7280]">Verified Endowments:</span>
-                      <span className="font-bold text-[#1a1a1e]">{src.scholarshipCount} listings</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#6b7280]">Last Ingested:</span>
-                      <span className="text-[#6b7280]">{src.lastIngested.slice(0, 16).replace('T', ' ')} UTC</span>
-                    </div>
-                  </div>
-
-                  <p className="font-caption text-xs text-[#6b7280] leading-relaxed mb-4 break-words">
-                    <strong>Audit Protocol:</strong> {src.auditPrinciples}
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-[#e5e7eb] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 w-full min-w-0">
-                  <a
-                    href={src.provenanceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center sm:justify-start gap-1 text-xs text-[#0037b0] hover:underline min-h-[44px] sm:min-h-0 py-2 sm:py-0"
-                  >
-                    <span>View Origin Source</span>
-                    <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                  </a>
-
-                  <button
-                    onClick={() => handleRunIngestion(src.id)}
-                    disabled={isRunning}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg bg-[#f3f4f3] hover:bg-[#e8e8e7] text-xs font-semibold text-[#1a1a1e] transition-colors cursor-pointer disabled:opacity-60 min-h-[44px] sm:min-h-0"
-                  >
-                    <span className={`material-symbols-outlined text-[15px] ${isRunning ? 'animate-spin text-[#0037b0]' : 'text-[#6b7280]'}`}>
-                      sync
-                    </span>
-                    <span>{isRunning ? 'Auditing feed...' : 'Audit & Refresh'}</span>
-                  </button>
-                </div>
-
-                {syncFeedback[src.id] && (
-                  <div className="mt-2.5 px-3 py-1.5 rounded-lg bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] text-[11px] font-caption flex items-center gap-1.5 animate-in fade-in min-w-0">
-                    <span className="material-symbols-outlined text-[14px] shrink-0">check_circle</span>
-                    <span className="truncate">{syncFeedback[src.id]}</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Technical Architecture & Audit Principles Box */}
-        <div className="bg-white rounded-2xl p-8 border border-[#e5e7eb] shadow-sm space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#dce2f3] text-[#0037b0] flex items-center justify-center font-bold">
-              <span className="material-symbols-outlined text-[24px]">architecture</span>
-            </div>
-            <div>
-              <h2 className="font-headline-sm text-lg text-[#1a1a1e]">
-                ScholarFind Institutional Architecture
-              </h2>
-              <p className="font-caption text-xs text-[#6b7280]">
-                Built for radical transparency, data sovereignty, and deterministic criteria evaluation.
-              </p>
-            </div>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <Badge tone={isDatabaseConnected ? 'ok' : 'warn'}>
+              {isDatabaseConnected ? 'Live registry' : 'Cached registry'}
+            </Badge>
+            <span className="text-xs text-ink-muted">
+              {sources.length} sources · {totalRecords} indexed records
+            </span>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-            <div className="space-y-2">
-              <h4 className="font-caption-strong text-sm text-[#1a1a1e]">
-                1. Modular Ingestion Pipeline
-              </h4>
-              <p className="font-body-default text-xs text-[#6b7280] leading-relaxed">
-                Python 3.12 with Pydantic validation schemas. Each collector runs in an isolated sandbox with exponential backoff, rate limits, robots.txt compliance, and idempotent upserts keyed on normalized official IDs.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-caption-strong text-sm text-[#1a1a1e]">
-                2. Explainable Rule Engine
-              </h4>
-              <p className="font-body-default text-xs text-[#6b7280] leading-relaxed">
-                Replaces black-box "AI guessing" with mathematical Boolean evaluation. Every criterion is classified as mandatory, optional, or informational, citing the exact clause from the provider's official endowment charter.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-caption-strong text-sm text-[#1a1a1e]">
-                3. Zero-Trust Security &amp; ABAC
-              </h4>
-              <p className="font-body-default text-xs text-[#6b7280] leading-relaxed">
-                Private user profiles, saved records, and tracker entries are protected with Firebase Firestore Security Rules and Attribute-Based Access Control. No candidate data is accessible across user boundaries.
-              </p>
-            </div>
-          </div>
-        </div>
+        </Container>
       </div>
+
+      <Container className="py-8">
+        {loading ? (
+          <p className="text-sm text-ink-muted">Loading sources…</p>
+        ) : (
+          <>
+            <ul className="space-y-4">
+              {sources.map((source) => (
+                <li key={source.id} className="rounded-card border border-hairline bg-paper-raised p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl" aria-hidden>
+                          {source.flag}
+                        </span>
+                        <h2 className="font-ui-display text-base font-semibold text-ink">{source.name}</h2>
+                        <Badge tone="ok">{source.status}</Badge>
+                      </div>
+                      <p className="mt-1 text-xs text-ink-muted">
+                        {source.originAgency} · {source.country}
+                      </p>
+                      <dl className="mt-3 grid grid-cols-1 gap-1 text-xs text-ink-muted sm:grid-cols-2">
+                        <div className="flex justify-between gap-2">
+                          <dt className="shrink-0">Records</dt>
+                          <dd className="font-semibold text-ink">{source.scholarshipCount}</dd>
+                        </div>
+                        <div className="flex justify-between gap-2">
+                          <dt className="shrink-0">Last audited</dt>
+                          <dd className="font-data text-ink">{source.lastIngested.slice(0, 10)}</dd>
+                        </div>
+                        <div className="flex justify-between gap-2 sm:col-span-2">
+                          <dt className="shrink-0">Access method</dt>
+                          <dd className="truncate text-ink">{source.accessMethod}</dd>
+                        </div>
+                      </dl>
+                      <p className="mt-3 text-xs leading-relaxed text-ink-muted">{source.auditPrinciples}</p>
+                    </div>
+                    <a
+                      href={source.provenanceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-control border border-hairline bg-paper-raised px-3 text-xs font-semibold text-sapphire transition-colors hover:bg-paper-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
+                    >
+                      View origin source
+                      <Icon name="external" size={14} />
+                    </a>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <section className="mt-10 rounded-card border border-hairline bg-paper-raised p-6">
+              <h2 className="font-ui-display text-base font-semibold text-ink">How records enter the catalogue</h2>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                Records are collected and validated server-side against each provider&apos;s official charter. The
+                client application can only read the verified catalogue and audit registry; it cannot create,
+                modify, or delete records.
+              </p>
+            </section>
+          </>
+        )}
+      </Container>
     </div>
   );
 };
