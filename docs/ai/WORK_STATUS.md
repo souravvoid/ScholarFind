@@ -7,8 +7,9 @@ Companion docs: `AGENTS.md`, `docs/DESIGN_BRIEF.md` (once approved),
 
 ## Current phase
 
-**Design-agent phase — discovery complete, awaiting questionnaire answers.**
-No visual-identity changes are made until the brief in `docs/DESIGN_BRIEF.md` is approved.
+**Design-agent phase — questionnaire answered (22/22 decisions), design docs written,
+awaiting approval to start Step 0 of `docs/engineering/PAGE_PLAN.md`.**
+No visual-identity changes land until the brief/system are approved.
 
 ## Done
 

@@ -58,9 +58,20 @@ existing test to make a build pass.
 - Before changing a module, grep its callers. After editing, run the verification commands above.
 - Never fabricate test results, metrics, or product numbers. The UI contains hardcoded mock
   stats (e.g. "842 grants", "342 records") — do not propagate them into new code.
+- Design work follows the approved system: read `docs/DESIGN_BRIEF.md`,
+  `docs/DESIGN_SYSTEM.md`, `docs/SITEMAP.md` before touching UI. Use shared `ui/` primitives
+  and design tokens — no page-specific styling or raw hexes. Icons are lucide-react via
+  `Icon.tsx` (no Material Symbols, no emoji in chrome). Design changes to identity or
+  feature removals need approval; minor CSS inside an approved page plan does not.
 
 ## Where things stand (see docs/)
 
 - Discovery audit: complete (see `docs/PROJECT_CONTEXT.md`, `docs/architecture/*`).
 - Approved fix sequence: `docs/engineering/ROADMAP.md` (start with security + honesty fixes).
 - Product requirements (as-is): `docs/product/PRD.md`.
+- Design intent: `docs/DESIGN_BRIEF.md` (approved 2026-11-08).
+- Design system: `docs/DESIGN_SYSTEM.md` — tokens, components, responsive + a11y contract.
+- Routes: `docs/SITEMAP.md` (react-router; top nav; detail as a page).
+- Implementation order: `docs/engineering/PAGE_PLAN.md` (shell first, then page by page).
+- UX findings: `docs/UX_AUDIT.md` · open defects: `docs/UI_BACKLOG.md`.
+- Session state: `docs/ai/WORK_STATUS.md` — read this first in a new session.
