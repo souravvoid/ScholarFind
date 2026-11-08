@@ -11,6 +11,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
   const { currentUser, profile, signInWithGoogle, signOut, savedScholarships } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const onLanding = currentTab === 'landing';
 
   // Close drawer on navigation
   const handleMobileNav = (tab: string) => {
@@ -42,7 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-40 bg-[#fbfbfa]/95 backdrop-blur-xl border-b border-[#e5e7eb] w-full max-w-full">
+      <header className={`fixed top-0 left-0 right-0 z-40 w-full max-w-full backdrop-blur-xl transition-colors ${onLanding ? 'bg-[#1A1A8C]/95 border-b border-white/10' : 'bg-[#fbfbfa]/95 border-b border-[#e5e7eb]'}`}>
         <div className="h-16 max-w-[1280px] w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 flex items-center justify-between gap-2 sm:gap-6 min-w-0">
           {/* Brand Logo & Desktop Nav */}
           <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 min-w-0">
@@ -51,10 +52,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
               className="flex items-center gap-2 sm:gap-2.5 text-left focus:outline-none group cursor-pointer shrink-0 min-h-[44px]"
               aria-label="ScholarFind Home"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#0037b0] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform shrink-0 ${onLanding ? 'bg-white/15' : 'bg-[#0037b0]'}`}>
                 <span className="material-symbols-outlined text-[20px]">school</span>
               </div>
-              <span className="font-headline-sm text-lg sm:text-[19px] tracking-tight text-[#1a1a1e] font-semibold truncate">
+              <span className={`font-headline-sm text-lg sm:text-[19px] tracking-tight font-semibold truncate ${onLanding ? 'text-white' : 'text-[#1a1a1e]'}`}>
                 ScholarFind
               </span>
             </button>
@@ -65,8 +66,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
                 onClick={() => onNavigate('explore')}
                 className={`font-body-default text-[15px] transition-colors cursor-pointer min-h-[44px] flex items-center ${
                   currentTab === 'explore' 
-                    ? 'text-[#0037b0] font-semibold' 
-                    : 'text-[#434655] hover:text-[#1a1c1c]'
+                    ? (onLanding ? 'text-white font-semibold' : 'text-[#0037b0] font-semibold')
+                    : (onLanding ? 'text-white/80 hover:text-white' : 'text-[#434655] hover:text-[#1a1c1c]')
                 }`}
               >
                 Explore Scholarships
@@ -75,8 +76,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
                 onClick={() => onNavigate('tracker')}
                 className={`font-body-default text-[15px] transition-colors relative cursor-pointer flex items-center gap-1.5 min-h-[44px] ${
                   currentTab === 'tracker' 
-                    ? 'text-[#0037b0] font-semibold' 
-                    : 'text-[#434655] hover:text-[#1a1c1c]'
+                    ? (onLanding ? 'text-white font-semibold' : 'text-[#0037b0] font-semibold')
+                    : (onLanding ? 'text-white/80 hover:text-white' : 'text-[#434655] hover:text-[#1a1c1c]')
                 }`}
               >
                 <span>Tracker &amp; Saved</span>
@@ -90,8 +91,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
                 onClick={() => onNavigate('sources')}
                 className={`font-body-default text-[15px] transition-colors cursor-pointer min-h-[44px] flex items-center ${
                   currentTab === 'sources' 
-                    ? 'text-[#0037b0] font-semibold' 
-                    : 'text-[#434655] hover:text-[#1a1c1c]'
+                    ? (onLanding ? 'text-white font-semibold' : 'text-[#0037b0] font-semibold')
+                    : (onLanding ? 'text-white/80 hover:text-white' : 'text-[#434655] hover:text-[#1a1c1c]')
                 }`}
               >
                 Source Transparency
@@ -193,13 +194,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={signInWithGoogle}
-                  className="hidden sm:inline-flex font-body-strong text-sm text-[#434655] hover:text-[#1a1c1c] transition-colors cursor-pointer px-2 py-1 min-h-[44px] items-center"
+                  className={`hidden sm:inline-flex font-body-strong text-sm transition-colors cursor-pointer px-2 py-1 min-h-[44px] items-center ${onLanding ? 'text-white/80 hover:text-white' : 'text-[#434655] hover:text-[#1a1c1c]'}`}
                 >
                   Sign In
                 </button>
                 <button
                   onClick={onOpenProfileBuilder}
-                  className="inline-flex items-center justify-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 rounded-lg bg-[#0037b0] text-white font-body-strong text-xs sm:text-[14px] hover:bg-[#2563eb] active:scale-[0.98] transition-all cursor-pointer shadow-xs whitespace-nowrap min-h-[44px]"
+                  className={`inline-flex items-center justify-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 rounded-lg font-body-strong text-xs sm:text-[14px] active:scale-[0.98] transition-all cursor-pointer shadow-xs whitespace-nowrap min-h-[44px] ${onLanding ? 'bg-white text-[#3B3BFF] hover:bg-white/90' : 'bg-[#0037b0] text-white hover:bg-[#2563eb]'}`}
                 >
                   <span>Get Started</span>
                   <span className="material-symbols-outlined text-[15px] sm:text-[16px]">arrow_forward</span>
@@ -210,7 +211,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate, onOpenPr
             {/* Mobile Navigation Drawer Toggle Button (< 768px) */}
             <button
               onClick={() => setMobileDrawerOpen(true)}
-              className="md:hidden flex items-center justify-center w-11 h-11 rounded-lg text-[#434655] hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0037b0]"
+              className={`md:hidden flex items-center justify-center w-11 h-11 rounded-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${onLanding ? 'text-white/85 hover:text-white hover:bg-white/10' : 'text-[#434655] hover:text-[#1a1a1e] hover:bg-[#f3f4f3]'}`}
               aria-label="Open navigation menu"
               aria-expanded={mobileDrawerOpen}
               aria-controls="mobile-navigation-drawer"
