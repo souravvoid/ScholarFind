@@ -10,3 +10,7 @@ test-results/
 playwright-report/
 
 .opencode/
+
+# Python
+__pycache__/
+*.pyc
