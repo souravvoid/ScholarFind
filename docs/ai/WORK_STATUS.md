@@ -27,6 +27,7 @@ Remaining steps: 2 Landing, 3 Explorer, 4 Detail route, 5 Tracker, 6 Sources, 7 
 | 2026-11-08 | Step 5 — tracker rebuilt; dead-ends/ghost/empty state fixed | Step 5 commit |
 | 2026-11-08 | Step 6 — sources informational provenance; fake audit removed | Step 6 commit |
 | 2026-11-08 | Step 7 — profile wizard step 1, honest copy, fake stats removed | Step 7 commit |
+| 2026-11-08 | Step 8 — a11y sweep: aria-hidden icons, aria-live, focus-visible rings | Step 8 commit |
 
 Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 ·
 8/9 catalogue URLs gate `verified`, gates-cambridge `mismatch` (allied portal, warns).
