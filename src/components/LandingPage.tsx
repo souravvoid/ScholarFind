@@ -11,7 +11,6 @@ import { Card } from './ui/Card';
 interface LandingPageProps {
   onNavigate: (tab: string) => void;
   onOpenProfileBuilder: () => void;
-  onSelectScholarship: (scholarship: Scholarship) => void;
 }
 
 const HOW_IT_WORKS = [
@@ -35,7 +34,6 @@ const HOW_IT_WORKS = [
 export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigate,
   onOpenProfileBuilder,
-  onSelectScholarship,
 }) => {
   const navigate = useNavigate();
 
@@ -187,7 +185,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <button
                   key={scholarship.id}
                   type="button"
-                  onClick={() => onSelectScholarship(scholarship)}
+                  onClick={() => navigate(`/scholarship/${scholarship.id}`)}
                   className="group flex flex-col overflow-hidden rounded-card border border-white/20 bg-white/10 text-left transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <div className="relative h-40 w-full overflow-hidden bg-white/5">

@@ -10,10 +10,9 @@ import { LandingPage } from './components/LandingPage';
 import { ScholarshipExplorer } from './components/ScholarshipExplorer';
 import { ApplicationTracker } from './components/ApplicationTracker';
 import { SourceTransparency } from './components/SourceTransparency';
+import { ScholarshipDetailPage } from './pages/ScholarshipDetailPage';
 import { ProfileBuilder } from './components/ProfileBuilder';
-import { ScholarshipDetailsModal } from './components/ScholarshipDetailsModal';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { Scholarship } from './types';
 import { testConnection } from './firebase';
 
 function ScrollToTop() {
@@ -26,12 +25,17 @@ function ScrollToTop() {
 
 function MainApp() {
   const [showProfileBuilder, setShowProfileBuilder] = useState(false);
-  const [selectedScholarship, setSelectedScholarship] = useState<Scholarship | null>(null);
   const navigate = useNavigate();
 
   // Validate connection to Firestore on initial boot (read-only probe).
   useEffect(() => {
     testConnection();
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setShowProfileBuilder(true);
+    window.addEventListener('open-profile-builder', handler);
+    return () => window.removeEventListener('open-profile-builder', handler);
   }, []);
 
   const handleNavigate = (tab: string) => {
@@ -49,29 +53,13 @@ function MainApp() {
             <LandingPage
               onNavigate={handleNavigate}
               onOpenProfileBuilder={() => setShowProfileBuilder(true)}
-              onSelectScholarship={(scholarship) => setSelectedScholarship(scholarship)}
             />
           }
         />
-        <Route
-          path="/explore"
-          element={
-            <ScholarshipExplorer
-              onSelectScholarship={(scholarship) => setSelectedScholarship(scholarship)}
-              onOpenProfileBuilder={() => setShowProfileBuilder(true)}
-            />
-          }
-        />
-        <Route
-          path="/tracker"
-          element={
-            <ApplicationTracker
-              onSelectScholarship={(scholarship) => setSelectedScholarship(scholarship)}
-              onExplore={() => navigate('/explore')}
-            />
-          }
-        />
+        <Route path="/explore" element={<ScholarshipExplorer onOpenProfileBuilder={() => setShowProfileBuilder(true)} />} />
+        <Route path="/tracker" element={<ApplicationTracker onExplore={() => navigate('/explore')} />} />
         <Route path="/sources" element={<SourceTransparency />} />
+        <Route path="/scholarship/:id" element={<ScholarshipDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
@@ -81,17 +69,6 @@ function MainApp() {
           onFinished={() => {
             setShowProfileBuilder(false);
             navigate('/explore');
-          }}
-        />
-      ) : null}
-
-      {selectedScholarship ? (
-        <ScholarshipDetailsModal
-          scholarship={selectedScholarship}
-          onClose={() => setSelectedScholarship(null)}
-          onOpenProfileBuilder={() => {
-            setSelectedScholarship(null);
-            setShowProfileBuilder(true);
           }}
         />
       ) : null}

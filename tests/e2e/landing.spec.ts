@@ -20,12 +20,13 @@ test('Explore button navigates to explorer', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('featured scholarship card opens details modal', async ({ page }) => {
+test('featured scholarship card opens details page', async ({ page }) => {
   const featured = page
     .locator('section')
     .filter({ hasText: /Scholarships worth your time/i })
     .locator('h3')
     .first();
   await featured.click();
-  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page).toHaveURL(/\/scholarship\//);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });

@@ -15,9 +15,8 @@ import { SkeletonRows } from './ui/Skeleton';
 import { ErrorPanel } from './ui/ErrorPanel';
 
 export const ScholarshipExplorer: React.FC<{
-  onSelectScholarship: (s: Scholarship) => void;
   onOpenProfileBuilder: () => void;
-}> = ({ onSelectScholarship, onOpenProfileBuilder }) => {
+}> = ({ onOpenProfileBuilder }) => {
   const { profile, isSaved, saveScholarship, unsaveScholarship } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -397,7 +396,7 @@ export const ScholarshipExplorer: React.FC<{
                           <Button
                             variant="primary"
                             size="md"
-                            onClick={() => onSelectScholarship(scholarship)}
+                            onClick={() => navigate(`/scholarship/${scholarship.id}`)}
                           >
                             View details
                           </Button>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { TrackerStatus, Scholarship } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
@@ -6,14 +7,11 @@ import { OfficialRedirectModal } from './OfficialRedirectModal';
 import { getDeadlineDisplay } from '../services/databaseService';
 
 interface ApplicationTrackerProps {
-  onSelectScholarship: (scholarship: Scholarship) => void;
   onExplore: () => void;
 }
 
-export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
-  onSelectScholarship,
-  onExplore
-}) => {
+export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({ onExplore }) => {
+  const navigate = useNavigate();
   const { savedScholarships, updateTrackerStatus, unsaveScholarship } = useAuth();
   const [activeTab, setActiveTab] = useState<'all' | TrackerStatus>('all');
   const [selectedScholarshipForRedirect, setSelectedScholarshipForRedirect] = useState<Scholarship | null>(null);
@@ -163,7 +161,7 @@ export const ApplicationTracker: React.FC<ApplicationTrackerProps> = ({
                       </div>
 
                       <h3 
-                        onClick={() => fullRecord && onSelectScholarship(fullRecord)}
+                        onClick={() => fullRecord && navigate(`/scholarship/${fullRecord.id}`)}
                         className="font-title text-base sm:text-lg text-[#1a1a1e] hover:text-[#0037b0] transition-colors cursor-pointer break-words min-w-0"
                       >
                         {item.scholarshipTitle}
