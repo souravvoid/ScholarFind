@@ -7,9 +7,9 @@ Companion docs: `AGENTS.md`, `docs/DESIGN_BRIEF.md` (once approved),
 
 ## Current phase
 
-**Design-agent phase — questionnaire answered (22/22 decisions), design docs written,
-awaiting approval to start Step 0 of `docs/engineering/PAGE_PLAN.md`.**
-No visual-identity changes land until the brief/system are approved.
+**Design-agent phase — Step 0 (foundation) + Step 1 (auth/state) done. Next: Step 2 (Landing).**
+Remaining steps: 2 Landing, 3 Explorer, 4 Detail route, 5 Tracker, 6 Sources, 7 Profile wizard,
+8 A11y/responsive sweep, 9 verification.
 
 ## Done
 
@@ -18,7 +18,9 @@ No visual-identity changes land until the brief/system are approved.
 | 2026-11-08 | Arc-inspired landing/nav/footer redesign + Playwright e2e suite | `ce43c29` |
 | 2026-11-08 | Discovery deliverables (PRD, architecture, debt, security, test strategy, roadmap) | `55ab397` |
 | 2026-11-08 | **M1 catalogue integrity**: catalogue/sources/logs read-only rules, no client seeding, read-shape validation, honest audit flow, redirect gate verified/mismatch/blocked | `afb0fe2` |
-| 2026-11-08 | `docs/UX_AUDIT.md` (journey defects, file:line) + `docs/UI_BACKLOG.md` (B-01…B-24) | this commit |
+| 2026-11-08 | `docs/UX_AUDIT.md` (journey defects, file:line) + `docs/UI_BACKLOG.md` (B-01…B-24) | prior commit |
+| 2026-11-08 | Step 0 — router shell, tokens, ui primitives, lucide, self-hosted fonts; 8/8 e2e green | Step 0 commit |
+| 2026-11-08 | Step 1 — auth/state hardening (demo fallback removed, guarded storage, leak + stale writes fixed) | Step 1 commit |
 
 Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 ·
 8/9 catalogue URLs gate `verified`, gates-cambridge `mismatch` (allied portal, warns).
