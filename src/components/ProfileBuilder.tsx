@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { DegreeLevel, GradingScale } from '../types';
 import { normalizeGpa, getEquivalentDegreeLabel } from '../utils/eligibilityEngine';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface ProfileBuilderProps {
   onClose: () => void;
@@ -11,6 +12,7 @@ interface ProfileBuilderProps {
 export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinished }) => {
   const { profile, currentUser, updateProfile } = useAuth();
   const [step, setStep] = useState<number>(1); // Start on step 1
+  const panelRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
   // Form states initialized from profile
   const [citizenship, setCitizenship] = useState(profile?.citizenship || 'Nigeria');
@@ -149,7 +151,14 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
   };
 
   return (
-    <div className="fixed inset-0 z-40 bg-[#fbfbfa] overflow-y-auto">
+    <div
+      ref={panelRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Student Profile Builder"
+      className="fixed inset-0 z-40 bg-[#fbfbfa] overflow-y-auto outline-none"
+    >
       {/* Top Header Bar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#fbfbfa]/95 backdrop-blur-md border-b border-[#e5e7eb] w-full max-w-full">
         <div className="h-14 max-w-[840px] w-full mx-auto px-4 md:px-0 flex items-center justify-between min-w-0">
@@ -190,7 +199,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] text-[#047857] font-caption-strong text-xs shrink-0">
               <span className="w-2 h-2 rounded-full bg-[#047857]"></span>
-              <span>{step * 25}% Complete — Unlocks ~840 Verified Awards</span>
+              <span>{step * 25}% Complete — Matches Verified Catalogue</span>
             </div>
           </div>
 
@@ -252,10 +261,11 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
 
               <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-[#e5e7eb] space-y-6">
                 <div>
-                  <label className="block font-caption-strong text-sm text-[#1a1a1e] mb-1.5">
+                  <label htmlFor="profile-citizenship" className="block font-caption-strong text-sm text-[#1a1a1e] mb-1.5">
                     Primary Citizenship / Passport Origin <span className="text-[#ba1a1a]">*</span>
                   </label>
                   <select
+                    id="profile-citizenship"
                     value={citizenship}
                     onChange={(e) => setCitizenship(e.target.value)}
                     className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
@@ -281,10 +291,11 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 </div>
 
                 <div>
-                  <label className="block font-caption-strong text-sm text-[#1a1a1e] mb-1.5">
+                  <label htmlFor="profile-residence-country" className="block font-caption-strong text-sm text-[#1a1a1e] mb-1.5">
                     Country of Current Legal Residence <span className="text-[#ba1a1a]">*</span>
                   </label>
                   <input
+                    id="profile-residence-country"
                     type="text"
                     value={residenceCountry}
                     onChange={(e) => setResidenceCountry(e.target.value)}

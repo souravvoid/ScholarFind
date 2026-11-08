@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Scholarship } from '../types';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface OfficialRedirectModalProps {
   scholarship: Scholarship;
@@ -13,6 +14,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
   onClose
 }) => {
   const [hasAcknowledged, setHasAcknowledged] = useState(false);
+  const panelRef = useFocusTrap<HTMLDivElement>(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -51,10 +53,12 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
 
       {/* Modal Dialog */}
       <div 
+        ref={panelRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="redirect-dialog-title"
-        className="relative w-full max-w-[540px] max-h-[92vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-[#e5e7eb] p-5 sm:p-8 z-10 animate-in fade-in zoom-in-95 duration-200 min-w-0"
+        className="relative w-full max-w-[540px] max-h-[92vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-[#e5e7eb] p-5 sm:p-8 z-10 animate-in fade-in zoom-in-95 duration-200 min-w-0 outline-none"
       >
         {/* Close Button with 44px touch target */}
         <button
