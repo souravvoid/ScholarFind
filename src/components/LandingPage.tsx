@@ -119,7 +119,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 type="text"
                 placeholder="Field of study"
                 aria-label="Field of study"
-                className="rounded-control bg-white px-3 py-2.5 text-sm text-arc-indigo placeholder:text-[#6B7280] focus:outline-none focus-visible:ring-2 focus:ring-white/60"
+                className="rounded-control bg-white px-3 py-2.5 text-sm text-arc-indigo placeholder:text-ink-muted focus:outline-none focus-visible:ring-2 focus:ring-white/60"
               />
               <button
                 type="submit"

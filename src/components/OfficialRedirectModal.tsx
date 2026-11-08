@@ -59,7 +59,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
         {/* Close Button with 44px touch target */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 sm:top-5 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors cursor-pointer"
+          className="absolute top-3 right-3 sm:top-5 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full text-ink-muted hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors cursor-pointer"
           aria-label="Close redirect confirmation"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
@@ -74,7 +74,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
           Leaving ScholarFind to Official Portal
         </h3>
 
-        <p className="font-body-default text-[#6b7280] mb-5 leading-relaxed">
+        <p className="font-body-default text-[var(--color-ink-muted)] mb-5 leading-relaxed">
           You are about to continue to the verified official application website for{' '}
           <strong className="text-[#1a1a1e]">{scholarship.title}</strong> hosted by{' '}
           <strong className="text-[#1a1a1e]">{scholarship.providerName}</strong>.
@@ -86,7 +86,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
           : gate === 'mismatch' ? 'bg-[#fffbeb] border-[#fde68a]'
           : 'bg-[#fff1f2] border-[#fecdd3]'
         }`}>
-          <div className="flex items-center justify-between text-xs font-semibold text-[#6b7280] uppercase tracking-wider">
+          <div className="flex items-center justify-between text-xs font-semibold text-ink-muted uppercase tracking-wider">
             <span>{gate === 'verified' ? 'Verified Destination Host' : gate === 'mismatch' ? 'Unaudited origin' : 'Blocked Destination'}</span>
             <span className={`inline-flex items-center gap-1 lowercase font-normal ${
               gate === 'verified' ? 'text-[#047857]' : gate === 'mismatch' ? 'text-[#b45309]' : 'text-[#be123c]'
@@ -105,7 +105,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
             </span>
             <span>{parsedHost || destinationUrl}</span>
           </div>
-          <p className="font-caption text-xs text-[#6b7280]">
+          <p className="font-caption text-xs text-ink-muted">
             {gate === 'verified' ? (
               <>Audit Provenance: Verified via {scholarship.provenance.sourceName} on {scholarship.lastVerified}.</>
             ) : gate === 'mismatch' ? (
@@ -146,7 +146,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
             className={`w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-body-strong text-sm transition-all shadow-sm ${
               hasAcknowledged && gate !== 'blocked'
                 ? 'bg-[#1d4ed8] hover:bg-[#2563eb] text-white active:scale-95 cursor-pointer'
-                : 'bg-[#e2e2e2] text-[#6b7280] cursor-not-allowed'
+                : 'bg-[var(--color-surface-container-highest)] text-ink-muted cursor-not-allowed'
             }`}
           >
             <span>Continue to Official Application</span>

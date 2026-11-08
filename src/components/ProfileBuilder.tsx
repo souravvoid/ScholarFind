@@ -155,7 +155,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
         <div className="h-14 max-w-[840px] w-full mx-auto px-4 md:px-0 flex items-center justify-between min-w-0">
           <button
             onClick={handlePrev}
-            className="inline-flex items-center gap-1 font-caption text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
+            className="inline-flex items-center gap-1 font-caption text-xs text-ink-muted hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-[18px]">arrow_back</span>
             Back
@@ -163,7 +163,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
           <span className="font-title text-base text-[#1a1a1e] font-semibold truncate px-2">ScholarFind</span>
           <button
             onClick={onClose}
-            className="font-caption-strong text-xs text-[#6b7280] hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
+            className="font-caption-strong text-xs text-ink-muted hover:text-[#1a1a1e] transition-colors cursor-pointer shrink-0"
           >
             Close
           </button>
@@ -180,8 +180,8 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] animate-pulse"></span>
                 Step {step} of 4
               </span>
-              <span className="font-caption text-xs text-[#6b7280] hidden sm:inline">•</span>
-              <span className="font-caption text-xs text-[#6b7280] truncate">
+              <span className="font-caption text-xs text-ink-muted hidden sm:inline">•</span>
+              <span className="font-caption text-xs text-ink-muted truncate">
                 {step === 1 && 'Identity & Citizenship'}
                 {step === 2 && 'Academic Foundation & Global Intent'}
                 {step === 3 && 'Language Proficiency & Work Experience'}
@@ -213,27 +213,27 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                   <span className="sm:hidden">2. Acad</span>
                   <span className="hidden sm:inline">2. Academics</span>
                 </span>
-                <span className="font-label-sm uppercase text-[#6b7280] text-[10px] hidden sm:inline">{step > 2 ? 'Done' : step === 2 ? 'Active' : 'Next'}</span>
+                <span className="font-label-sm uppercase text-ink-muted text-[10px] hidden sm:inline">{step > 2 ? 'Done' : step === 2 ? 'Active' : 'Next'}</span>
               </div>
             </div>
             <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0">
               <div className={`h-1.5 w-full rounded-full ${step >= 3 ? (step > 3 ? 'bg-[#047857]' : 'bg-[#1d4ed8]') : 'bg-[#e2e2e2]'}`} />
               <div className="flex items-center justify-between text-[11px] sm:text-xs">
-                <span className={`font-caption-strong truncate ${step === 3 ? 'text-[#1d4ed8]' : 'text-[#6b7280]'}`}>
+                <span className={`font-caption-strong truncate ${step === 3 ? 'text-[#1d4ed8]' : 'text-ink-muted'}`}>
                   <span className="sm:hidden">3. Tests</span>
                   <span className="hidden sm:inline">3. Language &amp; Tests</span>
                 </span>
-                <span className="font-label-sm uppercase text-[#6b7280] text-[10px] hidden sm:inline">{step > 3 ? 'Done' : step === 3 ? 'Active' : 'Next'}</span>
+                <span className="font-label-sm uppercase text-ink-muted text-[10px] hidden sm:inline">{step > 3 ? 'Done' : step === 3 ? 'Active' : 'Next'}</span>
               </div>
             </div>
             <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0">
               <div className={`h-1.5 w-full rounded-full ${step >= 4 ? 'bg-[#1d4ed8]' : 'bg-[#e2e2e2]'}`} />
               <div className="flex items-center justify-between text-[11px] sm:text-xs">
-                <span className={`font-caption-strong truncate ${step === 4 ? 'text-[#1d4ed8]' : 'text-[#6b7280]'}`}>
+                <span className={`font-caption-strong truncate ${step === 4 ? 'text-[#1d4ed8]' : 'text-ink-muted'}`}>
                   <span className="sm:hidden">4. Review</span>
                   <span className="hidden sm:inline">4. Review</span>
                 </span>
-                <span className="font-label-sm uppercase text-[#6b7280] text-[10px] hidden sm:inline">{step === 4 ? 'Active' : 'Locked'}</span>
+                <span className="font-label-sm uppercase text-ink-muted text-[10px] hidden sm:inline">{step === 4 ? 'Active' : 'Locked'}</span>
               </div>
             </div>
           </div>
@@ -245,7 +245,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2">
                   Identity &amp; Citizenship
                 </h1>
-                <p className="font-body-lead text-[#6b7280]">
+                <p className="font-body-lead text-ink-muted">
                   Scholarships have strict nationality and bilateral pact requirements. We never sell or share your data.
                 </p>
               </div>
@@ -275,7 +275,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     <option value="United States">United States</option>
                     <option value="Canada">Canada</option>
                   </select>
-                  <p className="font-caption text-xs text-[#6b7280] mt-1.5">
+                  <p className="font-caption text-xs text-ink-muted mt-1.5">
                     Evaluated against bilateral government treaties (e.g. Commonwealth, DAAD, Fulbright quotas).
                   </p>
                 </div>
@@ -291,7 +291,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                     placeholder="e.g. Nigeria, United Kingdom, etc."
                   />
-                  <p className="font-caption text-xs text-[#6b7280] mt-1.5">
+                  <p className="font-caption text-xs text-ink-muted mt-1.5">
                     Certain regional mobility grants require residency within specific territories for at least 12 months.
                   </p>
                 </div>
@@ -306,7 +306,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2">
                   Your Academic Background &amp; Ambition
                 </h1>
-                <p className="font-body-lead text-[#6b7280]">
+                <p className="font-body-lead text-ink-muted">
                   Enter your verified GPA scale, primary field, and destination preferences to calculate strict institutional eligibility without guesswork.
                 </p>
               </div>
@@ -322,12 +322,12 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       <h2 className="font-title text-base text-[#1a1a1e]">
                         1. Academic Background &amp; GPA Standardization
                       </h2>
-                      <p className="font-caption text-xs text-[#6b7280]">
+                      <p className="font-caption text-xs text-ink-muted">
                         Official institutional records for international credential evaluation
                       </p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#eeeeed] text-[#6b7280] font-label-sm text-[11px]">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#eeeeed] text-ink-muted font-label-sm text-[11px]">
                     Section Required
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       }`}
                     >
                       <span className="font-caption-strong text-xs">Secondary / High School</span>
-                      <span className="font-caption text-xs text-[#6b7280]">IB, A-Levels, WAEC, Bac</span>
+                      <span className="font-caption text-xs text-ink-muted">IB, A-Levels, WAEC, Bac</span>
                     </button>
 
                     <button
@@ -366,7 +366,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                           <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-[#1d4ed8]">check_circle</span>
                         )}
                       </div>
-                      <span className="font-caption text-xs text-[#6b7280]">BSc, BA, BEng, BTech, LL.B</span>
+                      <span className="font-caption text-xs text-ink-muted">BSc, BA, BEng, BTech, LL.B</span>
                     </button>
 
                     <button
@@ -379,7 +379,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       }`}
                     >
                       <span className="font-caption-strong text-xs">Master's / Postgraduate</span>
-                      <span className="font-caption text-xs text-[#6b7280]">MSc, MA, MBA, MRes</span>
+                      <span className="font-caption text-xs text-ink-muted">MSc, MA, MBA, MRes</span>
                     </button>
 
                     <button
@@ -392,7 +392,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       }`}
                     >
                       <span className="font-caption-strong text-xs">Doctorate / PhD</span>
-                      <span className="font-caption text-xs text-[#6b7280]">Ph.D, DPhil, Postgrad Fellow</span>
+                      <span className="font-caption text-xs text-ink-muted">Ph.D, DPhil, Postgrad Fellow</span>
                     </button>
                   </div>
                 </div>
@@ -403,7 +403,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     Awarding Institution / Current University
                   </label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6b7280]">
+                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-muted">
                       <span aria-hidden="true" className="material-symbols-outlined text-[18px]">account_balance</span>
                     </span>
                     <input
@@ -415,7 +415,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5 pointer-events-none">
                     </div>
                   </div>
-                  <p className="font-caption text-xs text-[#6b7280] mt-1.5">
+                  <p className="font-caption text-xs text-ink-muted mt-1.5">
                     Verified against the UNESCO / IAU World Higher Education Database registry.
                   </p>
                 </div>
@@ -454,7 +454,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         onChange={(e) => setGpa(parseFloat(e.target.value) || 0)}
                         className="w-full h-11 pl-3.5 pr-16 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-lg font-semibold focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                       />
-                      <span className="absolute right-3 font-caption-strong text-xs text-[#6b7280]">
+                      <span className="absolute right-3 font-caption-strong text-xs text-ink-muted">
                         / {gradingScale === 'gpa_5_0' ? '5.00' : gradingScale === 'percentage' ? '100' : '4.00'}
                       </span>
                     </div>
@@ -499,7 +499,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       <h2 className="font-title text-base text-[#1a1a1e]">
                         2. Field of Study &amp; Degree Specialization
                       </h2>
-                      <p className="font-caption text-xs text-[#6b7280]">
+                      <p className="font-caption text-xs text-ink-muted">
                         Align disciplinary nomenclature across EU, US, and Commonwealth frameworks
                       </p>
                     </div>
@@ -515,7 +515,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     Primary Academic Field / Major
                   </label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6b7280]">
+                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-muted">
                       <span aria-hidden="true" className="material-symbols-outlined text-[18px]">hub</span>
                     </span>
                     <input
@@ -524,11 +524,11 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       onChange={(e) => setPrimaryField(e.target.value)}
                       className="w-full h-11 pl-10 pr-10 rounded-lg bg-[#f3f4f3] text-[#1a1a1e] text-sm focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
                     />
-                    <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#6b7280]">
+                    <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-ink-muted">
                       <span aria-hidden="true" className="material-symbols-outlined text-[18px]">search</span>
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5 mt-2 font-caption text-xs text-[#6b7280]">
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2 font-caption text-xs text-ink-muted">
                     <span>Popular taxonomies:</span>
                     <button 
                       type="button" 
@@ -570,7 +570,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <button
                           type="button"
                           onClick={() => removeFacultyTag(tag)}
-                          className="text-[#6b7280] hover:text-[#1a1a1e] ml-0.5"
+                          className="text-ink-muted hover:text-[#1a1a1e] ml-0.5"
                         >
                           <span aria-hidden="true" className="material-symbols-outlined text-[14px]">close</span>
                         </button>
@@ -610,7 +610,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 {/* Research Keywords */}
                 <div className="mb-6">
                   <label className="block font-caption-strong text-xs text-[#1a1a1e] mb-2">
-                    Specific Research Subfields &amp; Keywords <span className="text-[#6b7280] font-normal">(Used for faculty &amp; donor indexing)</span>
+                    Specific Research Subfields &amp; Keywords <span className="text-ink-muted font-normal">(Used for faculty &amp; donor indexing)</span>
                   </label>
                   <div className="flex flex-wrap items-center gap-2">
                     {researchKeywords.map((kw) => (
@@ -622,7 +622,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <button
                           type="button"
                           onClick={() => removeKeyword(kw)}
-                          className="text-[#6b7280] hover:text-[#ba1a1a]"
+                          className="text-ink-muted hover:text-[#ba1a1a]"
                         >
                           <span aria-hidden="true" className="material-symbols-outlined text-[14px]">close</span>
                         </button>
@@ -662,7 +662,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 {/* Target Program Types */}
                 <div>
                   <label className="block font-caption-strong text-xs text-[#1a1a1e] mb-2.5">
-                    Target Program Type to Pursue <span className="text-[#6b7280] font-normal">(Select all that apply)</span>
+                    Target Program Type to Pursue <span className="text-ink-muted font-normal">(Select all that apply)</span>
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label 
@@ -686,7 +686,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                             520+ Grants
                           </span>
                         </div>
-                        <p className="font-caption text-xs text-[#6b7280] mt-0.5">Taught &amp; research master's across UK, Europe, &amp; North America.</p>
+                        <p className="font-caption text-xs text-ink-muted mt-0.5">Taught &amp; research master's across UK, Europe, &amp; North America.</p>
                       </div>
                     </label>
 
@@ -711,7 +711,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                             320+ Fully Funded
                           </span>
                         </div>
-                        <p className="font-caption text-xs text-[#6b7280] mt-0.5">Funded doctoral studentships, DAAD fellowships, &amp; NIH/NSF lab stipends.</p>
+                        <p className="font-caption text-xs text-ink-muted mt-0.5">Funded doctoral studentships, DAAD fellowships, &amp; NIH/NSF lab stipends.</p>
                       </div>
                     </label>
 
@@ -732,11 +732,11 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <span className="font-caption-strong text-sm text-[#1a1a1e]">Bachelor's Degree</span>
-                          <span className="text-[10px] font-caption text-[#6b7280] bg-[#eeeeed] px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-caption text-ink-muted bg-[#eeeeed] px-2 py-0.5 rounded-full">
                             140 Grants
                           </span>
                         </div>
-                        <p className="font-caption text-xs text-[#6b7280] mt-0.5">Undergraduate entrance scholarships and regional grants.</p>
+                        <p className="font-caption text-xs text-ink-muted mt-0.5">Undergraduate entrance scholarships and regional grants.</p>
                       </div>
                     </label>
 
@@ -757,11 +757,11 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <span className="font-caption-strong text-sm text-[#1a1a1e]">Postdoctoral Fellowship</span>
-                          <span className="text-[10px] font-caption text-[#6b7280] bg-[#eeeeed] px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-caption text-ink-muted bg-[#eeeeed] px-2 py-0.5 rounded-full">
                             85 Grants
                           </span>
                         </div>
-                        <p className="font-caption text-xs text-[#6b7280] mt-0.5">Early-career research stipends &amp; mobility grants (e.g. Marie Curie).</p>
+                        <p className="font-caption text-xs text-ink-muted mt-0.5">Early-career research stipends &amp; mobility grants (e.g. Marie Curie).</p>
                       </div>
                     </label>
                   </div>
@@ -779,12 +779,12 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       <h2 className="font-title text-base text-[#1a1a1e]">
                         3. Destination Regions &amp; Mobility Model
                       </h2>
-                      <p className="font-caption text-xs text-[#6b7280]">
+                      <p className="font-caption text-xs text-ink-muted">
                         ScholarFind maps institutional fee-waivers and living bursaries by jurisdiction
                       </p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#eeeeed] text-[#6b7280] font-label-sm text-[11px]">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#eeeeed] text-ink-muted font-label-sm text-[11px]">
                     {targetRegions.length} Regions Active
                   </span>
                 </div>
@@ -805,12 +805,12 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">Western &amp; Northern Europe</span>
                       </div>
                       <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
-                        targetRegions.includes('Western & Northern Europe') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
+                        targetRegions.includes('Western & Northern Europe') ? 'text-[#1d4ed8]' : 'text-ink-muted'
                       }`}>
                         {targetRegions.includes('Western & Northern Europe') ? 'check_circle' : 'radio_button_unchecked'}
                       </span>
                     </div>
-                    <p className="font-caption text-xs text-[#6b7280] mb-2.5">
+                    <p className="font-caption text-xs text-ink-muted mb-2.5">
                       Includes Chevening, Commonwealth, DAAD, Erasmus Mundus, and Swedish Institute bursaries.
                     </p>
                     <div className="flex items-center justify-between pt-1">
@@ -835,12 +835,12 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">North America</span>
                       </div>
                       <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
-                        targetRegions.includes('North America') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
+                        targetRegions.includes('North America') ? 'text-[#1d4ed8]' : 'text-ink-muted'
                       }`}>
                         {targetRegions.includes('North America') ? 'check_circle' : 'radio_button_unchecked'}
                       </span>
                     </div>
-                    <p className="font-caption text-xs text-[#6b7280] mb-2.5">
+                    <p className="font-caption text-xs text-ink-muted mb-2.5">
                       Includes Fulbright, Vanier CGS, Knight-Hennessy, and university departmental assistantships.
                     </p>
                     <div className="flex items-center justify-between pt-1">
@@ -865,16 +865,16 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">East Asia &amp; Oceania</span>
                       </div>
                       <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
-                        targetRegions.includes('East Asia & Oceania') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
+                        targetRegions.includes('East Asia & Oceania') ? 'text-[#1d4ed8]' : 'text-ink-muted'
                       }`}>
                         {targetRegions.includes('East Asia & Oceania') ? 'check_circle' : 'radio_button_unchecked'}
                       </span>
                     </div>
-                    <p className="font-caption text-xs text-[#6b7280] mb-2.5">
+                    <p className="font-caption text-xs text-ink-muted mb-2.5">
                       MEXT Japan, GKS Korea, Australia Awards, and Research Training Program (RTP) funds.
                     </p>
                     <div className="flex items-center justify-between pt-1">
-                      <span className="text-[11px] font-caption text-[#6b7280] bg-[#eeeeed] px-2.5 py-0.5 rounded-full">
+                      <span className="text-[11px] font-caption text-ink-muted bg-[#eeeeed] px-2.5 py-0.5 rounded-full">
                         210+ Matching Opportunities
                       </span>
                     </div>
@@ -895,16 +895,16 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <span className="font-caption-strong text-sm text-[#1a1a1e]">Latin America &amp; Middle East</span>
                       </div>
                       <span aria-hidden="true" className={`material-symbols-outlined text-[20px] ${
-                        targetRegions.includes('Latin America & Middle East') ? 'text-[#1d4ed8]' : 'text-[#6b7280]'
+                        targetRegions.includes('Latin America & Middle East') ? 'text-[#1d4ed8]' : 'text-ink-muted'
                       }`}>
                         {targetRegions.includes('Latin America & Middle East') ? 'check_circle' : 'radio_button_unchecked'}
                       </span>
                     </div>
-                    <p className="font-caption text-xs text-[#6b7280] mb-2.5">
+                    <p className="font-caption text-xs text-ink-muted mb-2.5">
                       OAS Fellowships, KAUST Discovery Scholarships, and national research council mobility.
                     </p>
                     <div className="flex items-center justify-between pt-1">
-                      <span className="text-[11px] font-caption text-[#6b7280] bg-[#eeeeed] px-2.5 py-0.5 rounded-full">
+                      <span className="text-[11px] font-caption text-ink-muted bg-[#eeeeed] px-2.5 py-0.5 rounded-full">
                         95+ Matching Opportunities
                       </span>
                     </div>
@@ -915,7 +915,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-2">
                     <label className="font-caption-strong text-xs text-[#1a1a1e]">
-                      Prioritized Destination Countries <span className="text-[#6b7280] font-normal">(Ranked higher in your matches)</span>
+                      Prioritized Destination Countries <span className="text-ink-muted font-normal">(Ranked higher in your matches)</span>
                     </label>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -928,7 +928,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                         <button 
                           type="button" 
                           onClick={() => removeCountry(country)}
-                          className="text-[#6b7280] hover:text-[#ba1a1a]"
+                          className="text-ink-muted hover:text-[#ba1a1a]"
                         >
                           <span aria-hidden="true" className="material-symbols-outlined text-[14px]">close</span>
                         </button>
@@ -942,7 +942,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       >
                         + Switzerland
                       </button>
-                      <span className="text-xs text-[#6b7280]">•</span>
+                      <span className="text-xs text-ink-muted">•</span>
                       <button
                         type="button"
                         onClick={() => addCountry('Japan')}
@@ -987,7 +987,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2">
                   Language Proficiency &amp; Professional Experience
                 </h1>
-                <p className="font-body-lead text-[#6b7280]">
+                <p className="font-body-lead text-ink-muted">
                   Many endowments grant official language waivers or require minimum professional or leadership tenure.
                 </p>
               </div>
@@ -1005,7 +1005,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                       <span className="font-caption-strong text-sm text-[#1a1a1e] block">
                         Undergraduate Degree Taught in English (Medium of Instruction Waiver)
                       </span>
-                      <p className="font-caption text-xs text-[#6b7280] mt-0.5">
+                      <p className="font-caption text-xs text-ink-muted mt-0.5">
                         Institutions such as Cambridge, DAAD, and UK universities frequently waive external testing if your official transcript confirms English medium of instruction.
                       </p>
                     </div>
@@ -1056,7 +1056,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     onChange={(e) => setWorkExperienceYears(parseInt(e.target.value) || 0)}
                     className="w-full accent-[#1d4ed8] h-2 bg-[#eeeeed] rounded-lg cursor-pointer"
                   />
-                  <div className="flex justify-between font-label-sm text-[11px] text-[#6b7280] pt-1">
+                  <div className="flex justify-between font-label-sm text-[11px] text-ink-muted pt-1">
                     <span>0 yrs (Fresh graduate)</span>
                     <span>2 yrs (Chevening threshold)</span>
                     <span>3+ yrs (Rotary threshold)</span>
@@ -1074,7 +1074,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                 <h1 className="font-headline-lg text-[#1a1a1e] tracking-tight mb-2">
                   Credential Verification &amp; Match Profile
                 </h1>
-                <p className="font-body-lead text-[#6b7280]">
+                <p className="font-body-lead text-ink-muted">
                   Your profile has been synchronized with the deterministic evaluation engine.
                 </p>
               </div>
@@ -1089,7 +1089,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     <h2 className="font-headline-sm text-[#1a1a1e] text-lg">
                       {institution}
                     </h2>
-                    <p className="font-caption text-xs text-[#6b7280]">
+                    <p className="font-caption text-xs text-ink-muted">
                       Standardized Score: <span className="font-bold text-[#1a1a1e]">{normalizedGpaScore.toFixed(1)}%</span> • {equivalencyLabel}
                     </p>
                     <p className="font-caption text-xs text-[#047857] flex items-center gap-1 mt-0.5">
@@ -1111,23 +1111,23 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
               {/* Profile Details Review Table */}
               <div className="bg-white rounded-xl p-6 shadow-sm border border-[#e5e7eb] divide-y divide-[#e5e7eb] text-sm">
                 <div className="py-2.5 flex justify-between">
-                  <span className="text-[#6b7280]">Primary Passport</span>
+                  <span className="text-ink-muted">Primary Passport</span>
                   <span className="font-semibold text-[#1a1a1e]">{citizenship}</span>
                 </div>
                 <div className="py-2.5 flex justify-between">
-                  <span className="text-[#6b7280]">Degree Level Pursued</span>
+                  <span className="text-ink-muted">Degree Level Pursued</span>
                   <span className="font-semibold text-[#1a1a1e] capitalize">{targetDegrees.join(', ')}</span>
                 </div>
                 <div className="py-2.5 flex justify-between">
-                  <span className="text-[#6b7280]">Primary Specialization</span>
+                  <span className="text-ink-muted">Primary Specialization</span>
                   <span className="font-semibold text-[#1a1a1e]">{primaryField}</span>
                 </div>
                 <div className="py-2.5 flex justify-between">
-                  <span className="text-[#6b7280]">Target Study Regions</span>
+                  <span className="text-ink-muted">Target Study Regions</span>
                   <span className="font-semibold text-[#1a1a1e]">{targetRegions.join(', ')}</span>
                 </div>
                 <div className="py-2.5 flex justify-between">
-                  <span className="text-[#6b7280]">Delivery Modality</span>
+                  <span className="text-ink-muted">Delivery Modality</span>
                   <span className="font-semibold text-[#1a1a1e] capitalize">{deliveryModality.replace('_', ' ')}</span>
                 </div>
               </div>
@@ -1144,7 +1144,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
               {step === 1 ? 'Cancel' : 'Previous Step'}
             </button>
 
-            <div className="flex items-center gap-2 font-caption text-xs text-[#6b7280] truncate">
+            <div className="flex items-center gap-2 font-caption text-xs text-ink-muted truncate">
               <span className="w-2 h-2 rounded-full bg-[#047857] shrink-0"></span>
               <span className="truncate">
                 {currentUser ? 'Saved to your account' : 'Saved on this device'}

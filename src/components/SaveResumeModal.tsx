@@ -49,7 +49,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
         {/* Top Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-[#6b7280] hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-ink-muted hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-sunken)] transition-colors"
           aria-label="Close modal"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
@@ -82,7 +82,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
           <h2 className="font-headline-sm text-headline-sm text-[#1a1a1e] font-semibold tracking-tight">
             Save progress and resume later?
           </h2>
-          <p className="font-body-default text-sm text-[#6b7280] max-w-[420px] mx-auto leading-relaxed">
+          <p className="font-body-default text-sm text-ink-muted max-w-[420px] mx-auto leading-relaxed">
             Your academic background, GPA conversions, and active destination regions have been safely autosaved.
           </p>
         </div>
@@ -100,7 +100,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#047857]"></span>
               </div>
-              <p className="font-caption text-xs text-[#6b7280] leading-snug">
+              <p className="font-caption text-xs text-ink-muted leading-snug">
                 Saved to your candidate profile. We will email a secure resumption link so you can seamlessly continue on mobile or desktop without a password.
               </p>
             </div>
@@ -119,7 +119,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
             </span>
           </div>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#6b7280]">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-muted">
               <span aria-hidden="true" className="material-symbols-outlined text-[18px]">mail</span>
             </div>
             <input
@@ -130,13 +130,13 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
               className="w-full h-11 pl-10 pr-24 bg-white border border-[#e5e7eb] rounded-lg font-body-default text-sm text-[#1a1a1e] focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
             />
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-              <span className="font-label-sm text-[10px] text-[#6b7280] uppercase tracking-wider bg-[#eeeeed] px-2 py-0.5 rounded">
+              <span className="font-label-sm text-[10px] text-ink-muted uppercase tracking-wider bg-[var(--color-cream)] px-2 py-0.5 rounded">
                 RESUME KEY
               </span>
             </div>
           </div>
-          <p className="font-caption text-xs text-[#6b7280] flex items-center gap-1.5 pt-0.5">
-            <span aria-hidden="true" className="material-symbols-outlined text-[15px] text-[#6b7280]">lock</span>
+          <p className="font-caption text-xs text-ink-muted flex items-center gap-1.5 pt-0.5">
+            <span aria-hidden="true" className="material-symbols-outlined text-[15px] text-ink-muted">lock</span>
             One-click resumption link will be encrypted and sent here. Valid for 14 days.
           </p>
         </div>
@@ -180,7 +180,7 @@ export const SaveResumeModal: React.FC<SaveResumeModalProps> = ({
 
         {/* Trust Note Footer */}
         <div className="mt-5 pt-3 text-center border-t border-[#e5e7eb]">
-          <p className="font-caption text-xs text-[#6b7280] max-w-[380px] mx-auto text-center flex items-center justify-center gap-1.5">
+          <p className="font-caption text-xs text-ink-muted max-w-[380px] mx-auto text-center flex items-center justify-center gap-1.5">
             <span aria-hidden="true" className="material-symbols-outlined text-[15px] text-[#047857]">verified_user</span>
             ScholarFind never charges discovery fees or submits applications without your explicit review.
           </p>
