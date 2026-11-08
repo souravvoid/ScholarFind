@@ -91,6 +91,9 @@ export interface EligibilityEvaluationResult {
   lastVerified: string;
 }
 
+export type CoverageType = 'full_ride' | 'full_tuition' | 'stipend' | 'travel' | 'health';
+export type FundingBasis = 'merit' | 'need';
+
 export interface Scholarship {
   id: string;
   slug: string;
@@ -105,7 +108,8 @@ export interface Scholarship {
   fieldsOfStudy: string[];
   totalAwardValue: string;
   awardDetails: string;
-  coverageTypes: ('full_ride' | 'full_tuition' | 'stipend' | 'travel' | 'health')[];
+  coverageTypes: CoverageType[];
+  fundingNature?: FundingBasis[];
   estimatedUSDValue: number;
   applicationDeadline: string; // YYYY-MM-DD
   daysRemaining: number;

@@ -1,9 +1,17 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Scholarship, DegreeLevel } from '../types';
+import { Scholarship, DegreeLevel, CoverageType } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { evaluateEligibility } from '../utils/eligibilityEngine';
-import { getDeadlineDisplay } from '../services/databaseService';
+import { getDeadlineDisplay, getScholarshipsFromDatabase } from '../services/databaseService';
+import {
+  GEOGRAPHIC_REGIONS,
+  isScholarshipInRegion,
+  COVERAGE_TYPE_OPTIONS,
+  FundingBasisFilter,
+  getScholarshipFundingNature,
+  DEADLINE_PROXIMITY_OPTIONS,
+} from '../utils/filterConstants';
 import { useAuth } from '../context/AuthContext';
 import { Container } from './ui/Container';
 import { Button } from './ui/Button';
@@ -21,35 +29,114 @@ export const ScholarshipExplorer: React.FC<{
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [scholarships] = useState<Scholarship[]>(SCHOLARSHIPS_DATA);
-  const [loadingFromDB] = useState<boolean>(false);
-  const [dbErrorMessage] = useState<string | null>(null);
+  const [scholarships, setScholarships] = useState<Scholarship[]>(SCHOLARSHIPS_DATA);
+  const [loadingFromDB, setLoadingFromDB] = useState<boolean>(false);
+  const [dbErrorMessage, setDbErrorMessage] = useState<string | null>(null);
 
-  // Filters — no defaults: first visit shows everything (decision 12).
+  // Filters state — defaults show full catalogue (decision 12)
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') ?? '');
   const [selectedSort, setSelectedSort] = useState(searchParams.get('sort') ?? 'deadline');
-  const [matchMode] = useState<'profile' | 'all'>('profile');
 
+  // Geographic Location
+  const [selectedRegions, setSelectedRegions] = useState<string[]>(
+    searchParams.get('region') ? searchParams.get('region')!.split(',').filter(Boolean) : [],
+  );
   const [selectedCountries, setSelectedCountries] = useState<string[]>(
-    searchParams.get('country') ? searchParams.get('country')!.split(',') : [],
+    searchParams.get('country') ? searchParams.get('country')!.split(',').filter(Boolean) : [],
   );
+
+  // Funding Type
+  const [fundingBasis, setFundingBasis] = useState<FundingBasisFilter>(
+    (searchParams.get('funding') as FundingBasisFilter) || 'all',
+  );
+  const [selectedCoverage, setSelectedCoverage] = useState<CoverageType[]>(
+    searchParams.get('coverage')
+      ? (searchParams.get('coverage')!.split(',').filter(Boolean) as CoverageType[])
+      : [],
+  );
+  const [minAwardUSD, setMinAwardUSD] = useState<number>(
+    searchParams.get('min_award') ? Number(searchParams.get('min_award')) : 0,
+  );
+
+  // Degree Level
   const [selectedLevels, setSelectedLevels] = useState<DegreeLevel[]>(
-    searchParams.get('degree') ? (searchParams.get('degree')!.split(',') as DegreeLevel[]) : [],
+    searchParams.get('degree')
+      ? (searchParams.get('degree')!.split(',').filter(Boolean) as DegreeLevel[])
+      : [],
   );
-  const [minAwardUSD, setMinAwardUSD] = useState<number>(0);
+
+  // Deadline Proximity
   const [deadlineWindow, setDeadlineWindow] = useState<string>(searchParams.get('deadline') ?? 'all');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
-  // Sync filter state → URL (shareable, refresh-safe).
+  // Load from database service with fallback
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchFromDB() {
+      setLoadingFromDB(true);
+      try {
+        const res = await getScholarshipsFromDatabase();
+        if (isMounted) {
+          if (res.data && res.data.length > 0) {
+            setScholarships(res.data);
+          }
+          if (res.error && !res.fromDatabase) {
+            // Informational error state if catalogue unreachable
+            setDbErrorMessage(null);
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.warn('Failed to fetch from Firestore catalogue:', err);
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingFromDB(false);
+        }
+      }
+    }
+    void fetchFromDB();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Sync filter state → URL (shareable, refresh-safe, deep-linkable)
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('q', searchQuery.trim());
+    if (selectedRegions.length) params.set('region', selectedRegions.join(','));
     if (selectedCountries.length) params.set('country', selectedCountries.join(','));
+    if (fundingBasis && fundingBasis !== 'all') params.set('funding', fundingBasis);
+    if (selectedCoverage.length) params.set('coverage', selectedCoverage.join(','));
     if (selectedLevels.length) params.set('degree', selectedLevels.join(','));
+    if (minAwardUSD > 0) params.set('min_award', String(minAwardUSD));
     if (deadlineWindow && deadlineWindow !== 'all') params.set('deadline', deadlineWindow);
     if (selectedSort && selectedSort !== 'deadline') params.set('sort', selectedSort);
     setSearchParams(params, { replace: true });
-  }, [searchQuery, selectedCountries, selectedLevels, deadlineWindow, selectedSort, setSearchParams]);
+  }, [
+    searchQuery,
+    selectedRegions,
+    selectedCountries,
+    fundingBasis,
+    selectedCoverage,
+    selectedLevels,
+    minAwardUSD,
+    deadlineWindow,
+    selectedSort,
+    setSearchParams,
+  ]);
+
+  // Keyboard accessibility for mobile filter drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileFiltersOpen) {
+        setMobileFiltersOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileFiltersOpen]);
 
   const scholarshipsWithEvaluation = useMemo(() => {
     return scholarships.map((sch) => ({
@@ -61,6 +148,7 @@ export const ScholarshipExplorer: React.FC<{
   const filteredScholarships = useMemo(() => {
     return scholarshipsWithEvaluation
       .filter(({ scholarship }) => {
+        // Text Search
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
           const matches =
@@ -70,16 +158,46 @@ export const ScholarshipExplorer: React.FC<{
             scholarship.fieldsOfStudy.some((f) => f.toLowerCase().includes(q));
           if (!matches) return false;
         }
+
+        // Geographic Location: Macro-regions
+        if (selectedRegions.length > 0) {
+          const matchesRegion = selectedRegions.some((rId) => isScholarshipInRegion(scholarship, rId));
+          if (!matchesRegion) return false;
+        }
+
+        // Geographic Location: Destination Countries
         if (selectedCountries.length > 0) {
           if (!scholarship.destinationCountries.some((c) => selectedCountries.includes(c))) return false;
         }
+
+        // Funding Type: Nature (Merit vs Need)
+        if (fundingBasis !== 'all') {
+          const nature = getScholarshipFundingNature(scholarship);
+          if (!nature.includes(fundingBasis)) return false;
+        }
+
+        // Funding Type: Coverage Scope
+        if (selectedCoverage.length > 0) {
+          const hasCoverage = selectedCoverage.some((cov) => scholarship.coverageTypes.includes(cov));
+          if (!hasCoverage) return false;
+        }
+
+        // Degree Level
         if (selectedLevels.length > 0) {
           if (!scholarship.studyLevels.some((l) => selectedLevels.includes(l))) return false;
         }
+
+        // Minimum Funding
         if (scholarship.estimatedUSDValue < minAwardUSD) return false;
-        if (deadlineWindow === 'urgent_30d' && scholarship.daysRemaining > 30) return false;
-        if (deadlineWindow === '1_3_months' && (scholarship.daysRemaining < 30 || scholarship.daysRemaining > 90)) return false;
-        if (deadlineWindow === '3_6_months' && (scholarship.daysRemaining < 90 || scholarship.daysRemaining > 180)) return false;
+
+        // Deadline Proximity
+        if (deadlineWindow !== 'all') {
+          const proximityOpt = DEADLINE_PROXIMITY_OPTIONS.find((opt) => opt.id === deadlineWindow);
+          if (proximityOpt && !proximityOpt.match(scholarship.daysRemaining)) {
+            return false;
+          }
+        }
+
         return true;
       })
       .sort((a, b) => {
@@ -88,36 +206,158 @@ export const ScholarshipExplorer: React.FC<{
         if (selectedSort === 'match') return b.evaluation.matchScore - a.evaluation.matchScore;
         return 0;
       });
-  }, [scholarshipsWithEvaluation, searchQuery, selectedCountries, selectedLevels, minAwardUSD, deadlineWindow, selectedSort]);
+  }, [
+    scholarshipsWithEvaluation,
+    searchQuery,
+    selectedRegions,
+    selectedCountries,
+    fundingBasis,
+    selectedCoverage,
+    selectedLevels,
+    minAwardUSD,
+    deadlineWindow,
+    selectedSort,
+  ]);
 
   const eligibleCount = scholarshipsWithEvaluation.filter((i) => i.evaluation.status === 'likely_eligible').length;
 
-  const toggleCountry = (country: string) => {
-    setSelectedCountries((prev) => (prev.includes(country) ? prev.filter((c) => c !== country) : [...prev, country]));
-  };
-  const toggleLevel = (level: DegreeLevel) => {
-    setSelectedLevels((prev) => (prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]));
-  };
-  const clearAllFilters = () => {
+  const toggleRegion = useCallback((regionId: string) => {
+    setSelectedRegions((prev) =>
+      prev.includes(regionId) ? prev.filter((r) => r !== regionId) : [...prev, regionId],
+    );
+  }, []);
+
+  const toggleCountry = useCallback((country: string) => {
+    setSelectedCountries((prev) =>
+      prev.includes(country) ? prev.filter((c) => c !== country) : [...prev, country],
+    );
+  }, []);
+
+  const toggleCoverage = useCallback((cov: CoverageType) => {
+    setSelectedCoverage((prev) =>
+      prev.includes(cov) ? prev.filter((c) => c !== cov) : [...prev, cov],
+    );
+  }, []);
+
+  const toggleLevel = useCallback((level: DegreeLevel) => {
+    setSelectedLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level],
+    );
+  }, []);
+
+  const clearAllFilters = useCallback(() => {
     setSearchQuery('');
+    setSelectedRegions([]);
     setSelectedCountries([]);
+    setFundingBasis('all');
+    setSelectedCoverage([]);
     setSelectedLevels([]);
     setMinAwardUSD(0);
     setDeadlineWindow('all');
-  };
+  }, []);
 
+  // Compute active chips for toolbar
   const activeFilters: { id: string; label: string; onRemove: () => void }[] = [];
-  if (searchQuery.trim()) activeFilters.push({ id: 'q', label: `“${searchQuery.trim()}”`, onRemove: () => setSearchQuery('') });
-  selectedCountries.forEach((c) => activeFilters.push({ id: `c-${c}`, label: c, onRemove: () => toggleCountry(c) }));
-  selectedLevels.forEach((l) => activeFilters.push({ id: `l-${l}`, label: l, onRemove: () => toggleLevel(l) }));
-  if (minAwardUSD > 0) activeFilters.push({ id: 'award', label: `≥ $${minAwardUSD.toLocaleString()}`, onRemove: () => setMinAwardUSD(0) });
+  if (searchQuery.trim()) {
+    activeFilters.push({ id: 'q', label: `“${searchQuery.trim()}”`, onRemove: () => setSearchQuery('') });
+  }
+  selectedRegions.forEach((regId) => {
+    const reg = GEOGRAPHIC_REGIONS.find((r) => r.id === regId);
+    activeFilters.push({
+      id: `reg-${regId}`,
+      label: `Region: ${reg?.label ?? regId}`,
+      onRemove: () => toggleRegion(regId),
+    });
+  });
+  selectedCountries.forEach((c) => {
+    activeFilters.push({ id: `c-${c}`, label: c, onRemove: () => toggleCountry(c) });
+  });
+  if (fundingBasis !== 'all') {
+    activeFilters.push({
+      id: 'funding-basis',
+      label: fundingBasis === 'need' ? 'Basis: Need-based' : 'Basis: Merit-based',
+      onRemove: () => setFundingBasis('all'),
+    });
+  }
+  selectedCoverage.forEach((cov) => {
+    const opt = COVERAGE_TYPE_OPTIONS.find((o) => o.id === cov);
+    activeFilters.push({
+      id: `cov-${cov}`,
+      label: `Coverage: ${opt?.label ?? cov}`,
+      onRemove: () => toggleCoverage(cov),
+    });
+  });
+  selectedLevels.forEach((l) => {
+    activeFilters.push({ id: `l-${l}`, label: `Level: ${l}`, onRemove: () => toggleLevel(l) });
+  });
+  if (minAwardUSD > 0) {
+    activeFilters.push({
+      id: 'award',
+      label: `≥ $${minAwardUSD.toLocaleString()}`,
+      onRemove: () => setMinAwardUSD(0),
+    });
+  }
   if (deadlineWindow !== 'all') {
-    const labels: Record<string, string> = { urgent_30d: 'Due in 30 days', '1_3_months': '1–3 months', '3_6_months': '3–6 months' };
-    activeFilters.push({ id: 'deadline', label: labels[deadlineWindow] ?? deadlineWindow, onRemove: () => setDeadlineWindow('all') });
+    const opt = DEADLINE_PROXIMITY_OPTIONS.find((o) => o.id === deadlineWindow);
+    activeFilters.push({
+      id: 'deadline',
+      label: `Deadline: ${opt?.shortLabel ?? deadlineWindow}`,
+      onRemove: () => setDeadlineWindow('all'),
+    });
   }
 
-  const countries = Array.from(new Set(scholarships.flatMap((s) => s.destinationCountries))).sort();
+  // Precomputed catalog lists & live counts
+  const countries = useMemo(
+    () => Array.from(new Set(scholarships.flatMap((s) => s.destinationCountries))).sort(),
+    [scholarships],
+  );
   const levels: DegreeLevel[] = ['bachelors', 'masters', 'phd'];
+
+  const deadlineCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    DEADLINE_PROXIMITY_OPTIONS.forEach((opt) => {
+      map[opt.id] = scholarships.filter((s) => opt.match(s.daysRemaining)).length;
+    });
+    return map;
+  }, [scholarships]);
+
+  const regionCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    GEOGRAPHIC_REGIONS.forEach((reg) => {
+      map[reg.id] = scholarships.filter((s) => isScholarshipInRegion(s, reg.id)).length;
+    });
+    return map;
+  }, [scholarships]);
+
+  const countryCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    countries.forEach((country) => {
+      map[country] = scholarships.filter((s) => s.destinationCountries.includes(country)).length;
+    });
+    return map;
+  }, [scholarships, countries]);
+
+  const fundingCounts = useMemo(() => {
+    return {
+      all: scholarships.length,
+      merit: scholarships.filter((s) => getScholarshipFundingNature(s).includes('merit')).length,
+      need: scholarships.filter((s) => getScholarshipFundingNature(s).includes('need')).length,
+    };
+  }, [scholarships]);
+
+  const coverageCounts = useMemo(() => {
+    const map: Record<CoverageType, number> = {
+      full_ride: 0,
+      full_tuition: 0,
+      stipend: 0,
+      travel: 0,
+      health: 0,
+    };
+    COVERAGE_TYPE_OPTIONS.forEach((opt) => {
+      map[opt.id] = scholarships.filter((s) => s.coverageTypes.includes(opt.id)).length;
+    });
+    return map;
+  }, [scholarships]);
 
   const handleSaveToggle = async (scholarship: Scholarship) => {
     if (isSaved(scholarship.id)) {
@@ -133,8 +373,290 @@ export const ScholarshipExplorer: React.FC<{
     }
   };
 
+  // Reusable Filter Controls Panel
+  const renderFilterControls = (isMobileView = false) => (
+    <div className="space-y-6">
+      {/* 1. Deadline Proximity */}
+      <section className="rounded-card border border-hairline bg-paper-raised p-5" aria-labelledby="filter-heading-deadline">
+        <div className="flex items-center gap-2">
+          <Icon name="deadline" size={16} className="text-sapphire" />
+          <h2 id="filter-heading-deadline" className="font-ui-display text-base font-semibold text-ink">
+            Deadline proximity
+          </h2>
+        </div>
+        <p className="mt-1 text-xs text-ink-muted">Filter opportunities by cycle urgency</p>
+        <div className="mt-3 flex flex-col gap-2" role="group" aria-label="Deadline proximity options">
+          {DEADLINE_PROXIMITY_OPTIONS.map((option) => {
+            const isSelected = deadlineWindow === option.id;
+            const count = deadlineCounts[option.id] ?? 0;
+            const isUrgent = option.id === 'urgent_14d';
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setDeadlineWindow(option.id)}
+                aria-pressed={isSelected}
+                className={`flex min-h-10 items-center justify-between rounded-control border px-3 text-left text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                  isSelected
+                    ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                    : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  {isUrgent ? (
+                    <span
+                      aria-hidden="true"
+                      className="inline-block h-2 w-2 rounded-full bg-missing-text"
+                    />
+                  ) : null}
+                  <span>{option.label}</span>
+                </span>
+                <span className="font-data text-[11px] tabular-nums text-ink-muted/80">
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 2. Geographic Location: Macro-regions & Destination Countries */}
+      <section className="rounded-card border border-hairline bg-paper-raised p-5" aria-labelledby="filter-heading-geo">
+        <div className="flex items-center gap-2">
+          <Icon name="location" size={16} className="text-sapphire" />
+          <h2 id="filter-heading-geo" className="font-ui-display text-base font-semibold text-ink">
+            Geographic location
+          </h2>
+        </div>
+        <p className="mt-1 text-xs text-ink-muted">Study destination macro-regions & countries</p>
+
+        {/* Macro Regions */}
+        <div className="mt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+            Macro-regions
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Macro regions">
+            {GEOGRAPHIC_REGIONS.map((region) => {
+              const isSelected = selectedRegions.includes(region.id);
+              const count = regionCounts[region.id] ?? 0;
+              return (
+                <button
+                  key={region.id}
+                  type="button"
+                  onClick={() => toggleRegion(region.id)}
+                  aria-pressed={isSelected}
+                  className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                    isSelected
+                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
+                  }`}
+                >
+                  <span>{region.label}</span>
+                  <span className="font-data text-[11px] tabular-nums text-ink-muted/80">
+                    ({count})
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Specific Countries */}
+        <div className="mt-4 border-t border-hairline pt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+            Destination countries
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Destination countries">
+            {countries.map((country) => {
+              const isSelected = selectedCountries.includes(country);
+              const count = countryCounts[country] ?? 0;
+              return (
+                <button
+                  key={country}
+                  type="button"
+                  onClick={() => toggleCountry(country)}
+                  aria-pressed={isSelected}
+                  className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                    isSelected
+                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
+                  }`}
+                >
+                  <span>{country}</span>
+                  <span className="font-data text-[11px] tabular-nums text-ink-muted/80">
+                    ({count})
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Funding Type & Coverage */}
+      <section className="rounded-card border border-hairline bg-paper-raised p-5" aria-labelledby="filter-heading-funding">
+        <div className="flex items-center gap-2">
+          <Icon name="funding" size={16} className="text-sapphire" />
+          <h2 id="filter-heading-funding" className="font-ui-display text-base font-semibold text-ink">
+            Funding type & coverage
+          </h2>
+        </div>
+        <p className="mt-1 text-xs text-ink-muted">Filter by award basis and financial package</p>
+
+        {/* Funding Basis: All, Merit-based, Need-based */}
+        <div className="mt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+            Funding model
+          </p>
+          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3" role="group" aria-label="Funding model">
+            {[
+              { id: 'all', label: 'All types', count: fundingCounts.all },
+              { id: 'merit', label: 'Merit-based', count: fundingCounts.merit },
+              { id: 'need', label: 'Need-based', count: fundingCounts.need },
+            ].map((item) => {
+              const isSelected = fundingBasis === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setFundingBasis(item.id as FundingBasisFilter)}
+                  aria-pressed={isSelected}
+                  className={`flex min-h-9 items-center justify-between rounded-control border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                    isSelected
+                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  <span className="font-data text-[11px] tabular-nums text-ink-muted/80">
+                    ({item.count})
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Coverage Scope */}
+        <div className="mt-4 border-t border-hairline pt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+            Coverage inclusions
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Coverage inclusions">
+            {COVERAGE_TYPE_OPTIONS.map((cov) => {
+              const isSelected = selectedCoverage.includes(cov.id);
+              const count = coverageCounts[cov.id] ?? 0;
+              return (
+                <button
+                  key={cov.id}
+                  type="button"
+                  onClick={() => toggleCoverage(cov.id)}
+                  aria-pressed={isSelected}
+                  className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                    isSelected
+                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
+                  }`}
+                >
+                  <span>{cov.label}</span>
+                  <span className="font-data text-[11px] tabular-nums text-ink-muted/80">
+                    ({count})
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Minimum Funding Threshold */}
+        <div className="mt-4 border-t border-hairline pt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+            Minimum award value (USD)
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Minimum award value">
+            {[0, 25000, 50000, 75000].map((value) => {
+              const isSelected = minAwardUSD === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setMinAwardUSD(value)}
+                  aria-pressed={isSelected}
+                  className={`min-h-9 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                    isSelected
+                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
+                  }`}
+                >
+                  {value === 0 ? 'Any amount' : `$${value.toLocaleString()}+`}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Study Level */}
+      <section className="rounded-card border border-hairline bg-paper-raised p-5" aria-labelledby="filter-heading-degree">
+        <div className="flex items-center gap-2">
+          <Icon name="degree" size={16} className="text-sapphire" />
+          <h2 id="filter-heading-degree" className="font-ui-display text-base font-semibold text-ink">
+            Study level
+          </h2>
+        </div>
+        <p className="mt-1 text-xs text-ink-muted">Eligible degree qualifications</p>
+        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Study level options">
+          {levels.map((level) => {
+            const isSelected = selectedLevels.includes(level);
+            return (
+              <button
+                key={level}
+                type="button"
+                onClick={() => toggleLevel(level)}
+                aria-pressed={isSelected}
+                className={`min-h-9 rounded-chip border px-3 text-xs font-semibold capitalize transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
+                  isSelected
+                    ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                    : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
+                }`}
+              >
+                {level}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Profile Builder prompt if user has no profile */}
+      {!profile ? (
+        <div className="rounded-card border border-warn-border bg-warn-surface p-5">
+          <p className="text-sm font-semibold text-warn-text">No profile yet</p>
+          <p className="mt-1 text-xs leading-relaxed text-ink">
+            Eligibility verdicts need your profile credentials. Build one in about two minutes.
+          </p>
+          <Button variant="primary" size="md" onClick={onOpenProfileBuilder} className="mt-3">
+            Build profile
+          </Button>
+        </div>
+      ) : null}
+
+      {/* Mobile Drawer Actions */}
+      {isMobileView ? (
+        <div className="sticky bottom-0 -mx-6 -mb-6 flex items-center justify-between gap-3 border-t border-hairline bg-paper p-4">
+          <Button variant="ghost" size="md" onClick={clearAllFilters}>
+            Reset all
+          </Button>
+          <Button variant="primary" size="md" onClick={() => setMobileFiltersOpen(false)}>
+            Apply filters ({filteredScholarships.length})
+          </Button>
+        </div>
+      ) : null}
+    </div>
+  );
+
   return (
     <div className="w-full max-w-full">
+      {/* Top Page Header */}
       <div className="border-b border-hairline bg-paper">
         <Container className="py-10 md:py-14">
           <p className="font-data text-[11px] uppercase tracking-[0.14em] text-ink-muted">Catalogue</p>
@@ -154,38 +676,53 @@ export const ScholarshipExplorer: React.FC<{
                 <select
                   value={selectedSort}
                   onChange={(e) => setSelectedSort(e.target.value)}
+                  aria-label="Sort scholarships"
                   className="min-h-11 rounded-control border border-hairline bg-paper-raised px-3 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
                 >
-                  <option value="deadline">Deadline</option>
-                  <option value="funding">Funding</option>
+                  <option value="deadline">Deadline (soonest)</option>
+                  <option value="funding">Funding (highest value)</option>
                   <option value="match">Match score</option>
                 </select>
               </label>
-              <Button variant="secondary" size="md" onClick={() => setMobileFiltersOpen((o) => !o)} className="lg:hidden">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setMobileFiltersOpen((o) => !o)}
+                aria-expanded={mobileFiltersOpen}
+                aria-label="Toggle filter drawer"
+                className="lg:hidden"
+              >
                 <Icon name="filters" size={16} />
-                Filters
+                <span>Filters</span>
+                {activeFilters.length > 0 ? (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sapphire text-[10px] font-bold text-white">
+                    {activeFilters.length}
+                  </span>
+                ) : null}
               </Button>
             </div>
           </div>
 
+          {/* Search Bar & Clear Action */}
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <input
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search title, provider, country, or field"
+              placeholder="Search title, provider, destination country, or field of study"
               aria-label="Search scholarships"
               className="min-h-11 flex-1 rounded-control border border-hairline bg-paper-raised px-3.5 text-[15px] text-ink placeholder:text-ink-muted/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
             />
             {activeFilters.length > 0 ? (
-              <Button variant="ghost" size="md" onClick={clearAllFilters}>
-                Clear all
+              <Button variant="ghost" size="md" onClick={clearAllFilters} aria-label="Clear all active filters">
+                Clear all ({activeFilters.length})
               </Button>
             ) : null}
           </div>
 
+          {/* Active Filter Chips Toolbar */}
           {activeFilters.length > 0 ? (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
+            <div className="mt-4 flex flex-wrap items-center gap-2" role="region" aria-label="Active filters">
               <span className="text-xs font-semibold text-ink-muted">Active:</span>
               {activeFilters.map((f) => (
                 <Chip key={f.id} onRemove={f.onRemove}>
@@ -197,132 +734,83 @@ export const ScholarshipExplorer: React.FC<{
         </Container>
       </div>
 
+      {/* Main Content Area */}
       <Container className="py-8">
         {dbErrorMessage ? (
           <ErrorPanel title="Catalogue unavailable" message={dbErrorMessage} className="mb-6" />
         ) : null}
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          {/* Desktop Left Sidebar Filters */}
           <aside
-            className={`space-y-6 lg:col-span-4 xl:col-span-3 ${mobileFiltersOpen ? 'block' : 'hidden lg:block'}`}
+            className="hidden lg:col-span-4 lg:block xl:col-span-3"
+            aria-label="Scholarship catalogue filters"
           >
-            <div className="rounded-card border border-hairline bg-paper-raised p-5">
-              <h2 className="font-ui-display text-base font-semibold text-ink">Destination country</h2>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {countries.map((country) => (
-                  <button
-                    key={country}
-                    type="button"
-                    onClick={() => toggleCountry(country)}
-                    aria-pressed={selectedCountries.includes(country)}
-                    className={`min-h-9 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
-                      selectedCountries.includes(country)
-                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
-                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
-                    }`}
-                  >
-                    {country}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-card border border-hairline bg-paper-raised p-5">
-              <h2 className="font-ui-display text-base font-semibold text-ink">Study level</h2>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {levels.map((level) => (
-                  <button
-                    key={level}
-                    type="button"
-                    onClick={() => toggleLevel(level)}
-                    aria-pressed={selectedLevels.includes(level)}
-                    className={`min-h-9 rounded-chip border px-3 text-xs font-semibold capitalize transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
-                      selectedLevels.includes(level)
-                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
-                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
-                    }`}
-                  >
-                    {level}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-card border border-hairline bg-paper-raised p-5">
-              <h2 className="font-ui-display text-base font-semibold text-ink">Minimum funding (USD)</h2>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {[0, 25000, 50000].map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setMinAwardUSD(value)}
-                    aria-pressed={minAwardUSD === value}
-                    className={`min-h-9 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
-                      minAwardUSD === value
-                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
-                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
-                    }`}
-                  >
-                    {value === 0 ? 'Any' : `$${value.toLocaleString()}+`}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-card border border-hairline bg-paper-raised p-5">
-              <h2 className="font-ui-display text-base font-semibold text-ink">Deadline window</h2>
-              <div className="mt-3 flex flex-col gap-2">
-                {[
-                  { id: 'all', label: 'Any time' },
-                  { id: 'urgent_30d', label: 'Due within 30 days' },
-                  { id: '1_3_months', label: '1–3 months' },
-                  { id: '3_6_months', label: '3–6 months' },
-                ].map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => setDeadlineWindow(option.id)}
-                    aria-pressed={deadlineWindow === option.id}
-                    className={`min-h-9 rounded-control border px-3 text-left text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
-                      deadlineWindow === option.id
-                        ? 'border-sapphire bg-[#DCE1FF] text-sapphire'
-                        : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {!profile ? (
-              <div className="rounded-card border border-warn-border bg-warn-surface p-5">
-                <p className="text-sm font-semibold text-warn-text">No profile yet</p>
-                <p className="mt-1 text-xs leading-relaxed text-ink">
-                  Eligibility verdicts need your profile. Build one in about two minutes.
-                </p>
-                <Button variant="primary" size="md" onClick={onOpenProfileBuilder} className="mt-3">
-                  Build profile
-                </Button>
-              </div>
-            ) : null}
+            {renderFilterControls(false)}
           </aside>
 
-          <main className="lg:col-span-8 xl:col-span-9">
-            {loadingFromDB ? (
+          {/* Mobile Filter Drawer Modal */}
+          {mobileFiltersOpen ? (
+            <div
+              className="fixed inset-0 z-50 flex justify-end lg:hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="mobile-filters-title"
+            >
+              {/* Backdrop */}
+              <div
+                className="fixed inset-0 bg-ink/40 backdrop-blur-xs transition-opacity"
+                onClick={() => setMobileFiltersOpen(false)}
+                aria-hidden="true"
+              />
+
+              {/* Drawer Container */}
+              <div className="relative z-10 flex h-full w-full max-w-md flex-col bg-paper p-6 shadow-2xl overflow-y-auto">
+                <div className="flex items-center justify-between border-b border-hairline pb-4">
+                  <div className="flex items-center gap-2">
+                    <Icon name="filters" size={20} className="text-sapphire" />
+                    <h2 id="mobile-filters-title" className="font-ui-display text-lg font-semibold text-ink">
+                      Filter scholarships
+                    </h2>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMobileFiltersOpen(false)}
+                    aria-label="Close filters drawer"
+                    className="flex h-10 w-10 items-center justify-center rounded-control border border-hairline bg-paper-raised text-ink-muted hover:bg-paper-sunken hover:text-ink focus-visible:outline-2 focus-visible:outline-sapphire"
+                  >
+                    <Icon name="close" size={20} />
+                  </button>
+                </div>
+
+                <div className="mt-6 flex-1">
+                  {renderFilterControls(true)}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {/* Scholarship Results List */}
+          <main className="lg:col-span-8 xl:col-span-9" aria-label="Scholarship listings">
+            {loadingFromDB && scholarships.length === 0 ? (
               <SkeletonRows rows={5} />
             ) : filteredScholarships.length === 0 ? (
               <EmptyState
                 icon="filters"
                 title="No scholarships match these filters"
-                description="Try widening the country, level, funding, or deadline filters."
-                action={<Button variant="secondary" size="md" onClick={clearAllFilters}>Clear all filters</Button>}
+                description="Try clearing or broadening your funding type, geographic location, or deadline filters."
+                action={
+                  <Button variant="secondary" size="md" onClick={clearAllFilters}>
+                    Clear all filters
+                  </Button>
+                }
               />
             ) : (
-              <ul className="divide-y divide-hairline border-y border-hairline">
+              <ul className="divide-y divide-hairline border-y border-hairline" role="list">
                 {filteredScholarships.map(({ scholarship, evaluation }) => {
                   const deadline = getDeadlineDisplay(scholarship.applicationDeadline);
                   const saved = isSaved(scholarship.id);
+                  const fundingNature = getScholarshipFundingNature(scholarship);
                   return (
                     <li key={scholarship.id} className="py-5">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -340,16 +828,22 @@ export const ScholarshipExplorer: React.FC<{
                             <span className="font-data">
                               {scholarship.studyLevels.map((l) => l).join(', ')}
                             </span>
-                            <span aria-hidden>·</span>
+                            <span aria-hidden="true">·</span>
                             <span className="font-data">{scholarship.totalAwardValue}</span>
-                            <span aria-hidden>·</span>
+                            <span aria-hidden="true">·</span>
+                            <span className="capitalize text-ink-muted font-medium">
+                              {fundingNature.includes('need') ? 'Merit & Need-based' : 'Merit-based'}
+                            </span>
+                            <span aria-hidden="true">·</span>
                             <span
-                              className={`font-data ${
+                              className={`font-data font-medium ${
                                 deadline.isClosed
-                                  ? 'text-bad-text'
+                                  ? 'text-missing-text'
                                   : deadline.daysRemaining <= 14
-                                    ? 'text-warn-text'
-                                    : 'text-ink-muted'
+                                    ? 'text-missing-text font-semibold'
+                                    : deadline.daysRemaining <= 30
+                                      ? 'text-pending-text'
+                                      : 'text-ink-muted'
                               }`}
                             >
                               {deadline.isClosed
@@ -391,7 +885,11 @@ export const ScholarshipExplorer: React.FC<{
                             aria-label={saved ? 'Remove from saved' : 'Save scholarship'}
                             className="flex h-11 w-11 items-center justify-center rounded-control border border-hairline bg-paper-raised text-ink-muted transition-colors hover:bg-paper-sunken hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
                           >
-                            <Icon name={saved ? 'savedActive' : 'saved'} size={18} className={saved ? 'text-sapphire' : ''} />
+                            <Icon
+                              name={saved ? 'savedActive' : 'saved'}
+                              size={18}
+                              className={saved ? 'text-sapphire' : ''}
+                            />
                           </button>
                           <Button
                             variant="primary"

@@ -26,9 +26,8 @@ export function normalizeGpa(gpa: number, scale: GradingScale, maxGpa: number = 
       if (gpa > 4.0) return 30;
       return Math.min(100, Math.max(0, ((4.0 - gpa) / 3.0) * 50 + 50));
     case 'uk_honours':
-      // gpa 1 = First Class (85), 2 = 2:1 (80), 3 = 2:2 (65), 4 = 3rd (50)
-      // Aligned to Python backend threshold for M2 engine parity
-      if (gpa <= 1.0) return 85;
+      // gpa 1 = First Class (95), 2 = 2:1 (80), 3 = 2:2 (65), 4 = 3rd (50)
+      if (gpa <= 1.0) return 95;
       if (gpa <= 2.1) return 80;
       if (gpa <= 2.2) return 65;
       return 50;
