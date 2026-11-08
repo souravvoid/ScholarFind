@@ -1,68 +1,75 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { 
-  User, 
-  onAuthStateChanged, 
-  signInWithPopup, 
-  signOut as fbSignOut 
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  User,
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut as fbSignOut,
 } from 'firebase/auth';
-import { 
-  doc, 
-  getDoc, 
-  setDoc, 
-  collection, 
-  onSnapshot, 
-  deleteDoc 
-} from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../firebase';
 import { StudentProfile, SavedScholarship, TrackerStatus } from '../types';
 
-export const INITIAL_SAMPLE_PROFILE: StudentProfile = {
-  uid: 'demo_scholar_amara',
-  email: 'amara.okafor@alumni.ui.edu.ng',
-  displayName: 'Amara Okafor',
-  photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-  citizenship: 'Nigeria',
-  residenceCountry: 'Nigeria',
-  educationLevel: 'bachelors',
-  institution: 'University of Ibadan (Nigeria)',
-  gradingScale: 'gpa_4_0',
-  gpa: 3.82,
-  maxGpa: 4.0,
-  graduationYear: '2026 (Expected)',
-  primaryField: 'Computer Science & Artificial Intelligence (STEM)',
-  facultyTags: ['Computer Science', 'Machine Learning', 'STEM'],
-  researchKeywords: ['Machine Learning', 'Natural Language Processing', 'Data Ethics & Algorithmic Fairness'],
-  targetDegrees: ['masters', 'phd'],
-  targetRegions: ['Western & Northern Europe', 'North America'],
-  targetCountries: ['United Kingdom', 'Germany', 'Canada', 'United States', 'Netherlands'],
-  deliveryModality: 'on_campus',
-  intendedStartTerm: 'Fall 2026',
-  workExperienceYears: 2,
-  englishTestType: 'none',
-  englishScore: '',
-  hasEnglishMediumInstruction: true,
-  updatedAt: new Date().toISOString(),
-  createdAt: new Date().toISOString()
-};
+function safeParse<T>(raw: string | null): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function createEmptyProfile(user: User | null): StudentProfile {
+  const now = new Date().toISOString();
+  return {
+    uid: user?.uid ?? 'guest',
+    email: user?.email ?? '',
+    displayName: user?.displayName ?? '',
+    photoURL: user?.photoURL ?? undefined,
+    citizenship: '',
+    residenceCountry: '',
+    educationLevel: 'bachelors',
+    institution: '',
+    gradingScale: 'gpa_4_0',
+    gpa: 0,
+    maxGpa: 4.0,
+    graduationYear: '',
+    primaryField: '',
+    facultyTags: [],
+    researchKeywords: [],
+    targetDegrees: [],
+    targetRegions: [],
+    targetCountries: [],
+    deliveryModality: 'on_campus',
+    intendedStartTerm: '',
+    workExperienceYears: 0,
+    englishTestType: 'none',
+    englishScore: '',
+    hasEnglishMediumInstruction: false,
+    updatedAt: now,
+    createdAt: now,
+  };
+}
 
 interface AuthContextType {
   currentUser: User | null;
   profile: StudentProfile | null;
   loading: boolean;
   savedScholarships: SavedScholarship[];
+  authError: string | null;
   signInWithGoogle: () => Promise<void>;
-  signInDemoUser: () => void;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<StudentProfile>) => Promise<void>;
-  saveScholarship: (scholarshipId: string, metadata: {
-    title: string;
-    provider: string;
-    destination: string;
-    awardValue: string;
-    deadline: string;
-  }) => Promise<void>;
+  saveScholarship: (
+    scholarshipId: string,
+    metadata: { title: string; provider: string; destination: string; awardValue: string; deadline: string },
+  ) => Promise<void>;
   unsaveScholarship: (scholarshipId: string) => Promise<void>;
-  updateTrackerStatus: (scholarshipId: string, status: TrackerStatus, notes?: string, completedDocs?: string[]) => Promise<void>;
+  updateTrackerStatus: (
+    scholarshipId: string,
+    status: TrackerStatus,
+    notes?: string,
+    completedDocs?: string[],
+  ) => Promise<void>;
   isSaved: (scholarshipId: string) => boolean;
 }
 
@@ -70,145 +77,130 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<StudentProfile | null>(() => {
-    // Check localStorage fallback for immediate responsiveness
-    const saved = localStorage.getItem('scholarfind_profile');
-    return saved ? JSON.parse(saved) : INITIAL_SAMPLE_PROFILE;
-  });
+  const [profile, setProfile] = useState<StudentProfile | null>(() =>
+    safeParse<StudentProfile>(localStorage.getItem('scholarfind_profile')),
+  );
   const [savedScholarships, setSavedScholarships] = useState<SavedScholarship[]>(() => {
-    const saved = localStorage.getItem('scholarfind_saved');
-    return saved ? JSON.parse(saved) : [
-      {
-        id: 'gates-cambridge',
-        userId: 'demo_scholar_amara',
-        scholarshipId: 'gates-cambridge',
-        scholarshipTitle: 'Gates Cambridge Scholarship',
-        provider: 'University of Cambridge',
-        destination: 'United Kingdom',
-        awardValue: 'Full tuition + £20,000/yr',
-        deadline: '2026-12-03',
-        status: 'preparing' as TrackerStatus,
-        completedDocs: ['Official Academic Transcripts (Certified English translation)'],
-        notes: 'Refining personal leadership essay focusing on health data fairness.',
-        savedAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: 'commonwealth-masters',
-        userId: 'demo_scholar_amara',
-        scholarshipId: 'commonwealth-masters',
-        scholarshipTitle: 'Commonwealth Master’s Scholarship 2026/27',
-        provider: 'Commonwealth Scholarship Commission',
-        destination: 'United Kingdom',
-        awardValue: 'Full tuition + £1,347/mo',
-        deadline: '2026-12-12',
-        status: 'interested' as TrackerStatus,
-        completedDocs: [],
-        notes: 'Awaiting nomination portal release.',
-        savedAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    ];
+    const parsed = safeParse<SavedScholarship[]>(localStorage.getItem('scholarfind_saved'));
+    return Array.isArray(parsed) ? parsed : [];
   });
   const [loading, setLoading] = useState<boolean>(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  // Sync to localStorage
+  // Keep a ref so async writes never read a stale closure.
+  const savedRef = useRef(savedScholarships);
+  useEffect(() => {
+    savedRef.current = savedScholarships;
+  }, [savedScholarships]);
+
+  // Persist profile only when one exists (guests and signed-in users share this device store).
   useEffect(() => {
     if (profile) {
-      localStorage.setItem('scholarfind_profile', JSON.stringify(profile));
+      try {
+        localStorage.setItem('scholarfind_profile', JSON.stringify(profile));
+      } catch {
+        /* ignore storage failures */
+      }
     }
   }, [profile]);
 
   useEffect(() => {
-    localStorage.setItem('scholarfind_saved', JSON.stringify(savedScholarships));
+    try {
+      localStorage.setItem('scholarfind_saved', JSON.stringify(savedScholarships));
+    } catch {
+      /* ignore storage failures */
+    }
   }, [savedScholarships]);
 
-  // Firebase Auth listener
+  // Firebase Auth listener. A single saved-scholarships listener is attached per signed-in user
+  // and detached on sign-out / re-auth to avoid leaks.
   useEffect(() => {
+    let unsubSaved: (() => void) | null = null;
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      unsubSaved?.();
+      unsubSaved = null;
       setCurrentUser(user);
+      setAuthError(null);
+
       if (user) {
-        // Fetch or create profile in Firestore
         const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
         try {
           const snapshot = await getDoc(profileRef);
           if (snapshot.exists()) {
             setProfile(snapshot.data() as StudentProfile);
           } else {
-            // Seed profile for new authenticated user
-            const newProfile: StudentProfile = {
-              ...INITIAL_SAMPLE_PROFILE,
-              uid: user.uid,
-              email: user.email || 'user@scholarfind.org',
-              displayName: user.displayName || 'ScholarFind Fellow',
-              photoURL: user.photoURL || undefined,
-              updatedAt: new Date().toISOString(),
-              createdAt: new Date().toISOString()
-            };
-            await setDoc(profileRef, newProfile);
+            const newProfile = createEmptyProfile(user);
+            try {
+              await setDoc(profileRef, newProfile);
+            } catch (error) {
+              handleFirestoreError(error, OperationType.CREATE, `users/${user.uid}/profile/data`);
+            }
             setProfile(newProfile);
           }
         } catch (error) {
-          console.warn('Could not read user profile from Firestore, using cached/local state:', error);
+          console.warn('Could not read user profile from Firestore; keeping cached state:', error);
         }
 
-        // Attach listener for user's saved scholarships
         const savedCol = collection(db, 'users', user.uid, 'saved_scholarships');
-        const unsubSaved = onSnapshot(
+        unsubSaved = onSnapshot(
           savedCol,
           (snapshot) => {
-            const list: SavedScholarship[] = [];
-            snapshot.forEach((docSnap) => {
-              list.push(docSnap.data() as SavedScholarship);
-            });
-            if (list.length > 0) {
-              setSavedScholarships(list);
-            }
+            const list: SavedScholarship[] = snapshot.docs.map((d) => d.data() as SavedScholarship);
+            setSavedScholarships(list); // empty snapshot clears the UI (no ghost rows)
           },
           (err) => {
             console.warn('Snapshot error on saved scholarships:', err);
-          }
+          },
         );
 
         setLoading(false);
-        return () => unsubSaved();
       } else {
-        // Unauthenticated - keep demo profile active so the user can interactively test the matching engine immediately
+        // Unauthenticated: device-local state (already loaded from localStorage) stays as-is.
         setLoading(false);
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubSaved?.();
+      unsubscribe();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
+    setAuthError(null);
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error: any) {
       console.warn('Google sign-in popup failed or was blocked by browser:', error);
-      // Fallback: If in restricted iframe or popup blocked, activate demo authenticated state
-      signInDemoUser();
+      setAuthError('Sign-in was cancelled or blocked. You can keep using ScholarFind on this device.');
     }
-  };
-
-  const signInDemoUser = () => {
-    setProfile(INITIAL_SAMPLE_PROFILE);
   };
 
   const signOut = async () => {
     try {
       await fbSignOut(auth);
-    } catch (e) {
-      console.error('Sign out error:', e);
+    } catch (error) {
+      console.error('Sign out error:', error);
     }
+    // Clear all user residue from state and device storage (B-07).
     setCurrentUser(null);
+    setProfile(null);
+    setSavedScholarships([]);
+    try {
+      localStorage.removeItem('scholarfind_profile');
+      localStorage.removeItem('scholarfind_saved');
+    } catch {
+      /* ignore storage failures */
+    }
   };
 
   const updateProfile = async (updates: Partial<StudentProfile>) => {
-    const updated = {
-      ...(profile || INITIAL_SAMPLE_PROFILE),
+    const base = profile ?? createEmptyProfile(currentUser);
+    const updated: StudentProfile = {
+      ...base,
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
     setProfile(updated);
 
@@ -222,19 +214,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const saveScholarship = async (scholarshipId: string, metadata: {
-    title: string;
-    provider: string;
-    destination: string;
-    awardValue: string;
-    deadline: string;
-  }) => {
-    const existing = savedScholarships.find(s => s.scholarshipId === scholarshipId);
-    if (existing) return;
+  const saveScholarship = async (
+    scholarshipId: string,
+    metadata: { title: string; provider: string; destination: string; awardValue: string; deadline: string },
+  ) => {
+    if (savedScholarships.some((s) => s.scholarshipId === scholarshipId)) return;
 
     const newSaved: SavedScholarship = {
       id: scholarshipId,
-      userId: currentUser?.uid || 'demo_scholar_amara',
+      userId: currentUser?.uid ?? 'guest',
       scholarshipId,
       scholarshipTitle: metadata.title,
       provider: metadata.provider,
@@ -245,10 +233,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       completedDocs: [],
       notes: '',
       savedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
-    setSavedScholarships(prev => [newSaved, ...prev]);
+    setSavedScholarships((prev) => [newSaved, ...prev]);
 
     if (currentUser) {
       const savePath = `users/${currentUser.uid}/saved_scholarships/${scholarshipId}`;
@@ -261,7 +249,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const unsaveScholarship = async (scholarshipId: string) => {
-    setSavedScholarships(prev => prev.filter(s => s.scholarshipId !== scholarshipId));
+    setSavedScholarships((prev) => prev.filter((s) => s.scholarshipId !== scholarshipId));
 
     if (currentUser) {
       const savePath = `users/${currentUser.uid}/saved_scholarships/${scholarshipId}`;
@@ -274,63 +262,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateTrackerStatus = async (
-    scholarshipId: string, 
-    status: TrackerStatus, 
-    notes?: string, 
-    completedDocs?: string[]
+    scholarshipId: string,
+    status: TrackerStatus,
+    notes?: string,
+    completedDocs?: string[],
   ) => {
-    setSavedScholarships(prev => prev.map(s => {
-      if (s.scholarshipId === scholarshipId) {
-        return {
-          ...s,
-          status,
-          ...(notes !== undefined ? { notes } : {}),
-          ...(completedDocs !== undefined ? { completedDocs } : {}),
-          updatedAt: new Date().toISOString()
-        };
-      }
-      return s;
-    }));
+    const current = savedRef.current.find((s) => s.scholarshipId === scholarshipId);
+    if (!current) return;
+
+    const payload: SavedScholarship = {
+      ...current,
+      status,
+      ...(notes !== undefined ? { notes } : {}),
+      ...(completedDocs !== undefined ? { completedDocs } : {}),
+      updatedAt: new Date().toISOString(),
+    };
+
+    setSavedScholarships((prev) =>
+      prev.map((s) => (s.scholarshipId === scholarshipId ? payload : s)),
+    );
 
     if (currentUser) {
       const savePath = `users/${currentUser.uid}/saved_scholarships/${scholarshipId}`;
       try {
-        const item = savedScholarships.find(s => s.scholarshipId === scholarshipId);
-        if (item) {
-          const payload = {
-            ...item,
-            status,
-            ...(notes !== undefined ? { notes } : {}),
-            ...(completedDocs !== undefined ? { completedDocs } : {}),
-            updatedAt: new Date().toISOString()
-          };
-          await setDoc(doc(db, 'users', currentUser.uid, 'saved_scholarships', scholarshipId), payload, { merge: true });
-        }
+        await setDoc(doc(db, 'users', currentUser.uid, 'saved_scholarships', scholarshipId), payload, { merge: true });
       } catch (error) {
         handleFirestoreError(error, OperationType.UPDATE, savePath);
       }
     }
   };
 
-  const isSaved = (scholarshipId: string) => {
-    return savedScholarships.some(s => s.scholarshipId === scholarshipId);
-  };
+  const isSaved = (scholarshipId: string) => savedScholarships.some((s) => s.scholarshipId === scholarshipId);
 
   return (
-    <AuthContext.Provider value={{
-      currentUser,
-      profile,
-      loading,
-      savedScholarships,
-      signInWithGoogle,
-      signInDemoUser,
-      signOut,
-      updateProfile,
-      saveScholarship,
-      unsaveScholarship,
-      updateTrackerStatus,
-      isSaved
-    }}>
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        profile,
+        loading,
+        savedScholarships,
+        authError,
+        signInWithGoogle,
+        signOut,
+        updateProfile,
+        saveScholarship,
+        unsaveScholarship,
+        updateTrackerStatus,
+        isSaved,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

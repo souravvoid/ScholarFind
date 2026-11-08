@@ -46,13 +46,13 @@
   --font-headline-lg: "Manrope", sans-serif;
   --font-headline-md: "Manrope", sans-serif;
   --font-headline-sm: "Manrope", sans-serif;
-  --font-title: "Inter", sans-serif;
-  --font-body-lead: "Inter", sans-serif;
-  --font-body-default: "Inter", sans-serif;
-  --font-body-strong: "Inter", sans-serif;
-  --font-caption: "Inter", sans-serif;
-  --font-caption-strong: "Inter", sans-serif;
-  --font-label-sm: "Inter", sans-serif;
+  --font-title: "Inter Variable", sans-serif;
+  --font-body-lead: "Inter Variable", sans-serif;
+  --font-body-default: "Inter Variable", sans-serif;
+  --font-body-strong: "Inter Variable", sans-serif;
+  --font-caption: "Inter Variable", sans-serif;
+  --font-caption-strong: "Inter Variable", sans-serif;
+  --font-label-sm: "Inter Variable", sans-serif;
 
   /* Arc design tokens */
   --color-arc-blue: #3B3BFF;
@@ -60,8 +60,50 @@
   --color-arc-cream: #FFFEF0;
   --color-arc-slate: #14141f;
 
-  --font-arc-display: "Space Grotesk", sans-serif;
-  --font-arc-mono: "JetBrains Mono", monospace;
+  --font-arc-display: "Space Grotesk Variable", sans-serif;
+  --font-arc-mono: "JetBrains Mono Variable", monospace;
+
+  /* ── ScholarFind design system v1 (docs/DESIGN_SYSTEM.md) ──────────────────
+     Additive during migration; legacy M3/Arc tokens are removed in the final
+     sweep once every page consumes the ui/ primitives. */
+  --color-paper: #FBFBFA;
+  --color-paper-raised: #FFFFFF;
+  --color-paper-sunken: #F3F4F3;
+  --color-ink: #14141F;
+  --color-ink-muted: #5A5A66;
+  --color-hairline: #E4E4E0;
+  --color-hairline-strong: #D2D2CC;
+  --color-sapphire: #0037B0;
+  --color-sapphire-hover: #1D4ED8;
+  --color-royal: #3B3BFF;
+  --color-cream: #FFFEF0;
+
+  --color-ok-text: #047857;
+  --color-ok-surface: #ECFDF5;
+  --color-ok-border: #A7F3D0;
+  --color-warn-text: #B45309;
+  --color-warn-surface: #FFFBEB;
+  --color-warn-border: #FDE68A;
+  --color-bad-text: #BE123C;
+  --color-bad-surface: #FFF1F2;
+  --color-bad-border: #FECDD3;
+
+  --color-disabled-surface: #EFEFEC;
+  --color-disabled-text: #6B6B75;
+
+  --font-ui: "Inter Variable", sans-serif;
+  --font-ui-display: "Space Grotesk Variable", sans-serif;
+  --font-data: "JetBrains Mono Variable", monospace;
+
+  --radius-chip: 6px;
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --radius-panel: 16px;
+
+  --shadow-raise: 0 1px 2px rgb(20 20 31 / 0.05);
+  --shadow-overlay: 0 24px 64px -16px rgb(20 20 31 / 0.24);
+
+  --ease-arc: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
@@ -76,6 +118,16 @@
     color: var(--color-on-surface);
     background-color: var(--color-canvas-warm);
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Global motion contract: honor the OS preference everywhere. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -163,7 +215,7 @@
 }
 
 .font-body-lead {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter Variable", sans-serif;
   font-weight: 400;
   font-size: 17px;
   line-height: 27px;
@@ -178,7 +230,7 @@
 }
 
 .font-title {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter Variable", sans-serif;
   font-weight: 600;
   font-size: 18px;
   line-height: 24px;
@@ -186,33 +238,33 @@
 }
 
 .font-body-default {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter Variable", sans-serif;
   font-size: 15px;
   line-height: 24px;
 }
 
 .font-body-strong {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter Variable", sans-serif;
   font-weight: 600;
   font-size: 15px;
   line-height: 24px;
 }
 
 .font-caption {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter Variable", sans-serif;
   font-size: 13px;
   line-height: 18px;
 }
 
 .font-caption-strong {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter Variable", sans-serif;
   font-weight: 600;
   font-size: 13px;
   line-height: 18px;
 }
 
 .font-label-sm {
-  font-family: "Inter", sans-serif;
+  font-family: "Inter Variable", sans-serif;
   font-weight: 600;
   font-size: 11px;
   line-height: 14px;
@@ -249,13 +301,13 @@
 
 /* Arc design utilities */
 .font-arc-display {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Space Grotesk Variable", sans-serif;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .font-arc-mono {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "JetBrains Mono Variable", monospace;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -285,7 +337,7 @@
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   border: 1px solid #3B3BFF;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "JetBrains Mono Variable", monospace;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -301,7 +353,7 @@
   border-radius: 0.75rem;
   background: #FFFFFF;
   color: #3B3BFF;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "JetBrains Mono Variable", monospace;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -320,7 +372,7 @@
   background: #1A1A8C;
   border: 1px solid rgba(255, 255, 255, 0.35);
   color: #FFFFFF;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "JetBrains Mono Variable", monospace;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.05em;

@@ -2,88 +2,90 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import React, { useState, useEffect } from 'react';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { Navbar } from './components/Navbar';
-import { Footer } from './components/Footer';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { AppShell } from './components/layout/AppShell';
 import { LandingPage } from './components/LandingPage';
 import { ScholarshipExplorer } from './components/ScholarshipExplorer';
 import { ApplicationTracker } from './components/ApplicationTracker';
 import { SourceTransparency } from './components/SourceTransparency';
 import { ProfileBuilder } from './components/ProfileBuilder';
 import { ScholarshipDetailsModal } from './components/ScholarshipDetailsModal';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { Scholarship } from './types';
 import { testConnection } from './firebase';
 
-function MainApp() {
-  const [currentTab, setCurrentTab] = useState<string>('landing');
-  const [showProfileBuilder, setShowProfileBuilder] = useState<boolean>(false);
-  const [selectedScholarship, setSelectedScholarship] = useState<Scholarship | null>(null);
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [pathname]);
+  return null;
+}
 
-  // Validate connection to Firestore on initial boot as required by skill
+function MainApp() {
+  const [showProfileBuilder, setShowProfileBuilder] = useState(false);
+  const [selectedScholarship, setSelectedScholarship] = useState<Scholarship | null>(null);
+  const navigate = useNavigate();
+
+  // Validate connection to Firestore on initial boot (read-only probe).
   useEffect(() => {
     testConnection();
   }, []);
 
   const handleNavigate = (tab: string) => {
-    setCurrentTab(tab);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(tab === 'landing' ? '/' : `/${tab}`);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbfbfa] text-[#1a1c1c] antialiased w-full max-w-full overflow-x-hidden">
-      {/* Universal Navigation Bar */}
-      <Navbar
-        currentTab={currentTab}
-        onNavigate={handleNavigate}
-        onOpenProfileBuilder={() => setShowProfileBuilder(true)}
-      />
+    <AppShell onOpenProfileBuilder={() => setShowProfileBuilder(true)}>
+      <ScrollToTop />
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-full pt-16 overflow-x-hidden min-w-0">
-        {currentTab === 'landing' && (
-          <LandingPage
-            onNavigate={handleNavigate}
-            onOpenProfileBuilder={() => setShowProfileBuilder(true)}
-            onSelectScholarship={(s) => setSelectedScholarship(s)}
-          />
-        )}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <LandingPage
+              onNavigate={handleNavigate}
+              onOpenProfileBuilder={() => setShowProfileBuilder(true)}
+              onSelectScholarship={(scholarship) => setSelectedScholarship(scholarship)}
+            />
+          }
+        />
+        <Route
+          path="/explore"
+          element={
+            <ScholarshipExplorer
+              onSelectScholarship={(scholarship) => setSelectedScholarship(scholarship)}
+              onOpenProfileBuilder={() => setShowProfileBuilder(true)}
+            />
+          }
+        />
+        <Route
+          path="/tracker"
+          element={
+            <ApplicationTracker
+              onSelectScholarship={(scholarship) => setSelectedScholarship(scholarship)}
+              onExplore={() => navigate('/explore')}
+            />
+          }
+        />
+        <Route path="/sources" element={<SourceTransparency />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
 
-        {currentTab === 'explore' && (
-          <ScholarshipExplorer
-            onSelectScholarship={(s) => setSelectedScholarship(s)}
-            onOpenProfileBuilder={() => setShowProfileBuilder(true)}
-          />
-        )}
-
-        {currentTab === 'tracker' && (
-          <ApplicationTracker
-            onSelectScholarship={(s) => setSelectedScholarship(s)}
-            onExplore={() => handleNavigate('explore')}
-          />
-        )}
-
-        {currentTab === 'sources' && (
-          <SourceTransparency />
-        )}
-      </main>
-
-      {/* Universal Footer */}
-      <Footer onNavigate={handleNavigate} />
-
-      {/* Interactive Multi-step Profile Builder Modal */}
-      {showProfileBuilder && (
+      {showProfileBuilder ? (
         <ProfileBuilder
           onClose={() => setShowProfileBuilder(false)}
           onFinished={() => {
             setShowProfileBuilder(false);
-            handleNavigate('explore');
+            navigate('/explore');
           }}
         />
-      )}
+      ) : null}
 
-      {/* Scholarship Details & Eligibility Rubric Breakdown Modal */}
-      {selectedScholarship && (
+      {selectedScholarship ? (
         <ScholarshipDetailsModal
           scholarship={selectedScholarship}
           onClose={() => setSelectedScholarship(null)}
@@ -92,15 +94,17 @@ function MainApp() {
             setShowProfileBuilder(true);
           }}
         />
-      )}
-    </div>
+      ) : null}
+    </AppShell>
   );
 }
 
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <BrowserRouter>
+        <MainApp />
+      </BrowserRouter>
     </AuthProvider>
   );
 }
