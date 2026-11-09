@@ -1,352 +1,193 @@
-# Migration Report: FastAPI to Django
+# Migration Report: FastAPI → Django + DRF
 
-## 1. Original FastAPI Architecture
+Verified on 2026-11-09 against PostgreSQL 18.3, Django 6.1.3, DRF 3.18.3.
 
-### Backend Entry Point
-- `backend/main.py`: FastAPI application with 4 endpoints:
-  - `GET /api/v1/health`: Health check with service status
-  - `GET /api/v1/sources`: List ingestion sources
-  - `POST /api/v1/admin/ingest/{source_id}`: Trigger ingestion for a source
-  - `POST /api/v1/evaluate`: Evaluate scholarship eligibility
+## 1. What was migrated
 
-### API Endpoints
-| Endpoint | Method | Description |
+| Original FastAPI surface | Django implementation | Status |
 |---|---|---|
-| `/api/v1/health` | GET | Health check returning service status, registered sources, stored scholarships |
-| `/api/v1/sources` | GET | List all ingestion sources with their metadata |
-| `/api/v1/admin/ingest/{source_id}` | POST | Trigger ingestion for a specific source ID |
-| `/api/v1/evaluate` | POST | Evaluate scholarship eligibility based on student profile and rules |
+| `GET /api/v1/health` | `config.views.health` | Preserved (same JSON shape, includes DB catalogue count) |
+| `GET /api/v1/sources` | `config.views.sources` | Preserved (all 10 registry sources) |
+| `POST /api/v1/admin/ingest/{source_id}` | `ingestion.views.admin_ingest` | Preserved + now persists to PostgreSQL |
+| `POST /api/v1/evaluate` | `accounts.views.evaluate_compat` | Preserved (body-supplied rules, no DB lookup) |
+| Google OAuth login/callback | `accounts.views.google_login/google_callback` | Implemented (needs real credentials to exercise) |
+| Session auth | Django sessions | Implemented |
+| SQLAlchemy models | Six Django apps | Migrated |
+| Deterministic eligibility engine | `eligibility_service.py` | Migrated, parity-tested against the original |
 
-### Authentication
-- Google OAuth integration for login/callback
-- Session-based authentication
+Additional DRF endpoints (new, not in FastAPI):
 
-### Database
-- SQLAlchemy ORM models
-- Custom models: User, StudentProfile, ScholarshipProvider, ScholarshipSource, Scholarship, EligibilityRules, RequiredDocument, SavedScholarship, ApplicationTrackerEntry, IngestionJob
+- `/api/v1/scholarships/` — paginated search envelope (`page`, `page_size`,
+  `total_count`, `results`) with `query`, `destination`, `degree_level` filters.
+- `/api/v1/eligibility/` and `/api/v1/eligibility/evaluate/` — DB-aware
+  evaluation (uses stored rules when `rules` is omitted).
+- `/api/v1/student-profiles/`, `/api/v1/user-profiles/`,
+  `/api/v1/saved-scholarships/`, `/api/v1/application-tracker-entries/`,
+  `/api/v1/manual-review-flags/`, `/api/v1/work-experience-records/` —
+  authenticated, per-user viewsets.
+- `/api/v1/scholarship-providers/`, `scholarship-sources/`,
+  `eligibility-rules/`, `required-documents/`, `ingestion-jobs/` — read-only.
+- `/api/auth/token/` — DRF token auth.
+- `/api/auth/google/session/`, `/api/auth/google/logout/`.
 
-### Eligibility Engine
-- `backend/eligibility.py`: Deterministic eligibility evaluation engine
-- Rule types: citizenship, degree_level, academic_score, field_of_study, language, work_experience, manual_review
-- GPA standardization across scales (4.0, 5.0, UK_HONOURS, PERCENTAGE, GERMAN, ECTS)
-- 4 overall outcomes: LIKELY_ELIGIBLE, MORE_INFO_NEEDED, DOES_NOT_MEET, NEEDS_MANUAL_REVIEW
+## 2. Project layout
 
-### Ingestion Pipeline
-- 10 ingestion adapters (CSC UK, DAAD DE, Fulbright US, etc.)
-- Modular pipeline: access policy verification, backoff fetch, parse, normalize, validate, idempotent storage, audit logging
-
-### Dependencies
-- FastAPI, FastAPI-CORSMiddleware, Uvicorn
-- Pydantic for schema validation
-- SQLAlchemy for ORM
-- Various ingestion adapter dependencies
-
-## 2. New Django Architecture
-
-### Project Structure
 ```
 backend/
     manage.py
-    config/
-        __init__.py
-        settings.py
-        urls.py
-        wsgi.py
-        asgi.py
-    accounts/
-        __init__.py
-        admin.py
-        apps.py
-        migrations/
-            0001_initial.py
-            ...
-        models.py
-        views.py
-        tests/
-    students/
-        __init__.py
-        admin.py
-        apps.py
-        migrations/
-            0001_initial.py
-            ...
-        models.py
-        views.py
-        tests/
-    scholarships/
-        __init__.py
-        admin.py
-        apps.py
-        migrations/
-            0001_initial.py
-            ...
-        models.py
-        views.py
-        serializers.py
-        tests/
-    matching/
-        __init__.py
-        admin.py
-        apps.py
-        migrations/
-            0001_initial.py
-            ...
-        models.py
-        views.py
-    saved/
-        __init__.py
-        admin.py
-        apps.py
-        migrations/
-            0001_initial.py
-            ...
-        models.py
-        views.py
-    tracking/
-        __init__.pg
-        admin.py
-        apps.py
-        migrations/
-            0001_initial.py
-            ...
-        models.py
-        views.py
-    tests/
+    config/            settings, root URLs, health/sources views
+    accounts/          UserProfile, OAuth, evaluation, token auth
+    students/          StudentProfile + GPA normalization
+    scholarships/      catalogue models, services, population command
+    matching/          ManualReviewFlag, WorkExperienceRecord
+    saved/             SavedScholarship (user-owned)
+    tracking/          ApplicationTrackerEntry (user-owned)
+    ingestion/         adapters, pipeline, registry, admin endpoint
+    eligibility_service.py   migrated deterministic engine
+    tests/             legacy unit tests + migrated/pytest suites
     requirements.txt
-    pyproject.toml
+    pytest.ini
     .env.example
-    .gitignore
 ```
 
-### Django Apps
-- `accounts`: Custom user profile model (OneToOneField to AUTH_USER_MODEL)
-- `students`: StudentProfile model with education details
-- `scholarships`: ScholarshipProvider, ScholarshipSource, Scholarship, EligibilityRules, RequiredDocument models
-- `matching`: ManualReviewFlag, WorkExperienceRecord models
-- `saved`: SavedScholarship model (user-Scholarship many-to-many with status)
-- `tracking`: ApplicationTrackerEntry model (application progress tracking)
+## 3. Database
 
-### API Endpoints (DRF)
-| Endpoint | Method | Description |
+- Engine: PostgreSQL 18.3.
+- **Dedicated database:** `scholarfind_django` (owner `scholarfind`).
+- The pre-existing `scholarfind` database on this host contains unrelated
+  Prisma tables (`Application`, `Student`, `Disbursement`, …) with live rows.
+  It was **not** modified or dropped. Django does not use it.
+- Env overrides: `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`,
+  `POSTGRES_HOST`, `POSTGRES_PORT` (see `backend/.env.example`).
+- `rest_framework.authtoken` is installed, so token auth has real tables.
+
+## 4. Data population
+
+The original FastAPI service kept adapter output in **memory**
+(`IngestionStorageRepository`); there was no FastAPI database to copy. The
+adapter registry is therefore the source of truth.
+
+`python3 manage.py populate_scholarships` runs all 10 verified adapters through
+the ingestion pipeline and idempotently upserts into PostgreSQL:
+
+```
+src_csc_uk: success fetched=2 created=2 updated=0 errors=0
+... (10 sources)
+Population complete: created=11 updated=0 catalogue_total=11 sources=10
+```
+
+A second run reports `created=0 updated=11`, proving idempotency. Persisted
+counts: 11 scholarships, 10 sources, 10 providers, 29 eligibility rules,
+47 required documents.
+
+Persistence lives in `scholarships/services.py` and is shared by the management
+command and the admin ingestion endpoint. Unknown adapter rule types are stored
+as `manual_review` with the original type preserved in `rule_payload`.
+
+## 5. Verification performed
+
+| Check | Command | Result |
 |---|---|---|
-| `/api/v1/health` | GET | Health check returning `{"status": "ok", "service": "scholarfind"}` |
-| `/api/v1/sources` | GET | List scholarship sources |
-| `/api/v1/scholarships` | GET | List scholarships with pagination |
-| `/api/v1/student-profiles` | GET/POST | Student profile management |
-| `/api/v1/user-profiles` | GET/POST | User profile management |
-| `/api/v1/evaluate` | POST | Eligibility evaluation (stub implementation) |
-| `/api/auth/token/` | POST | Obtain auth token via DRF token auth |
+| Django system check | `python3 manage.py check` | No issues |
+| Migration drift | `python3 manage.py makemigrations --check --dry-run` | No changes detected |
+| Apply migrations | `python3 manage.py migrate` | All applied |
+| Population | `python3 manage.py populate_scholarships` | 11 records, idempotent |
+| Pytest (all) | `cd backend && python3 -m pytest -q` | **64 passed** |
+| Legacy unittest | `npm run test:backend` | **44 passed** |
+| API smoke | `manage.py shell` Django client | health/sources/scholarships/evaluate OK |
 
-### Database
-- PostgreSQL as the actual database
-- Django ORM for all database operations
-- Django migrations for schema management
-- Default user model extended with profile information
+Integration tests (PostgreSQL) cover: health, sources, catalogue pagination and
+filters, read-only enforcement, both evaluation contracts, token auth, profile
+creation with GPA normalization, saved-scholarship privacy/uniqueness,
+ingestion authorization + persistence, and OAuth unconfigured paths.
 
-### Authentication
-- DRF token-based authentication (`obtain_auth_token`)
-- Django's built-in auth contrib apps (contenttypes, auth, admin, sessions, messages)
-- Custom user profile via OneToOneField
+Eligibility tests cover all grading scales, all four outcomes, language
+test/waiver paths, degree and field mismatches, work experience, and outcome
+parity with the original FastAPI engine.
 
-### Key Features Preserved
-- All existing API endpoint URLs preserved
-- JSON response formats consistent with original
-- Eligibility engine business logic preserved and enhanced
-- Ingestion pipeline structure maintained
-- Google OAuth authentication reimplemented (custom)
-- Student profile functionality with GPA normalization
-- Saved scholarships with unique user-scholarship constraint
-- Progress tracking with application tracker entries
+## 6. Known gaps / remaining work
 
-## 3. Files Created and Modified
+1. **Live Google OAuth** cannot be exercised without
+   `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET`; unconfigured paths
+   return HTTP 503 and are tested.
+2. **CORS** for a browser frontend is not configured. Add `django-cors-headers`
+   with an explicit origin allowlist before wiring the React app to this API.
+3. **Production hardening** still needed: real `DJANGO_SECRET_KEY`, `DEBUG=False`,
+   `SECURE_*` settings, static file serving.
+4. The seven lightweight collectors are wrapped by
+   `ingestion/registry.py::CollectorAdapter`; their award/deadline data is
+   indicative and should be verified against each provider.
+5. Frontend still talks to Firebase directly; cut-over is a separate effort.
 
-### Files Created
-- `backend/config/settings.py`: Django project settings with PostgreSQL configuration
-- `backend/config/urls.py`: URL routing with DRF routers and API endpoints
-- `backend/accounts/models.py`: UserProfile model extending Django's auth user
-- `backend/students/models.py`: StudentProfile model with education details
-- `backend/scholarships/models.py`: ScholarshipProvider, ScholarshipSource, Scholarship, EligibilityRule, RequiredDocument, IngestionJob models
-- `backend/matching/models.py`: ManualReviewFlag, WorkExperienceRecord models
-- `backend/saved/models.py`: SavedScholarship model
-- `backend/tracking/models.py`: ApplicationTrackerEntry model
-- `backend/accounts/serializers.py`: UserProfileSerializer
-- `backend/students/serializers.py`: StudentProfileSerializer
-- `backend/scholarships/serializers.py`: ScholarshipProviderSerializer, ScholarshipSourceSerializer, ScholarshipSerializer, etc.
-- `backend/matching/views.py`: ManualReviewFlagViewSet, WorkExperienceRecordViewSet
-- `backend/saved/views.py`: SavedScholarshipViewSet
-- `backend/tracking/views.py`: ApplicationTrackerEntryViewSet
-- `backend/scholarships/views.py`: ViewSets with serializer classes
-- `backend/students/views.py`: StudentProfileViewSet
-- `backend/accounts/views.py`: UserProfileViewSet
-- `backend/config/settings.py`: Updated with TEMPLATES configuration, AUTH_USER_MODEL
-- `backend/config/urls.py`: Updated with health, sources, evaluate endpoints and DRF router
-- `backend/manage.py`: Django management command entry point
-- Migration files for all 6 apps (0001_initial.py)
+## 7. Prioritized task list
 
-### Files Modified
-- `backend/config/settings.py`: Added auth to INSTALLED_APPS, added TEMPLATES, updated DATABASES user from 'scholarfind' to 'sourav'
-- Existing frontend files: Not modified (as per restriction)
+Status reflects work completed in this session.
 
-### Files Deleted (Dead Code Cleanup)
-- `backend/HeroGlobe3D.*`
-- `backend/SaveResumeModal.*`
-- `backend/Dialog.*`
-- `backend/Field.*`
-- `backend/PageHeader.*`
-- 9 dependencies removed from requirements
+### P1 — Critical correctness and security (done unless noted)
 
-## 4. API Endpoint Compatibility Table
+| # | Task | Effort | Dependencies | Changes | Tests |
+|---|---|---|---|---|---|
+| 1.1 | Fix admin ingestion endpoint (`adapter_instance`, DB persistence, staff-only) | 2 h | — | `ingestion/views.py`, `ingestion/registry.py`, `scholarships/services.py` | staff/non-staff, unknown source, persistence |
+| 1.2 | Replace stub `/api/v1/health`, `/sources`, `/evaluate` | 2 h | — | `config/views.py`, `config/urls.py`, `accounts/views.py` | contract assertions |
+| 1.3 | Add missing viewsets serializers + auth scoping | 2 h | — | `saved/`, `tracking/`, `matching/`, `students/`, `accounts/serializers.py` | auth, privacy, uniqueness |
+| 1.4 | Remove duplicate `SavedScholarship` / `ApplicationTrackerEntry` models | 1 h | — | `scholarships/models.py`, `scholarships/migrations/0001_initial.py` | `makemigrations --check` |
+| 1.5 | Dedicated working PostgreSQL database + token auth tables | 1 h | PG running | `config/settings.py`, `.env.example` | migrate, smoke |
+| 1.6 | Prevent public catalogue writes | 1 h | — | `scholarships/views.py` | 405 on POST |
+| 1.7 | Resolve production hosting DB/CORS | 3 h | 1.5 | `settings.py` | deployment smoke — **open** |
 
-| FastAPI Endpoint | Django Equivalent | Status |
-|---|---|---|
-| `GET /api/v1/health` | `GET /api/v1/health/` | ✅ Preserved |
-| `GET /api/v1/sources` | `GET /api/v1/sources/` | ✅ Preserved |
-| `POST /api/v1/admin/ingest/{source_id}` | `POST /api/v1/admin/ingest/{source_id}` | ⚠️ In progress - adapter integration pending |
-| `POST /api/v1/evaluate` | `POST /api/v1/evaluate/` | ✅ Preserved (stub implementation) |
+### P2 — Eligibility engine coverage (done)
 
-### Response Format Compatibility
-- All response JSON field names preserved from FastAPI schemas
-- Eligibility outcomes preserved: LIKELY_ELIGIBLE, MORE_INFO_NEEDED, DOES_NOT_MEET, NEEDS_MANUAL_REVIEW
-- Scholarship data fields preserved (title, provider, destination, study_levels, etc.)
-- Student profile fields preserved (GPA, citizenship, education_level, etc.)
+| # | Task | Effort | Dependencies | Changes | Tests |
+|---|---|---|---|---|---|
+| 2.1 | Port eligibility unit tests to `eligibility_service` | 2 h | — | `tests/test_eligibility_service.py` | scales, outcomes, language, degree, field |
+| 2.2 | Parity test vs original engine | 1 h | 2.1 | same | outcome/count/percentage parity |
 
-## 5. Database Migration Details
+### P3 — Database-backed integration tests (done)
 
-### PostgreSQL Configuration
-- Database: `scholarfind`
-- User: `sourav` (PostgreSQL superuser)
-- Host: `localhost`
-- Port: `5432`
+| # | Task | Effort | Dependencies | Changes | Tests |
+|---|---|---|---|---|---|
+| 3.1 | pytest-django configuration | 0.5 h | — | `pytest.ini`, `tests/test_api_integration.py` | collection |
+| 3.2 | Endpoint integration suite on PostgreSQL | 3 h | 1.x, 3.1 | same | 20+ API tests |
+| 3.3 | Keep `npm run test:backend` green | 1 h | 3.2 | import bootstrap in test module | 44 unittest pass |
 
-### Models Mapped from SQLAlchemy
-| SQLAlchemy Model | Django Model | Notes |
-|---|---|---|
-| User | Django auth User + UserProfile OneToOne | Extended with display_name, photo_url, citizenship, residence_country |
-| StudentProfile | students.StudentProfile | Added DegreeLevelChoices, GPA normalization |
-| ScholarshipProvider | scholarships.ScholarshipProvider | Simplified from adapter modules |
-| ScholarshipSource | scholarships.ScholarshipSource | Adapter module metadata preserved |
-| Scholarship | scholarships.Scholarship | All fields mapped including deadline, URLs |
-| EligibilityRules | scholarships.ScholarshipEligibilityRule | RuleTypeChoices, is_mandatory flag |
-| RequiredDocument | scholarships.RequiredDocument | document_name, is_mandatory |
-| SavedScholarship | saved.SavedScholarship | unique_together (user, scholarship) |
-| ApplicationTrackerEntry | tracking.ApplicationTrackerEntry | unique_together (user, scholarship) |
-| IngestionJob | scholarships.IngestionJob | source_id, status tracking |
+### P4 — Data population (done)
 
-### Data Preservation
-- Existing database records preserved during transition
-- Primary keys mapped where feasible
-- Foreign-key relationships maintained
-- Unique constraints preserved
-- Existing data types maintained
+| # | Task | Effort | Dependencies | Changes | Tests |
+|---|---|---|---|---|---|
+| 4.1 | Persistence service mapping normalized records → ORM | 3 h | 1.4 | `scholarships/services.py` | idempotency via command |
+| 4.2 | `populate_scholarships` command (all 10 sources) | 2 h | 4.1 | `scholarships/management/commands/` | run twice, counts stable |
+| 4.3 | Adapter wrapper for lightweight collectors | 2 h | — | `ingestion/registry.py` | all 10 sources execute |
 
-## 6. Data Preservation Verification
+### P5 — Verification and documentation (done)
 
-### Database Tables Created
-- `django_content_type`, `auth_permission`, `auth_user`, `auth_group`
-- `django_auth_user_groups`, `django_auth_user_user_permissions`
-- `django_admin_log`, `django_migrations`, `django_session`
-- Custom tables: `accounts_userprofile`, `students_studentprofile`, `scholarships_scholarshipprovider`, `scholarships_scholarsource`, `scholarships_scholarship`, `scholarships_eligibilityrule`, `scholarships_requireddocument`, `scholarships_ingestionjob`, `matching_manualreviewflag`, `matching_workexperiencerecord`, `saved_savedscholarship`, `trackingapplicationtrackerentry`
+| # | Task | Effort | Dependencies | Changes | Tests |
+|---|---|---|---|---|---|
+| 5.1 | Run system check, migration drift, full test suites | 1 h | 1–4 | — | recorded above |
+| 5.2 | Update migration report and env example | 1 h | 5.1 | this file, `.env.example`, `requirements.txt` | docs review |
+| 5.3 | Frontend lint/build regression check | 1 h | — | none | `npm run lint`, `npm run build` — **open** |
 
-### Record Counts
-- Existing records from FastAPI database verified and migrated
-- No data loss during migration
-- Relationships between tables preserved (foreign keys, unique constraints)
+### P6 — OAuth completion (partially blocked)
 
-## 7. Authentication Migration Status
+| # | Task | Effort | Dependencies | Changes | Tests |
+|---|---|---|---|---|---|
+| 6.1 | OAuth login/callback with `state` validation | 3 h | — | `accounts/views.py` | unconfigured/missing-code paths |
+| 6.2 | Session and logout endpoints | 1 h | 6.1 | `accounts/views.py`, `config/urls.py` | anonymous session, logout |
+| 6.3 | Live credential verification | 1 h | real Google client | none | manual — **blocked** |
 
-### Google OAuth
-- ✅ Fully implemented: login, callback, user creation, session management
-- User creation from Google profile with automatic profile setup
-- Protected endpoints verified with OAuth authentication
-- Session-based auth flow: login → callback → user creation → session
-- Logout functionality via Django's auth system
+## 8. Commands
 
-### Authentication Behavior
-- Login/logout functionality preserved via Django session auth
-- Protected endpoints require authentication
-- Permission checks working via Django's auth system
-- Token-based auth available via DRF's obtain_auth_token
-- Google OAuth provides passwordless authentication for new users
-
-## 8. Test Results
-
-### Verification Commands
-- `python manage.py check`: ✅ Passes (no issues)
-- `python manage.py migrate`: ✅ All migrations applied
-- `python manage.py test`: ✅ 0 tests found (no test files yet)
-
-### API Testing Results
-- Health endpoint: ✅ Returns `{"status": "ok", "service": "scholarfind"}`
-- Sources endpoint: ✅ Returns `{"sources": []}`
-- Scholarships endpoint: ✅ Returns `[]` (empty, no data)
-- Student profiles: ✅ Returns profile data with correct fields
-- User profiles: ✅ Returns profile data with correct fields
-- Authentication token: ✅ Endpoint working (credential validation separate)
-
-### Known Issues
-- Ingestion admin endpoint adapter integration pending
-- Full data population from existing database not yet verified
-- Some edge cases in eligibility rules not yet tested
-
-## 9. Remaining Issues
-
-### Not Implemented
-- Ingestion admin endpoint adapter integration
-- Full data population from existing database verification
-- Admin dashboard functionality
-- Search and filtering on scholarships
-- Pagination on API endpoints
-
-### Testing Needs
-- Unit tests for all views and serializers
-- Integration tests against PostgreSQL
-- Eligibility engine test suite
-- Ingestion pipeline tests
-
-### Configuration
-- ALLOWED_HOSTS needs production settings
-- CORS configuration for frontend integration
-- Static files setup for production
-- Secret key management
-
-## 10. Commands to Run the Backend
-
-### Development Setup
 ```bash
+# Start the project-local PostgreSQL cluster
+pg_ctl -D ~/.scholarfind_pgdata \
+  -o "-k /tmp/opencode/pgsock" -l ~/.scholarfind_pgdata/server.log start
+
 cd backend
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+python3 manage.py check
+python3 manage.py migrate
+python3 manage.py populate_scholarships
+python3 manage.py runserver 0.0.0.0:8000
 
-# Start PostgreSQL
-pg_ctl -D /path/to/data start  # or use system service
-
-# Run migrations
-python manage.py migrate
-
-# Start development server
-python manage.py runserver 0.0.0.0:8000
-
-# Create superuser
-python manage.py createsuperuser
-```
-
-### API Usage
-```bash
-# Health check
-curl http://localhost:8000/api/v1/health/
-
-# List sources
-curl http://localhost:8000/api/v1/sources/
-
-# List scholarships
-curl http://localhost:8000/api/v1/scholarships/
-
-# Get student profiles
-curl http://localhost:8000/api/v1/student-profiles/
-
-# Obtain auth token
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "password"}' \
-  http://localhost:8000/api/auth/token/
+# Tests
+python3 -m pytest -q                 # 64 passed
+cd .. && npm run test:backend        # 44 passed
 ```

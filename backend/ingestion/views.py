@@ -1,61 +1,79 @@
+import json
 import logging
-import os
-from datetime import datetime
-from typing import Dict, Any, List
 
+from django.utils import timezone
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
-from .pipeline import IngestionPipeline, DEFAULT_STORAGE, IngestionValidationError
-from ingestion.adapters.csc_uk import CSCCommonwealthAdapter
-from ingestion.adapters.daad_de import DAADHelmutSchmidtAdapter
-from ingestion.adapters.fulbright_us import FulbrightProgramAdapter
+from scholarships.models import IngestionJob
+from scholarships.services import persist_records, records_for_source
+
+from .pipeline import IngestionPipeline, IngestionStorageRepository
+from .registry import PIPELINE_ADAPTERS, get_pipeline_adapter
 
 logger = logging.getLogger("scholarfind.ingestion.admin")
 
-# Adapter mapping
-ADAPTERS: Dict[str, Any] = {
-    "src_csc_uk": CSCCommonwealthAdapter,
-    "src_daad_de": DAADHelmutSchmidtAdapter,
-    "src_fulbright_us": FulbrightProgramAdapter,
-}
+PIPELINE_SOURCE_IDS = list(PIPELINE_ADAPTERS)
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([IsAdminUser])
 def admin_ingest(request, source_id: str) -> Response:
+    """Trigger ingestion for a verified source and persist it to PostgreSQL.
+
+    Preserves the original ``POST /api/v1/admin/ingest/{source_id}`` result
+    shape and adds persistence counters.
     """
-    POST /api/v1/admin/ingest/{source_id}
-    
-    Trigger ingestion for a specific source ID.
-    Integrates with existing 10 ingestion adapters (CSC UK, DAAD DE, Fulbright US, etc.).
-    
-    Pipeline: access policy verification, backoff fetch, parse, normalize, validate,
-    idempotent storage, audit logging
-    """
-    # Validate source_id
-    if source_id not in ADAPTERS:
+    adapter = get_pipeline_adapter(source_id)
+    if adapter is None:
         return Response(
             {
-                "error": f"Unknown source_id: {source_id}. "
-                f"Valid sources: {', '.join(ADAPTERS.keys())}"
+                "error": f"Source adapter '{source_id}' not found in registry.",
+                "valid_sources": list(PIPELINE_SOURCE_IDS),
             },
-            status=400,
+            status=status.HTTP_404_NOT_FOUND,
         )
-    
-    adapter_class = ADAPTERS[source_id]
-    adapter = adapter_class()
-    
-    # Run the ingestion pipeline
-    pipeline = IngestionPipeline(source_id=source_id, adapter=adapter, storage=DEFAULT_STORAGE)
-    results = pipeline.run_job()
-    
-    logger.info(
-        f"Ingestion completed for {source_id}: "
-        f"status={results['status']}, "
-        f"new={results['records_stored_new']}, "
-        f"total={results['records_stored_total']}"
+
+    job = IngestionJob.objects.create(
+        source_id=source_id, status=IngestionJob.StatusChoices.RUNNING
     )
-    
+
+    # A per-request store makes the pipeline report the full record set, while
+    # database writes below remain idempotent across repeated runs.
+    storage = IngestionStorageRepository()
+    pipeline = IngestionPipeline(
+        source_id=source_id, adapter_instance=adapter, storage=storage
+    )
+    results = pipeline.run_job()
+
+    records = records_for_source(storage, source_id)
+    created_count, updated_count = persist_records(records)
+
+    results["records_created"] = created_count
+    results["records_updated"] = updated_count
+    results["records_persisted"] = created_count + updated_count
+
+    succeeded = results["status"] in ("success", "completed_with_warnings")
+    job.status = (
+        IngestionJob.StatusChoices.COMPLETED
+        if succeeded
+        else IngestionJob.StatusChoices.FAILED
+    )
+    job.records_fetched = results.get("records_fetched", 0)
+    job.records_upserted = created_count + updated_count
+    job.records_failed = len(results.get("errors", []))
+    job.error_log = json.dumps(results.get("errors", []))
+    job.completed_at = timezone.now()
+    job.save()
+
+    logger.info(
+        "Ingestion completed for %s: status=%s new=%s updated=%s total=%s",
+        source_id,
+        results["status"],
+        created_count,
+        updated_count,
+        len(records),
+    )
     return Response(results)

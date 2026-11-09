@@ -113,35 +113,4 @@ class Migration(migrations.Migration):
             name='source',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scholarships', to='scholarships.scholarshipsource'),
         ),
-        migrations.CreateModel(
-            name='SavedScholarship',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('interested', 'Interested'), ('preparing', 'Preparing'), ('ready', 'Ready'), ('applied', 'Applied')], default='interested', max_length=20)),
-                ('notes', models.TextField(blank=True, null=True)),
-                ('saved_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('scholarship', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='scholarships.scholarship')),
-            ],
-            options={
-                'unique_together': {('user', 'scholarship')},
-            },
-        ),
-        migrations.CreateModel(
-            name='ApplicationTrackerEntry',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('interested', 'Interested'), ('preparing', 'Preparing'), ('ready', 'Ready'), ('applied', 'Applied')], default='interested', max_length=20)),
-                ('completed_documents', models.TextField(blank=True, null=True)),
-                ('personal_deadline_target', models.DateTimeField(blank=True, null=True)),
-                ('notes', models.TextField(blank=True, null=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('scholarship', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='scholarships.scholarship')),
-            ],
-            options={
-                'unique_together': {('user', 'scholarship')},
-            },
-        ),
     ]
