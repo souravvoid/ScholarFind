@@ -17,7 +17,7 @@ const NAV_ITEMS = [
 ] as const;
 
 export function MobileDrawer({ open, onClose, onOpenProfileBuilder }: MobileDrawerProps) {
-  const { currentUser, profile, signInWithGoogle, signOut, savedScholarships } = useAuth();
+  const { currentUser, profile, signOut, savedScholarships } = useAuth();
   const panelRef = useFocusTrap<HTMLDivElement>(open, onClose);
   const navigate = useNavigate();
 
@@ -92,12 +92,12 @@ export function MobileDrawer({ open, onClose, onOpenProfileBuilder }: MobileDraw
                 type="button"
                 onClick={() => {
                   onClose();
-                  signInWithGoogle();
+                  navigate('/login');
                 }}
                 className={`${buttonStyles({ variant: 'secondary' })} w-full`}
               >
                 <Icon name="user" size={16} />
-                Sign in with Google
+                Sign in or create an account
               </button>
             </div>
           )}

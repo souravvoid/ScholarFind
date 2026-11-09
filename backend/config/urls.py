@@ -8,13 +8,17 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
 from accounts.views import (
+    auth_login,
+    auth_logout,
     csrf_token,
+    current_user,
     evaluate_compat,
     evaluate_eligibility,
     google_callback,
     google_login,
     google_logout,
     google_session,
+    register,
     UserProfileViewSet,
 )
 from config.views import health, sources
@@ -65,6 +69,10 @@ urlpatterns = [
         name="eligibility_evaluate_explicit",
     ),
     path("api/v1/admin/ingest/<str:source_id>/", admin_ingest, name="admin_ingest"),
+    path("api/auth/register/", register, name="api_register"),
+    path("api/auth/login/", auth_login, name="api_login"),
+    path("api/auth/logout/", auth_logout, name="api_logout"),
+    path("api/auth/me/", current_user, name="api_current_user"),
     path("api/auth/token/", obtain_auth_token, name="api_token_auth"),
     path("api/auth/csrf/", csrf_token, name="csrf_token"),
     path("api/auth/google/login/", google_login, name="google_login"),

@@ -10,7 +10,7 @@ interface ProfileBuilderProps {
 }
 
 export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinished }) => {
-  const { profile, currentUser, updateProfile } = useAuth();
+  const { profile, updateProfile } = useAuth();
   const [step, setStep] = useState<number>(1); // Start on step 1
   const panelRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
@@ -1157,9 +1157,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
 
             <div className="flex items-center gap-2 font-caption text-xs text-ink-muted truncate">
               <span className="w-2 h-2 rounded-full bg-[#047857] shrink-0"></span>
-              <span className="truncate">
-                {currentUser ? 'Saved to your account' : 'Saved on this device'}
-              </span>
+              <span className="truncate">Saved on this device</span>
             </div>
 
             <div className="flex items-center gap-3 w-full sm:w-auto justify-end min-w-0">

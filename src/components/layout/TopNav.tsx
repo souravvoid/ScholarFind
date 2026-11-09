@@ -16,7 +16,7 @@ const NAV_ITEMS = [
 ] as const;
 
 export function TopNav({ onOpenProfileBuilder }: TopNavProps) {
-  const { currentUser, profile, signInWithGoogle, signOut, savedScholarships } = useAuth();
+  const { currentUser, profile, signOut, savedScholarships } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -219,9 +219,9 @@ export function TopNav({ onOpenProfileBuilder }: TopNavProps) {
               </div>
             ) : (
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <button
-                  type="button"
-                  onClick={signInWithGoogle}
+                <Link
+                  to="/login"
+                  state={{ from: `${location.pathname}${location.search}` }}
                   className={`hidden min-h-11 items-center rounded-chip px-2 text-[15px] font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 sm:inline-flex ${
                     overHero
                       ? 'text-white/85 hover:text-white focus-visible:outline-white'
@@ -229,7 +229,7 @@ export function TopNav({ onOpenProfileBuilder }: TopNavProps) {
                   }`}
                 >
                   Sign in
-                </button>
+                </Link>
                 <button type="button" onClick={onOpenProfileBuilder} className={ctaClass}>
                   <span className="hidden sm:inline">Find my matches</span>
                   <span className="sm:hidden">Match me</span>

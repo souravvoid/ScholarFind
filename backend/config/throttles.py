@@ -3,6 +3,22 @@
 from rest_framework.throttling import SimpleRateThrottle
 
 
+class AuthRateThrottle(SimpleRateThrottle):
+    """Tighter rate limit for login and registration.
+
+    Keyed by client IP, not by the submitted identity, so an attacker cannot
+    bypass the limit by rotating the email/username in the request body.
+    """
+
+    scope = 'auth'
+
+    def get_cache_key(self, request, view):
+        return self.cache_format % {
+            'scope': self.scope,
+            'ident': self.get_ident(request),
+        }
+
+
 class EvaluationRateThrottle(SimpleRateThrottle):
     """Tighter rate limit for eligibility evaluation.
 

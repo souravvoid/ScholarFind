@@ -11,6 +11,7 @@ import { ScholarshipExplorer } from './components/ScholarshipExplorer';
 import { ApplicationTracker } from './components/ApplicationTracker';
 import { SourceTransparency } from './components/SourceTransparency';
 import { ScholarshipDetailPage } from './pages/ScholarshipDetailPage';
+import { AuthPage } from './pages/AuthPage';
 import { ProfileBuilder } from './components/ProfileBuilder';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { testConnection } from './firebase';
@@ -60,6 +61,8 @@ function MainApp() {
         <Route path="/tracker" element={<ApplicationTracker onExplore={() => navigate('/explore')} />} />
         <Route path="/sources" element={<SourceTransparency />} />
         <Route path="/scholarship/:id" element={<ScholarshipDetailPage />} />
+        <Route path="/login" element={<AuthPage mode="login" />} />
+        <Route path="/signup" element={<AuthPage mode="signup" />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 

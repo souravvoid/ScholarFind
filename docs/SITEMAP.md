@@ -12,10 +12,12 @@ mobile drawer + footer). Tab state (`landing/explore/tracker/sources`) is retire
 | `/scholarship/:id` | Scholarship detail | public | Check eligibility / Apply | `ScholarshipDetailsModal` |
 | `/tracker` | Saved & applications | public (guest or account) | Next step on nearest deadline | `currentTab='tracker'` |
 | `/sources` | Provenance & verification | public | Read source record | `currentTab='sources'` |
+| `/login` | Sign in | public (redirects when signed in) | Sign in with email/password | — (new 2026-11-09) |
+| `/signup` | Create account | public (redirects when signed in) | Create account | — (new 2026-11-09) |
 | `*` | Not found | public | Back to explore | — (new) |
 
-Not in v1: `/dashboard`, `/profile`, `/login` (decisions 21–22). The profile wizard stays a
-modal; no auth pages.
+Not in v1: `/dashboard`, `/profile` (decisions 21–22). The profile wizard stays a modal;
+account pages are limited to `/login` and `/signup`.
 
 ## Query state
 
@@ -79,6 +81,15 @@ replaces the CTA emphasis. Same sections otherwise.
 4. How records enter the catalogue (service-side process; no client ingestion claim).
 5. No "Audit & Refresh" button (removed, decision 14).
 
+### `/login` and `/signup` Account (public)
+1. Page intro: one-line account promise + honest note that profile/saved records stay on
+   this device.
+2. Form card: email, password, sign-up display name + confirmation.
+3. Inline field errors from DRF, one `role="alert"` summary for non-field errors.
+4. Switch link between sign-in and sign-up; back-to-home link.
+5. On success, return to the originating route (or `/`) and show the account menu.
+6. Already-signed-in visitors are redirected away from both routes.
+
 ### `*` Not found
 Short message + `Go to Explore`.
 
@@ -93,4 +104,4 @@ Short message + `Go to Explore`.
 ## Navigation labels
 
 `Explore` · `Tracked` · `Sources` (route `/tracker` keeps its path; label shortens for the
-top bar). Account control shows `Sign in` or avatar menu with `Sign out`.
+top bar). Account control shows `Sign in` (links to `/login`) or avatar menu with `Sign out`.

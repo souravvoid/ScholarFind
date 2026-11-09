@@ -8,9 +8,10 @@ Companion docs: `AGENTS.md`, `docs/DESIGN_BRIEF.md` (once approved),
 ## Current phase
 
 **Page plan complete (Steps 0–9). Django/DRF migration + security hardening pushed (`7a19f7a`).**
-Recent: 2026-11-09 Slice 1 eligibility parity — shared golden fixture, TS/Python engines aligned,
-UI handles `needs_review`. Awaiting GATE 2 diff approval before commit.
-Next: GATE 2 review → commit scaffold + slice; then M6 backend keep/archive decision, CI.
+Recent: 2026-11-09 Slice 1 eligibility parity committed (`d943ad2`). Auth slice implemented:
+Django register/login/logout/me endpoints + token-based React auth pages. Awaiting GATE 2 diff
+approval before committing auth.
+Next: GATE 2 review → commit auth slice; then M6 backend keep/archive decision, CI.
 
 ## Done
 

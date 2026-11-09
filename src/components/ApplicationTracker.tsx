@@ -21,7 +21,7 @@ const STAGES: { id: TrackerStatus; label: string }[] = [
 
 export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
   const navigate = useNavigate();
-  const { currentUser, savedScholarships, updateTrackerStatus, unsaveScholarship } = useAuth();
+  const { savedScholarships, updateTrackerStatus, unsaveScholarship } = useAuth();
   const [activeTab, setActiveTab] = useState<'all' | TrackerStatus>('all');
   const [redirectTarget, setRedirectTarget] = useState<(typeof SCHOLARSHIPS_DATA)[number] | null>(null);
   const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
@@ -77,8 +77,8 @@ export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExpl
                 Saved &amp; in progress
               </h1>
               <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-muted">
-                {savedScholarships.length} saved · {dueSoon} due within 14 days.{' '}
-                {currentUser ? 'Synced to your account.' : 'Saved on this device.'}
+                {savedScholarships.length} saved · {dueSoon} due within 14 days. Saved on this
+                device.
               </p>
             </div>
           </div>

@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
-  User,
-  onAuthStateChanged,
-  signInWithPopup,
-  signOut as fbSignOut,
-} from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, onSnapshot, deleteDoc } from 'firebase/firestore';
-import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../firebase';
-import { StudentProfile, SavedScholarship, TrackerStatus } from '../types';
+  AuthRequestError,
+  clearAuthToken,
+  fetchCurrentUser,
+  loginAccount,
+  logoutAccount,
+  readAuthToken,
+  registerAccount,
+  storeAuthToken,
+  type AuthSession,
+} from '../services/authService';
+import { AuthUser, StudentProfile, SavedScholarship, TrackerStatus } from '../types';
 
 function safeParse<T>(raw: string | null): T | null {
   if (!raw) return null;
@@ -18,13 +21,13 @@ function safeParse<T>(raw: string | null): T | null {
   }
 }
 
-function createEmptyProfile(user: User | null): StudentProfile {
+function createEmptyProfile(user: AuthUser | null): StudentProfile {
   const now = new Date().toISOString();
   return {
-    uid: user?.uid ?? 'guest',
+    uid: user ? String(user.id) : 'guest',
     email: user?.email ?? '',
     displayName: user?.displayName ?? '',
-    photoURL: user?.photoURL ?? undefined,
+    photoURL: user?.photoURL,
     citizenship: '',
     residenceCountry: '',
     educationLevel: 'bachelors',
@@ -50,13 +53,44 @@ function createEmptyProfile(user: User | null): StudentProfile {
   };
 }
 
+/**
+ * Keep guest answers when someone signs in, but never show one account's
+ * profile to a different account on the same device.
+ */
+function applyUserToProfile(previous: StudentProfile | null, user: AuthUser): StudentProfile {
+  const uid = String(user.id);
+  const belongsToUser = previous?.uid === uid;
+  const isGuestProfile = !previous?.uid || previous.uid === 'guest';
+
+  if (previous && !belongsToUser && !isGuestProfile) {
+    return createEmptyProfile(user);
+  }
+
+  const base = previous ?? createEmptyProfile(user);
+  return {
+    ...base,
+    uid,
+    email: user.email || base.email,
+    displayName: base.displayName || user.displayName,
+    photoURL: user.photoURL ?? base.photoURL,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+interface SignUpInput {
+  email: string;
+  password: string;
+  displayName?: string;
+}
+
 interface AuthContextType {
-  currentUser: User | null;
+  currentUser: AuthUser | null;
   profile: StudentProfile | null;
   loading: boolean;
   savedScholarships: SavedScholarship[];
   authError: string | null;
-  signInWithGoogle: () => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (input: SignUpInput) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<StudentProfile>) => Promise<void>;
   saveScholarship: (
@@ -76,7 +110,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<StudentProfile | null>(() =>
     safeParse<StudentProfile>(localStorage.getItem('scholarfind_profile')),
   );
@@ -86,6 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(() => readAuthToken());
 
   // Keep a ref so async writes never read a stale closure.
   const savedRef = useRef(savedScholarships);
@@ -112,86 +147,103 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [savedScholarships]);
 
-  // Firebase Auth listener. A single saved-scholarships listener is attached per signed-in user
-  // and detached on sign-out / re-auth to avoid leaks.
+  // Validate any stored token once on boot. An invalid/revoked token is cleared
+  // so the UI falls back to guest mode instead of pretending to be signed in.
   useEffect(() => {
-    let unsubSaved: (() => void) | null = null;
+    const stored = readAuthToken();
+    if (!stored) {
+      setLoading(false);
+      return;
+    }
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      unsubSaved?.();
-      unsubSaved = null;
-      setCurrentUser(user);
-      setAuthError(null);
-
-      if (user) {
-        const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
-        try {
-          const snapshot = await getDoc(profileRef);
-          if (snapshot.exists()) {
-            setProfile(snapshot.data() as StudentProfile);
-          } else {
-            const newProfile = createEmptyProfile(user);
-            try {
-              await setDoc(profileRef, newProfile);
-            } catch (error) {
-              handleFirestoreError(error, OperationType.CREATE, `users/${user.uid}/profile/data`);
-            }
-            setProfile(newProfile);
-          }
-        } catch (error) {
-          console.warn('Could not read user profile from Firestore; keeping cached state:', error);
-        }
-
-        const savedCol = collection(db, 'users', user.uid, 'saved_scholarships');
-        unsubSaved = onSnapshot(
-          savedCol,
-          (snapshot) => {
-            const list: SavedScholarship[] = snapshot.docs.map((d) => d.data() as SavedScholarship);
-            setSavedScholarships(list); // empty snapshot clears the UI (no ghost rows)
-          },
-          (err) => {
-            console.warn('Snapshot error on saved scholarships:', err);
-          },
-        );
-
-        setLoading(false);
-      } else {
-        // Unauthenticated: device-local state (already loaded from localStorage) stays as-is.
-        setLoading(false);
+    let active = true;
+    (async () => {
+      try {
+        const user = await fetchCurrentUser(stored);
+        if (!active) return;
+        setToken(stored);
+        setCurrentUser(user);
+        setProfile((previous) => applyUserToProfile(previous, user));
+      } catch {
+        clearAuthToken();
+        if (active) setToken(null);
+      } finally {
+        if (active) setLoading(false);
       }
-    });
+    })();
 
     return () => {
-      unsubSaved?.();
-      unsubscribe();
+      active = false;
     };
   }, []);
 
-  const signInWithGoogle = async () => {
+  const acceptSession = (session: AuthSession) => {
+    storeAuthToken(session.token);
+    setToken(session.token);
+    setCurrentUser(session.user);
+    setProfile((previous) => applyUserToProfile(previous, session.user));
+    setAuthError(null);
+  };
+
+  const signIn = async (email: string, password: string) => {
     setAuthError(null);
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error: any) {
-      console.warn('Google sign-in popup failed or was blocked by browser:', error);
-      setAuthError('Sign-in was cancelled or blocked. You can keep using ScholarFind on this device.');
+      acceptSession(await loginAccount(email, password));
+    } catch (error) {
+      const message =
+        error instanceof AuthRequestError
+          ? error.message
+          : 'Sign in failed. Please try again.';
+      setAuthError(message);
+      throw error instanceof Error ? error : new Error(message);
+    }
+  };
+
+  const signUp = async ({ email, password, displayName }: SignUpInput) => {
+    setAuthError(null);
+    try {
+      acceptSession(
+        await registerAccount({
+          email,
+          password,
+          passwordConfirm: password,
+          displayName,
+        }),
+      );
+    } catch (error) {
+      const message =
+        error instanceof AuthRequestError
+          ? error.message
+          : 'Could not create your account. Please try again.';
+      setAuthError(message);
+      throw error instanceof Error ? error : new Error(message);
     }
   };
 
   const signOut = async () => {
-    try {
-      await fbSignOut(auth);
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
-    // Clear all user residue from state and device storage (B-07).
+    const currentToken = token;
+
+    clearAuthToken();
+    setToken(null);
     setCurrentUser(null);
     setProfile(null);
     setSavedScholarships([]);
+    setAuthError(null);
     try {
       localStorage.removeItem('scholarfind_profile');
       localStorage.removeItem('scholarfind_saved');
     } catch {
       /* ignore storage failures */
+    }
+
+    if (currentToken) {
+      try {
+        await logoutAccount(currentToken);
+      } catch (error) {
+        // The local token is already cleared; a failed server revoke should not
+        // trap the user in a signed-in state.
+        console.warn('Server sign-out failed; the local session was cleared.', error);
+      }
     }
   };
 
@@ -203,15 +255,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updatedAt: new Date().toISOString(),
     };
     setProfile(updated);
-
-    if (currentUser) {
-      const profilePath = `users/${currentUser.uid}/profile/data`;
-      try {
-        await setDoc(doc(db, 'users', currentUser.uid, 'profile', 'data'), updated, { merge: true });
-      } catch (error) {
-        handleFirestoreError(error, OperationType.UPDATE, profilePath);
-      }
-    }
   };
 
   const saveScholarship = async (
@@ -222,7 +265,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const newSaved: SavedScholarship = {
       id: scholarshipId,
-      userId: currentUser?.uid ?? 'guest',
+      userId: currentUser ? String(currentUser.id) : 'guest',
       scholarshipId,
       scholarshipTitle: metadata.title,
       provider: metadata.provider,
@@ -237,28 +280,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     setSavedScholarships((prev) => [newSaved, ...prev]);
-
-    if (currentUser) {
-      const savePath = `users/${currentUser.uid}/saved_scholarships/${scholarshipId}`;
-      try {
-        await setDoc(doc(db, 'users', currentUser.uid, 'saved_scholarships', scholarshipId), newSaved);
-      } catch (error) {
-        handleFirestoreError(error, OperationType.CREATE, savePath);
-      }
-    }
   };
 
   const unsaveScholarship = async (scholarshipId: string) => {
     setSavedScholarships((prev) => prev.filter((s) => s.scholarshipId !== scholarshipId));
-
-    if (currentUser) {
-      const savePath = `users/${currentUser.uid}/saved_scholarships/${scholarshipId}`;
-      try {
-        await deleteDoc(doc(db, 'users', currentUser.uid, 'saved_scholarships', scholarshipId));
-      } catch (error) {
-        handleFirestoreError(error, OperationType.DELETE, savePath);
-      }
-    }
   };
 
   const updateTrackerStatus = async (
@@ -281,18 +306,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSavedScholarships((prev) =>
       prev.map((s) => (s.scholarshipId === scholarshipId ? payload : s)),
     );
-
-    if (currentUser) {
-      const savePath = `users/${currentUser.uid}/saved_scholarships/${scholarshipId}`;
-      try {
-        await setDoc(doc(db, 'users', currentUser.uid, 'saved_scholarships', scholarshipId), payload, { merge: true });
-      } catch (error) {
-        handleFirestoreError(error, OperationType.UPDATE, savePath);
-      }
-    }
   };
 
-  const isSaved = (scholarshipId: string) => savedScholarships.some((s) => s.scholarshipId === scholarshipId);
+  const isSaved = (scholarshipId: string) =>
+    savedScholarships.some((s) => s.scholarshipId === scholarshipId);
 
   return (
     <AuthContext.Provider
@@ -302,7 +319,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         savedScholarships,
         authError,
-        signInWithGoogle,
+        signIn,
+        signUp,
         signOut,
         updateProfile,
         saveScholarship,

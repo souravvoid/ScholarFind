@@ -1,5 +1,14 @@
 export type DegreeLevel = 'secondary' | 'bachelors' | 'masters' | 'phd' | 'postdoc';
 
+/** Account identity returned by the Django auth API. */
+export interface AuthUser {
+  id: number;
+  username: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+}
+
 export type GradingScale = 
   | 'gpa_4_0' 
   | 'gpa_5_0' 

@@ -151,6 +151,7 @@ REST_FRAMEWORK = {
         'anon': os.environ.get('DRF_ANON_RATE', '120/min'),
         'user': os.environ.get('DRF_USER_RATE', '1000/hour'),
         'evaluate': os.environ.get('DRF_EVALUATE_RATE', '60/min'),
+        'auth': os.environ.get('DRF_AUTH_RATE', '10/min'),
     },
 }
 

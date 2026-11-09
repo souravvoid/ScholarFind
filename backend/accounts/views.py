@@ -11,15 +11,16 @@ import urllib.parse
 
 import requests
 from django.conf import settings
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.utils.crypto import constant_time_compare
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework import status, viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from config.throttles import EvaluationRateThrottle
+from config.throttles import AuthRateThrottle, EvaluationRateThrottle
 from eligibility_service import (  # type: ignore
     DeterministicEligibilityEngine,
     EligibilityRuleRecord,
@@ -28,7 +29,7 @@ from eligibility_service import (  # type: ignore
 from scholarships.models import Scholarship
 
 from .models import UserProfile
-from .serializers import UserProfileSerializer
+from .serializers import LoginSerializer, RegisterSerializer, UserProfileSerializer
 
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
@@ -49,6 +50,92 @@ def _oauth_config():
 def csrf_token(request):
     """Set the CSRF cookie so browser clients can send authenticated writes."""
     return Response({"detail": "CSRF cookie set"})
+
+
+def _profile_for_user(user):
+    profile, _ = UserProfile.objects.get_or_create(user=user)
+    return profile
+
+
+def _user_payload(user):
+    profile = UserProfile.objects.filter(user=user).first()
+    full_name = user.get_full_name().strip()
+    return {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "display_name": (profile.display_name if profile else "")
+        or full_name
+        or user.username,
+        "photo_url": profile.photo_url if profile else "",
+    }
+
+
+def _session_payload(user):
+    token, _ = Token.objects.get_or_create(user=user)
+    return {"token": token.key, "user": _user_payload(user)}
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+@throttle_classes([AuthRateThrottle])
+def register(request):
+    """Create an account and return a DRF token for immediate sign-in."""
+    serializer = RegisterSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = serializer.save()
+    return Response(_session_payload(user), status=status.HTTP_201_CREATED)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+@throttle_classes([AuthRateThrottle])
+def auth_login(request):
+    """Log in with an email address or username and return a DRF token."""
+    serializer = LoginSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    identifier = serializer.validated_data["identifier"].strip()
+    password = serializer.validated_data["password"]
+
+    user = authenticate(request, username=identifier, password=password)
+    if user is None:
+        candidate = get_user_model().objects.filter(email__iexact=identifier).first()
+        if candidate is not None:
+            user = authenticate(
+                request, username=candidate.username, password=password
+            )
+
+    if user is None or not user.is_active:
+        # Deliberately generic: do not reveal whether the account exists.
+        return Response(
+            {"detail": "Invalid email or password."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    _profile_for_user(user)
+    return Response(_session_payload(user))
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    """Return the account associated with the supplied token."""
+    _profile_for_user(request.user)
+    return Response({"authenticated": True, "user": _user_payload(request.user)})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def auth_logout(request):
+    """Revoke the current DRF token (or end a session for session auth)."""
+    if isinstance(request.auth, Token):
+        request.auth.delete()
+    else:
+        logout(request)
+    return Response({"detail": "Logged out"})
 
 
 @api_view(["GET"])
