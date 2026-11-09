@@ -1,8 +1,124 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert';
+import { readFileSync } from 'node:fs';
 import { normalizeGpa, evaluateEligibility, getEquivalentDegreeLabel } from './eligibilityEngine';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
-import { StudentProfile } from '../types';
+import {
+  DegreeLevel,
+  EligibilityCriterion,
+  GradingScale,
+  Scholarship,
+  StudentProfile,
+} from '../types';
+
+const parityFixture = JSON.parse(
+  readFileSync(new URL('../../tests/fixtures/eligibility-parity.json', import.meta.url), 'utf8'),
+);
+
+const CANONICAL_STATUS: Record<string, string> = {
+  passed: 'meets',
+  failed: 'fails',
+  missing: 'more_info_needed',
+  needs_review: 'needs_manual_review',
+};
+
+const CANONICAL_OUTCOME: Record<string, string> = {
+  likely_eligible: 'likely_eligible',
+  more_info_needed: 'more_info_needed',
+  ineligible: 'does_not_meet',
+  needs_review: 'needs_review',
+};
+
+function buildParityProfile(overrides: Record<string, unknown>): StudentProfile {
+  const data: Record<string, any> = { ...parityFixture.base_profile, ...overrides };
+  return {
+    uid: 'parity',
+    email: '',
+    displayName: '',
+    citizenship: data.citizenship,
+    residenceCountry: '',
+    educationLevel: data.education_level as DegreeLevel,
+    institution: '',
+    gradingScale: data.grading_scale as GradingScale,
+    gpa: data.gpa,
+    maxGpa: data.max_gpa,
+    graduationYear: '',
+    primaryField: data.primary_field,
+    facultyTags: [],
+    researchKeywords: [],
+    targetDegrees: [data.target_degree as DegreeLevel],
+    targetRegions: [],
+    targetCountries: [],
+    deliveryModality: 'on_campus',
+    intendedStartTerm: '',
+    workExperienceYears: data.work_experience_years,
+    englishTestType: data.english_test_type,
+    englishScore: data.english_score == null ? '' : String(data.english_score),
+    hasEnglishMediumInstruction: data.has_english_medium_instruction,
+    updatedAt: '',
+    createdAt: '',
+  };
+}
+
+function buildParityScholarship(rules: any[]): Scholarship {
+  const degreeRule = rules.find((rule) => rule.rule_type === 'degree_level');
+  const fieldRule = rules.find((rule) => rule.rule_type === 'field_of_study');
+  const criteria: EligibilityCriterion[] = rules.map((rule) => {
+    const params = rule.parameters ?? {};
+    return {
+      id: rule.rule_id,
+      ruleType: rule.rule_type,
+      title: rule.title,
+      description: rule.description,
+      isMandatory: rule.is_mandatory,
+      sourceCitation: 'parity-fixture',
+      allowedCitizenships: params.allowed_countries,
+      prohibitedCitizenships: params.prohibited_countries,
+      requiredDegrees: params.allowed_degrees,
+      applicableFields: params.allowed_fields,
+      minGpaNormalized: params.min_gpa_normalized,
+      minWorkYears: params.min_work_years,
+      acceptsMediumOfInstructionWaiver:
+        params.accepts_medium_of_instruction_waiver,
+      minIelts: params.min_ielts,
+    };
+  });
+
+  return {
+    id: 'parity',
+    slug: 'parity',
+    title: 'Parity fixture',
+    providerName: 'Fixture',
+    providerCategory: 'Government Endowment',
+    heroImage: '',
+    destinationCountries: [],
+    destinationFlag: '',
+    hostInstitutions: [],
+    studyLevels: (degreeRule?.parameters?.allowed_degrees ?? ['masters']) as DegreeLevel[],
+    fieldsOfStudy: fieldRule?.parameters?.allowed_fields ?? [],
+    totalAwardValue: '',
+    awardDetails: '',
+    coverageTypes: [],
+    estimatedUSDValue: 0,
+    applicationDeadline: '2099-01-01',
+    daysRemaining: 0,
+    academicYear: '2026',
+    lastVerified: '2026-01-01',
+    officialSourceUrl: 'https://example.org',
+    officialApplicationUrl: 'https://example.org/apply',
+    sourceDomain: 'example.org',
+    requiredDocuments: [],
+    applicationInstructions: [],
+    overview: '',
+    criteria,
+    provenance: {
+      sourceName: 'Fixture',
+      sourceRecordUrl: 'https://example.org',
+      collectedAt: '2026-01-01',
+      sourceId: 'fixture',
+    },
+  };
+}
 
 describe('ScholarFind Deterministic Eligibility Engine', () => {
   const sampleProfile: StudentProfile = {
@@ -42,8 +158,8 @@ describe('ScholarFind Deterministic Eligibility Engine', () => {
     const gpa5 = normalizeGpa(4.82, 'gpa_5_0', 5.0);
     assert(Math.abs(gpa5 - 96.4) < 0.2);
 
-    // UK Honours First Class (1.0) => 95%
-    assert.strictEqual(normalizeGpa(1.0, 'uk_honours'), 95);
+    // UK Honours First Class (1.0) => 85% (canonical mapping shared with the Python engine)
+    assert.strictEqual(normalizeGpa(1.0, 'uk_honours'), 85);
 
     // Percentage 85% => 85%
     assert.strictEqual(normalizeGpa(85, 'percentage'), 85);
@@ -100,4 +216,69 @@ describe('ScholarFind Deterministic Eligibility Engine', () => {
     assert.strictEqual(result.status, 'more_info_needed');
     assert.strictEqual(result.matchScore, 0);
   });
+});
+
+describe('Cross-language parity fixture', () => {
+  test('GPA normalization matches the canonical shared fixture', () => {
+    for (const gpaCase of parityFixture.gpa_cases) {
+      const actual = normalizeGpa(
+        gpaCase.gpa,
+        gpaCase.scale as GradingScale,
+        gpaCase.max_gpa,
+      );
+      assert.ok(
+        Math.abs(actual - gpaCase.expected) < 1e-9,
+        `${gpaCase.name}: expected ${gpaCase.expected}, received ${actual}`,
+      );
+    }
+  });
+
+  for (const scenario of parityFixture.scenarios) {
+    test(`Scenario: ${scenario.name}`, () => {
+      const profile = buildParityProfile(scenario.profile);
+      const rules = [...parityFixture.base_rules, ...scenario.add_rules];
+      const scholarship = buildParityScholarship(rules);
+
+      const result = evaluateEligibility(scholarship, profile);
+      const expected = scenario.expected;
+
+      assert.strictEqual(
+        CANONICAL_OUTCOME[result.status],
+        expected.outcome,
+        `outcome for ${scenario.name}`,
+      );
+      assert.strictEqual(
+        result.matchScore,
+        expected.match_percentage,
+        `match percentage for ${scenario.name}`,
+      );
+      assert.strictEqual(
+        result.matchedCount,
+        expected.met_criteria_count,
+        `met criteria count for ${scenario.name}`,
+      );
+      assert.strictEqual(
+        result.mandatoryFailedCount,
+        expected.mandatory_failed_count,
+        `mandatory failed count for ${scenario.name}`,
+      );
+      assert.strictEqual(
+        result.missingCount,
+        expected.missing_info_count,
+        `missing info count for ${scenario.name}`,
+      );
+      assert.strictEqual(
+        result.manualReviewCount,
+        expected.manual_review_count,
+        `manual review count for ${scenario.name}`,
+      );
+
+      const statuses = result.evaluatedList.map((item) => CANONICAL_STATUS[item.status]);
+      assert.deepStrictEqual(
+        statuses,
+        scenario.criteria_statuses,
+        `criterion statuses for ${scenario.name}`,
+      );
+    });
+  }
 });

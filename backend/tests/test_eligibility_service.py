@@ -4,7 +4,10 @@ Covers the deterministic outcomes, every supported grading scale, and parity
 with the original FastAPI engine (``backend.eligibility``).
 """
 
+import json
+import math
 import unittest
+from pathlib import Path
 
 from backend.eligibility import (
     DeterministicEligibilityEngine as LegacyEngine,
@@ -369,9 +372,101 @@ class TestEngineParity(unittest.TestCase):
             self.assertEqual(
                 new_result.missing_info_count, legacy_result.missing_info_count
             )
-            self.assertEqual(
-                new_result.match_percentage, legacy_result.match_percentage
+            # Canonical rounding is half-up; the legacy engine used banker's
+            # rounding, so scores can differ by one point at exact .5 boundaries.
+            weighted_score = sum(
+                1.0
+                if result.status.value == "meets"
+                else 0.5
+                if result.status.value == "needs_manual_review"
+                else 0.25
+                if result.status.value == "more_info_needed"
+                else 0.0
+                for result in legacy_result.criteria_results
             )
+            total_rules = len(legacy_result.criteria_results) or 1
+            expected_match = int(
+                math.floor((weighted_score / total_rules) * 100 + 0.5)
+            )
+            self.assertEqual(new_result.match_percentage, expected_match)
+
+
+class TestSharedParityFixture(unittest.TestCase):
+    """Cross-language parity driven by tests/fixtures/eligibility-parity.json."""
+
+    @classmethod
+    def setUpClass(cls):
+        fixture_path = (
+            Path(__file__).resolve().parents[2]
+            / "tests"
+            / "fixtures"
+            / "eligibility-parity.json"
+        )
+        with fixture_path.open(encoding="utf-8") as handle:
+            cls.fixture = json.load(handle)
+        cls.engine = DeterministicEligibilityEngine()
+        cls.outcome_map = {
+            OverallOutcome.LIKELY_ELIGIBLE: "likely_eligible",
+            OverallOutcome.MORE_INFO_NEEDED: "more_info_needed",
+            OverallOutcome.DOES_NOT_MEET: "does_not_meet",
+            OverallOutcome.NEEDS_MANUAL_REVIEW: "needs_review",
+        }
+
+    @staticmethod
+    def _build_rule(raw):
+        return EligibilityRuleRecord(
+            rule_id=raw["rule_id"],
+            rule_type=raw["rule_type"],
+            title=raw["title"],
+            description=raw["description"],
+            is_mandatory=raw["is_mandatory"],
+            source_citation=raw.get("source_citation", ""),
+            parameters=raw.get("parameters", {}),
+        )
+
+    def test_gpa_cases_match_fixture(self):
+        for case in self.fixture["gpa_cases"]:
+            with self.subTest(case=case["name"]):
+                actual = standardize_gpa(case["gpa"], case["scale"], case["max_gpa"])
+                self.assertIsNotNone(actual)
+                self.assertAlmostEqual(actual, case["expected"], places=6)
+
+    def test_scenarios_match_fixture(self):
+        for scenario in self.fixture["scenarios"]:
+            with self.subTest(scenario=scenario["name"]):
+                profile_data = dict(self.fixture["base_profile"])
+                profile_data.update(scenario["profile"])
+                profile = StudentProfileRecord(uid=scenario["name"], **profile_data)
+
+                rules = [self._build_rule(raw) for raw in self.fixture["base_rules"]]
+                rules.extend(self._build_rule(raw) for raw in scenario["add_rules"])
+
+                evaluation = self.engine.evaluate(scenario["name"], rules, profile)
+                expected = scenario["expected"]
+
+                self.assertEqual(
+                    self.outcome_map[evaluation.outcome], expected["outcome"]
+                )
+                self.assertEqual(
+                    evaluation.match_percentage, expected["match_percentage"]
+                )
+                self.assertEqual(
+                    evaluation.met_criteria_count, expected["met_criteria_count"]
+                )
+                self.assertEqual(
+                    evaluation.mandatory_failed_count,
+                    expected["mandatory_failed_count"],
+                )
+                self.assertEqual(
+                    evaluation.missing_info_count, expected["missing_info_count"]
+                )
+                self.assertEqual(
+                    evaluation.manual_review_count, expected["manual_review_count"]
+                )
+                self.assertEqual(
+                    [result.status.value for result in evaluation.criteria_results],
+                    scenario["criteria_statuses"],
+                )
 
 
 if __name__ == "__main__":

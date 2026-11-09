@@ -858,7 +858,8 @@ export const ScholarshipExplorer: React.FC<{
                               tone={
                                 evaluation.status === 'likely_eligible'
                                   ? 'ok'
-                                  : evaluation.status === 'more_info_needed'
+                                  : evaluation.status === 'more_info_needed' ||
+                                      evaluation.status === 'needs_review'
                                     ? 'warn'
                                     : 'bad'
                               }
@@ -866,8 +867,10 @@ export const ScholarshipExplorer: React.FC<{
                               {evaluation.status === 'likely_eligible'
                                 ? 'Likely eligible'
                                 : evaluation.status === 'more_info_needed'
-                                  ? 'Needs review'
-                                  : 'Not eligible'}
+                                  ? 'Info needed'
+                                  : evaluation.status === 'needs_review'
+                                    ? 'Manual review'
+                                    : 'Not eligible'}
                             </Badge>
                             {profile ? (
                               <span className="text-xs text-ink-muted">

@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "description": "Canonical cross-language eligibility parity fixture. Consumed by src/utils/eligibilityEngine.test.ts and backend/tests/test_eligibility_service.py. Do not duplicate expected values per language.",
+  "gpa_cases": [
+    { "name": "gpa_4_0_typical", "scale": "gpa_4_0", "gpa": 3.82, "max_gpa": 4.0, "expected": 95.5 },
+    { "name": "gpa_4_0_max", "scale": "gpa_4_0", "gpa": 4.0, "max_gpa": 4.0, "expected": 100.0 },
+    { "name": "gpa_4_0_zero", "scale": "gpa_4_0", "gpa": 0, "max_gpa": 4.0, "expected": 0.0 },
+    { "name": "gpa_5_0_typical", "scale": "gpa_5_0", "gpa": 4.82, "max_gpa": 5.0, "expected": 96.4 },
+    { "name": "gpa_5_0_max", "scale": "gpa_5_0", "gpa": 5.0, "max_gpa": 5.0, "expected": 100.0 },
+    { "name": "percentage_typical", "scale": "percentage", "gpa": 88.5, "max_gpa": 4.0, "expected": 88.5 },
+    { "name": "percentage_zero", "scale": "percentage", "gpa": 0, "max_gpa": 4.0, "expected": 0.0 },
+    { "name": "uk_first", "scale": "uk_honours", "gpa": 1.0, "max_gpa": 4.0, "expected": 85.0 },
+    { "name": "uk_two_one", "scale": "uk_honours", "gpa": 2.1, "max_gpa": 4.0, "expected": 75.0 },
+    { "name": "uk_two_two", "scale": "uk_honours", "gpa": 2.2, "max_gpa": 4.0, "expected": 60.0 },
+    { "name": "uk_other", "scale": "uk_honours", "gpa": 2.5, "max_gpa": 4.0, "expected": 75.0 },
+    { "name": "uk_raw_percentage", "scale": "uk_honours", "gpa": 45.0, "max_gpa": 4.0, "expected": 45.0 },
+    { "name": "german_best", "scale": "german", "gpa": 1.0, "max_gpa": 4.0, "expected": 100.0 },
+    { "name": "german_2_5", "scale": "german", "gpa": 2.5, "max_gpa": 4.0, "expected": 62.5 },
+    { "name": "german_pass", "scale": "german", "gpa": 4.0, "max_gpa": 4.0, "expected": 25.0 },
+    { "name": "german_fail", "scale": "german", "gpa": 5.0, "max_gpa": 4.0, "expected": 0.0 },
+    { "name": "german_zero", "scale": "german", "gpa": 0, "max_gpa": 4.0, "expected": 0.0 },
+    { "name": "ects_percentage", "scale": "ects", "gpa": 85.0, "max_gpa": 4.0, "expected": 85.0 },
+    { "name": "ects_low_percentage", "scale": "ects", "gpa": 2.0, "max_gpa": 4.0, "expected": 2.0 }
+  ],
+  "base_profile": {
+    "citizenship": "Nigeria",
+    "target_degree": "masters",
+    "education_level": "bachelors",
+    "grading_scale": "gpa_4_0",
+    "gpa": 3.82,
+    "max_gpa": 4.0,
+    "primary_field": "Computer Science",
+    "work_experience_years": 2.0,
+    "english_test_type": "none",
+    "english_score": null,
+    "has_english_medium_instruction": true
+  },
+  "base_rules": [
+    {
+      "rule_id": "citizenship",
+      "rule_type": "citizenship",
+      "title": "Eligible citizenship",
+      "description": "Must be a citizen of an eligible country.",
+      "is_mandatory": true,
+      "parameters": {
+        "allowed_countries": ["Nigeria", "Ghana"],
+        "prohibited_countries": ["United States"]
+      }
+    },
+    {
+      "rule_id": "degree",
+      "rule_type": "degree_level",
+      "title": "Master's objective",
+      "description": "Applying for a master's degree.",
+      "is_mandatory": true,
+      "parameters": { "allowed_degrees": ["masters"] }
+    },
+    {
+      "rule_id": "academic",
+      "rule_type": "academic_score",
+      "title": "Minimum 2:1 equivalent",
+      "description": "At least 75% normalized.",
+      "is_mandatory": true,
+      "parameters": { "min_gpa_normalized": 75.0, "uk_equivalent": "2:1" }
+    },
+    {
+      "rule_id": "language",
+      "rule_type": "language",
+      "title": "English proficiency",
+      "description": "Test score or MOI waiver.",
+      "is_mandatory": false,
+      "parameters": {
+        "min_ielts": 6.5,
+        "accepts_medium_of_instruction_waiver": true
+      }
+    },
+    {
+      "rule_id": "work",
+      "rule_type": "work_experience",
+      "title": "Two years experience",
+      "description": "At least two years.",
+      "is_mandatory": true,
+      "parameters": { "min_work_years": 2.0 }
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "base_likely_eligible",
+      "profile": {},
+      "add_rules": [],
+      "expected": {
+        "outcome": "likely_eligible",
+        "match_percentage": 100,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "meets", "meets", "meets"]
+    },
+    {
+      "name": "citizenship_prohibited",
+      "profile": { "citizenship": "United States" },
+      "add_rules": [],
+      "expected": {
+        "outcome": "does_not_meet",
+        "match_percentage": 80,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 1,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["fails", "meets", "meets", "meets", "meets"]
+    },
+    {
+      "name": "citizenship_not_allowed",
+      "profile": { "citizenship": "Kenya" },
+      "add_rules": [],
+      "expected": {
+        "outcome": "does_not_meet",
+        "match_percentage": 80,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 1,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["fails", "meets", "meets", "meets", "meets"]
+    },
+    {
+      "name": "academic_below_threshold",
+      "profile": { "gpa": 2.4 },
+      "add_rules": [],
+      "expected": {
+        "outcome": "does_not_meet",
+        "match_percentage": 80,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 1,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "fails", "meets", "meets"]
+    },
+    {
+      "name": "academic_missing",
+      "profile": { "gpa": 0 },
+      "add_rules": [],
+      "expected": {
+        "outcome": "more_info_needed",
+        "match_percentage": 85,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 1,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "more_info_needed", "meets", "meets"]
+    },
+    {
+      "name": "manual_review_rule",
+      "profile": {},
+      "add_rules": [
+        {
+          "rule_id": "manual",
+          "rule_type": "manual_review",
+          "title": "Committee review",
+          "description": "Portfolio review.",
+          "is_mandatory": true,
+          "parameters": {}
+        }
+      ],
+      "expected": {
+        "outcome": "needs_review",
+        "match_percentage": 92,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 0,
+        "manual_review_count": 1
+      },
+      "criteria_statuses": [
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "needs_manual_review"
+      ]
+    },
+    {
+      "name": "unknown_rule",
+      "profile": {},
+      "add_rules": [
+        {
+          "rule_id": "custom",
+          "rule_type": "custom_qualitative",
+          "title": "Custom criterion",
+          "description": "Provider-specific qualitative criterion.",
+          "is_mandatory": true,
+          "parameters": {}
+        }
+      ],
+      "expected": {
+        "outcome": "needs_review",
+        "match_percentage": 92,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 0,
+        "manual_review_count": 1
+      },
+      "criteria_statuses": [
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "needs_manual_review"
+      ]
+    },
+    {
+      "name": "deadline_rule",
+      "profile": {},
+      "add_rules": [
+        {
+          "rule_id": "deadline",
+          "rule_type": "deadline",
+          "title": "Recent graduation window",
+          "description": "Graduated within the past seven years.",
+          "is_mandatory": true,
+          "parameters": {}
+        }
+      ],
+      "expected": {
+        "outcome": "needs_review",
+        "match_percentage": 92,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 0,
+        "manual_review_count": 1
+      },
+      "criteria_statuses": [
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "needs_manual_review"
+      ]
+    },
+    {
+      "name": "field_mismatch",
+      "profile": { "primary_field": "History" },
+      "add_rules": [
+        {
+          "rule_id": "field",
+          "rule_type": "field_of_study",
+          "title": "Engineering only",
+          "description": "Engineering fields.",
+          "is_mandatory": true,
+          "parameters": { "allowed_fields": ["Engineering"] }
+        }
+      ],
+      "expected": {
+        "outcome": "does_not_meet",
+        "match_percentage": 83,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 1,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": [
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "fails"
+      ]
+    },
+    {
+      "name": "field_missing",
+      "profile": { "primary_field": "" },
+      "add_rules": [
+        {
+          "rule_id": "field",
+          "rule_type": "field_of_study",
+          "title": "Engineering only",
+          "description": "Engineering fields.",
+          "is_mandatory": true,
+          "parameters": { "allowed_fields": ["Engineering"] }
+        }
+      ],
+      "expected": {
+        "outcome": "more_info_needed",
+        "match_percentage": 88,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 1,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": [
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "more_info_needed"
+      ]
+    },
+    {
+      "name": "language_low_optional",
+      "profile": {
+        "has_english_medium_instruction": false,
+        "english_test_type": "ielts",
+        "english_score": 5.5
+      },
+      "add_rules": [],
+      "expected": {
+        "outcome": "likely_eligible",
+        "match_percentage": 80,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "meets", "fails", "meets"]
+    },
+    {
+      "name": "language_missing_optional",
+      "profile": {
+        "has_english_medium_instruction": false,
+        "english_test_type": "none",
+        "english_score": null
+      },
+      "add_rules": [],
+      "expected": {
+        "outcome": "likely_eligible",
+        "match_percentage": 85,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 1,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "meets", "more_info_needed", "meets"]
+    },
+    {
+      "name": "work_below_threshold",
+      "profile": { "work_experience_years": 1.0 },
+      "add_rules": [],
+      "expected": {
+        "outcome": "does_not_meet",
+        "match_percentage": 80,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 1,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "meets", "meets", "fails"]
+    },
+    {
+      "name": "degree_mismatch",
+      "profile": { "target_degree": "phd" },
+      "add_rules": [],
+      "expected": {
+        "outcome": "does_not_meet",
+        "match_percentage": 80,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 1,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "fails", "meets", "meets", "meets"]
+    },
+    {
+      "name": "missing_precedes_manual_review",
+      "profile": { "primary_field": "" },
+      "add_rules": [
+        {
+          "rule_id": "field",
+          "rule_type": "field_of_study",
+          "title": "Engineering only",
+          "description": "Engineering fields.",
+          "is_mandatory": true,
+          "parameters": { "allowed_fields": ["Engineering"] }
+        },
+        {
+          "rule_id": "manual",
+          "rule_type": "manual_review",
+          "title": "Committee review",
+          "description": "Portfolio review.",
+          "is_mandatory": true,
+          "parameters": {}
+        }
+      ],
+      "expected": {
+        "outcome": "more_info_needed",
+        "match_percentage": 82,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 1,
+        "manual_review_count": 1
+      },
+      "criteria_statuses": [
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "more_info_needed",
+        "needs_manual_review"
+      ]
+    },
+    {
+      "name": "work_missing",
+      "profile": { "work_experience_years": null },
+      "add_rules": [],
+      "expected": {
+        "outcome": "more_info_needed",
+        "match_percentage": 85,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 1,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "meets", "meets", "more_info_needed"]
+    },
+    {
+      "name": "language_ielts_pass",
+      "profile": {
+        "has_english_medium_instruction": false,
+        "english_test_type": "ielts",
+        "english_score": 7.0
+      },
+      "add_rules": [],
+      "expected": {
+        "outcome": "likely_eligible",
+        "match_percentage": 100,
+        "met_criteria_count": 5,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 0,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "meets", "meets", "meets"]
+    },
+    {
+      "name": "language_malformed_score",
+      "profile": {
+        "has_english_medium_instruction": false,
+        "english_test_type": "ielts",
+        "english_score": "7.0abc"
+      },
+      "add_rules": [],
+      "expected": {
+        "outcome": "likely_eligible",
+        "match_percentage": 85,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 0,
+        "missing_info_count": 1,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": ["meets", "meets", "meets", "more_info_needed", "meets"]
+    },
+    {
+      "name": "mandatory_fail_precedes_missing",
+      "profile": { "work_experience_years": 1.0, "primary_field": "" },
+      "add_rules": [
+        {
+          "rule_id": "field",
+          "rule_type": "field_of_study",
+          "title": "Engineering only",
+          "description": "Engineering fields.",
+          "is_mandatory": true,
+          "parameters": { "allowed_fields": ["Engineering"] }
+        }
+      ],
+      "expected": {
+        "outcome": "does_not_meet",
+        "match_percentage": 71,
+        "met_criteria_count": 4,
+        "mandatory_failed_count": 1,
+        "missing_info_count": 1,
+        "manual_review_count": 0
+      },
+      "criteria_statuses": [
+        "meets",
+        "meets",
+        "meets",
+        "meets",
+        "fails",
+        "more_info_needed"
+      ]
+    }
+  ]
+}

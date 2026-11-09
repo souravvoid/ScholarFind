@@ -7,9 +7,10 @@ Companion docs: `AGENTS.md`, `docs/DESIGN_BRIEF.md` (once approved),
 
 ## Current phase
 
-**Page plan complete (Steps 0–9). All routes rebuilt on the shared design system; DoD green.**
-Recent: 2026-11-08 Refactor Session - Dead Code Cleanup (deleted 5 components, removed 9 deps, ~3500 LOC).
-Next: optional deeper passes (M2 engine parity, M6 backend, i18n, dark mode) — see ROADMAP.md.
+**Page plan complete (Steps 0–9). Django/DRF migration + security hardening pushed (`7a19f7a`).**
+Recent: 2026-11-09 Slice 1 eligibility parity — shared golden fixture, TS/Python engines aligned,
+UI handles `needs_review`. Awaiting GATE 2 diff approval before commit.
+Next: GATE 2 review → commit scaffold + slice; then M6 backend keep/archive decision, CI.
 
 ## Done
 
@@ -29,6 +30,7 @@ Next: optional deeper passes (M2 engine parity, M6 backend, i18n, dark mode) —
 | 2026-11-08 | Step 7 — profile wizard step 1, honest copy, fake stats removed | Step 7 commit |
 | 2026-11-08 | Step 8 — a11y sweep: aria-hidden icons, aria-live, focus-visible rings | Step 8 commit |
 | 2026-11-08 | Step 9 — full verification: lint + 22 unit + backend 27 + build + 8 e2e green | Step 9 |
+| 2026-11-09 | **M2 eligibility parity**: canonical scale/status/outcome mapping, shared fixture `tests/fixtures/eligibility-parity.json`, weighted half-up score, `needs_review` UI | uncommitted (GATE 2) |
 
 Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 ·
 8/9 catalogue URLs gate `verified`, gates-cambridge `mismatch` (allied portal, warns).
@@ -43,7 +45,7 @@ Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 
 | Item | Needs |
 |---|---|
 | Firestore rules deploy | Owner runs `firebase deploy --only firestore:rules` (needs `firebase.json`); live project still on old rules |
-| M2 engine parity (TS vs Python eligibility) | Canonical values: UK 1st 95 vs 85, German 2.5 → 66.7 vs 62.5, unknown ruleType auto-pass vs manual-review |
+| M2 engine parity (TS vs Python eligibility) | ✅ resolved 2026-11-09 via shared fixture; pending GATE 2 commit |
 | M6 backend keep vs archive | Product decision |
 | B-15 default explorer filters | Design decision (risk of empty first paint) |
 | B-16 URL routing (B-16) | Design decision |

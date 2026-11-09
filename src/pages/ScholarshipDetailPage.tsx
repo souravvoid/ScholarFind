@@ -41,13 +41,15 @@ export function ScholarshipDetailPage() {
   const deadline = getDeadlineDisplay(scholarship.applicationDeadline);
 
   const statusTone =
-    evaluation.status === 'likely_eligible' ? 'ok' : evaluation.status === 'more_info_needed' ? 'warn' : 'bad';
-  const statusLabel =
     evaluation.status === 'likely_eligible'
-      ? evaluation.statusLabel
-      : evaluation.status === 'more_info_needed'
-        ? evaluation.statusLabel
-        : 'Does not meet a mandatory criterion';
+      ? 'ok'
+      : evaluation.status === 'more_info_needed' || evaluation.status === 'needs_review'
+        ? 'warn'
+        : 'bad';
+  const statusLabel =
+    evaluation.status === 'ineligible'
+      ? 'Does not meet a mandatory criterion'
+      : evaluation.statusLabel;
 
   const handleSave = async () => {
     if (saved) await unsaveScholarship(scholarship.id);
@@ -142,10 +144,18 @@ export function ScholarshipDetailPage() {
 
               <div className="space-y-3">
                 {evaluation.evaluatedList.map((item, idx) => {
-                  const tone =
-                    item.status === 'passed' ? 'ok' : item.status === 'missing' ? 'warn' : 'bad';
-                  const icon = item.status === 'passed' ? 'eligible' : item.status === 'missing' ? 'manual' : 'missing';
-                  const label = item.status === 'passed' ? 'Met' : item.status === 'missing' ? 'Info needed' : 'Not met';
+                  const isReview = item.status === 'needs_review';
+                  const isMissing = item.status === 'missing';
+                  const tone = item.status === 'passed' ? 'ok' : isMissing || isReview ? 'warn' : 'bad';
+                  const icon = item.status === 'passed' ? 'eligible' : isMissing || isReview ? 'manual' : 'missing';
+                  const label =
+                    item.status === 'passed'
+                      ? 'Met'
+                      : isReview
+                        ? 'Manual review'
+                        : isMissing
+                          ? 'Info needed'
+                          : 'Not met';
                   return (
                     <div key={idx} className="rounded-card border border-hairline bg-paper-raised p-4">
                       <div className="flex items-start justify-between gap-3">
@@ -156,7 +166,7 @@ export function ScholarshipDetailPage() {
                             className={
                               item.status === 'passed'
                                 ? 'text-ok-text'
-                                : item.status === 'missing'
+                                : isMissing || isReview
                                   ? 'text-warn-text'
                                   : 'text-bad-text'
                             }

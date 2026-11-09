@@ -7,39 +7,50 @@ import {
   GradingScale
 } from '../types';
 
+const clampScore = (value: number): number => Math.min(100, Math.max(0, value));
+
 /**
- * Standardize any institutional grading scale to a 0 - 100 unified index
+ * Round half-up to a fixed number of decimal places.
+ * Mirrors the Python canonical engine so both languages agree on .5 boundaries.
+ */
+function roundHalfUp(value: number, digits: number = 0): number {
+  const factor = 10 ** digits;
+  return Math.floor(value * factor + 0.5) / factor;
+}
+
+/**
+ * Standardize any institutional grading scale to a 0 - 100 unified index.
+ *
+ * Canonical mapping shared with `backend/eligibility_service.py` and the golden
+ * fixture in `tests/fixtures/eligibility-parity.json`. Do not change one without
+ * the other.
  */
 export function normalizeGpa(gpa: number, scale: GradingScale, maxGpa: number = 4.0): number {
-  if (gpa <= 0) return 0;
-  
+  if (gpa === null || gpa === undefined || gpa <= 0) return 0;
+
   switch (scale) {
     case 'gpa_4_0':
-      return Math.min(100, Math.max(0, (gpa / 4.0) * 100));
+      return clampScore((gpa / 4.0) * 100);
     case 'gpa_5_0':
-      return Math.min(100, Math.max(0, (gpa / 5.0) * 100));
+      return clampScore((gpa / 5.0) * 100);
     case 'percentage':
-      return Math.min(100, Math.max(0, gpa));
-    case 'german':
-      // German scale: 1.0 is highest (100%), 4.0 is pass (50%), >4.0 fail
-      // Formula: ((4.0 - gpa) / (4.0 - 1.0)) * 50 + 50
-      if (gpa > 4.0) return 30;
-      return Math.min(100, Math.max(0, ((4.0 - gpa) / 3.0) * 50 + 50));
-    case 'uk_honours':
-      // gpa 1 = First Class (95), 2 = 2:1 (80), 3 = 2:2 (65), 4 = 3rd (50)
-      if (gpa <= 1.0) return 95;
-      if (gpa <= 2.1) return 80;
-      if (gpa <= 2.2) return 65;
-      return 50;
     case 'ects':
-      // ECTS scale encoded 1 (A) to 5 (E)
-      if (gpa <= 1) return 95;
-      if (gpa <= 2) return 85;
-      if (gpa <= 3) return 75;
-      if (gpa <= 4) return 65;
-      return 50;
+      // Percentage and ECTS grades are already expressed on a 0-100 scale.
+      return clampScore(gpa);
+    case 'german': {
+      // Modified Bavarian formula: 1.0 => 100, 4.0 => 25, 5.0 => 0.
+      const clamped = Math.min(5.0, Math.max(1.0, gpa));
+      return roundHalfUp(((5.0 - clamped) / 4.0) * 100, 1);
+    }
+    case 'uk_honours':
+      // 1st => 85, 2:1 => 75, 2:2 => 60, raw percentage >= 40 => raw.
+      if (gpa <= 1.0) return 85;
+      if (gpa >= 2.0 && gpa <= 2.15) return 75;
+      if (gpa > 2.15 && gpa <= 2.25) return 60;
+      if (gpa >= 40.0) return clampScore(gpa);
+      return 75;
     default:
-      return Math.min(100, (gpa / (maxGpa || 4.0)) * 100);
+      return clampScore((gpa / (maxGpa || 4.0)) * 100);
   }
 }
 
@@ -77,18 +88,35 @@ export function evaluateEligibility(
       totalMandatoryCount: scholarship.criteria.filter(c => c.isMandatory).length,
       mandatoryFailedCount: 0,
       missingCount: scholarship.criteria.length,
+      manualReviewCount: 0,
       lastVerified: scholarship.lastVerified,
     };
   }
 
   const evaluatedList: EvaluatedCriterion[] = [];
-  let mandatoryPassed = 0;
-  let mandatoryFailed = 0;
-  let missingInfo = 0;
   let totalMandatory = 0;
-  let totalCriteria = scholarship.criteria.length;
+  let mandatoryFailed = 0;
+  let missingMandatory = 0;
+  let missingOptional = 0;
+  let manualReviewCount = 0;
+  let matchedCount = 0;
 
+  const totalCriteria = scholarship.criteria.length;
   const normalizedStudentGpa = normalizeGpa(profile.gpa, profile.gradingScale, profile.maxGpa);
+
+  const record = (
+    criterion: EligibilityCriterion,
+    status: EvaluatedCriterion['status'],
+    explanation: string,
+  ) => {
+    evaluatedList.push({ criterion, status, explanation });
+    if (status === 'passed') matchedCount++;
+    else if (status === 'needs_review') manualReviewCount++;
+    else if (status === 'missing') {
+      if (criterion.isMandatory) missingMandatory++;
+      else missingOptional++;
+    } else if (status === 'failed' && criterion.isMandatory) mandatoryFailed++;
+  };
 
   for (const criterion of scholarship.criteria) {
     if (criterion.isMandatory) totalMandatory++;
@@ -96,235 +124,239 @@ export function evaluateEligibility(
     switch (criterion.ruleType) {
       case 'citizenship': {
         if (!profile.citizenship) {
-          evaluatedList.push({
-            criterion,
-            status: 'missing',
-            explanation: 'Citizenship not specified in your profile.'
-          });
-          missingInfo++;
+          record(criterion, 'missing', 'Citizenship not specified in your profile.');
           break;
         }
 
+        const citizenship = profile.citizenship.trim().toLowerCase();
         const isDisallowed = criterion.prohibitedCitizenships?.some(
-          c => c.toLowerCase() === profile.citizenship.toLowerCase()
+          c => c.trim().toLowerCase() === citizenship
         );
         if (isDisallowed) {
-          evaluatedList.push({
+          record(
             criterion,
-            status: 'failed',
-            explanation: `Passport origin (${profile.citizenship}) is ineligible under host bilateral quota.`
-          });
-          if (criterion.isMandatory) mandatoryFailed++;
+            'failed',
+            `Passport origin (${profile.citizenship}) is ineligible under host bilateral quota.`
+          );
           break;
         }
 
-        if (criterion.allowedCitizenships && criterion.allowedCitizenships.length > 0) {
-          const isAllowed = criterion.allowedCitizenships.some(
-            c => c.toLowerCase() === profile.citizenship.toLowerCase() || c === '*' || c.toLowerCase() === 'all'
-          );
-          if (isAllowed) {
-            evaluatedList.push({
-              criterion,
-              status: 'passed',
-              explanation: `Citizenship verified eligible (${profile.citizenship}).`
-            });
-            if (criterion.isMandatory) mandatoryPassed++;
-          } else {
-            evaluatedList.push({
-              criterion,
-              status: 'failed',
-              explanation: `Restricted to citizens of: ${criterion.allowedCitizenships.slice(0, 3).join(', ')}${criterion.allowedCitizenships.length > 3 ? '...' : ''}.`
-            });
-            if (criterion.isMandatory) mandatoryFailed++;
-          }
+        const allowed = criterion.allowedCitizenships ?? [];
+        const openedGlobally =
+          allowed.length === 0 || allowed.some(c => ['*', 'all'].includes(c.trim().toLowerCase()));
+
+        if (openedGlobally || allowed.some(c => c.trim().toLowerCase() === citizenship)) {
+          record(criterion, 'passed', `Citizenship verified eligible (${profile.citizenship}).`);
         } else {
-          // Global / all countries
-          evaluatedList.push({
+          record(
             criterion,
-            status: 'passed',
-            explanation: `Open globally to international applicants including ${profile.citizenship}.`
-          });
-          if (criterion.isMandatory) mandatoryPassed++;
+            'failed',
+            `Restricted to citizens of: ${allowed.slice(0, 3).join(', ')}${allowed.length > 3 ? '...' : ''}.`
+          );
         }
         break;
       }
 
       case 'degree_level': {
-        const matchesTarget = profile.targetDegrees?.some(d => scholarship.studyLevels.includes(d));
-        const hasPrereq = 
-          (scholarship.studyLevels.includes('masters') && ['bachelors', 'masters'].includes(profile.educationLevel)) ||
-          (scholarship.studyLevels.includes('phd') && ['masters', 'bachelors'].includes(profile.educationLevel)) ||
-          scholarship.studyLevels.includes(profile.educationLevel);
+        const targets = (profile.targetDegrees ?? []).map(t => String(t).toLowerCase());
+        const required = (criterion.requiredDegrees ?? []).map(d => String(d).toLowerCase());
 
-        if (matchesTarget || hasPrereq) {
-          evaluatedList.push({
+        if (targets.length === 0) {
+          record(
             criterion,
-            status: 'passed',
-            explanation: `Target degree matches your objective (${profile.targetDegrees.join(', ') || profile.educationLevel}).`
-          });
-          if (criterion.isMandatory) mandatoryPassed++;
+            'missing',
+            'Target study level not selected. Specify whether you are pursuing a master’s, PhD, or bachelor’s.'
+          );
+          break;
+        }
+
+        if (required.length === 0) {
+          record(criterion, 'missing', 'Study level requirement is not specified in the programme rules.');
+          break;
+        }
+
+        // Case-insensitive substring match, mirroring the Python engine.
+        const matched = targets.some(target =>
+          required.some(req => req.includes(target) || target.includes(req))
+        );
+        if (matched) {
+          record(criterion, 'passed', `Target degree matches your objective (${targets.join(', ')}).`);
         } else {
-          evaluatedList.push({
-            criterion,
-            status: 'failed',
-            explanation: `Requires study at: ${scholarship.studyLevels.join(', ')}.`
-          });
-          if (criterion.isMandatory) mandatoryFailed++;
+          record(criterion, 'failed', `Requires study at: ${required.join(', ')}.`);
         }
         break;
       }
 
       case 'academic_score': {
-        if (!profile.gpa) {
-          evaluatedList.push({
-            criterion,
-            status: 'missing',
-            explanation: 'Cumulative GPA not recorded in profile.'
-          });
-          missingInfo++;
+        // Zero/absent GPA means "not provided", never an automatic failure.
+        if (!profile.gpa || profile.gpa <= 0) {
+          record(criterion, 'missing', 'Cumulative GPA not recorded in profile.');
           break;
         }
 
-        const requiredCutoff = criterion.minGpaNormalized || 75; // default ~3.0 / 4.0
+        const requiredCutoff = criterion.minGpaNormalized ?? 70;
         if (normalizedStudentGpa >= requiredCutoff) {
-          evaluatedList.push({
+          record(
             criterion,
-            status: 'passed',
-            explanation: `Your standardized academic score (${normalizedStudentGpa.toFixed(1)}%) meets the threshold (${requiredCutoff}%).`
-          });
-          if (criterion.isMandatory) mandatoryPassed++;
+            'passed',
+            `Your standardized academic score (${normalizedStudentGpa.toFixed(1)}%) meets the threshold (${requiredCutoff}%).`
+          );
         } else {
-          evaluatedList.push({
+          record(
             criterion,
-            status: 'failed',
-            explanation: `Your standardized academic score (${normalizedStudentGpa.toFixed(1)}%) is below the minimum required (${requiredCutoff}%).`
-          });
-          if (criterion.isMandatory) mandatoryFailed++;
+            'failed',
+            `Your standardized academic score (${normalizedStudentGpa.toFixed(1)}%) is below the minimum required (${requiredCutoff}%).`
+          );
         }
         break;
       }
 
       case 'field_of_study': {
-        if (!profile.primaryField && (!profile.facultyTags || profile.facultyTags.length === 0)) {
-          evaluatedList.push({
-            criterion,
-            status: 'missing',
-            explanation: 'Field of study not specified in profile.'
-          });
-          missingInfo++;
+        const fields = criterion.applicableFields ?? [];
+        const lowered = fields.map(f => f.trim().toLowerCase());
+
+        if (lowered.length === 0 || lowered.some(f => ['all', 'all fields', '*'].includes(f))) {
+          record(criterion, 'passed', 'All academic disciplines and research areas are eligible.');
           break;
         }
 
-        const fieldMatches = scholarship.fieldsOfStudy.some(f => {
-          if (f.toLowerCase() === 'all' || f.toLowerCase() === 'all fields') return true;
-          const searchLower = profile.primaryField.toLowerCase();
-          const tagMatches = profile.facultyTags?.some(t => f.toLowerCase().includes(t.toLowerCase()) || t.toLowerCase().includes(f.toLowerCase()));
-          return searchLower.includes(f.toLowerCase()) || f.toLowerCase().includes(searchLower) || tagMatches;
-        });
+        const studentField = (profile.primaryField ?? '').trim().toLowerCase();
+        if (!studentField) {
+          record(criterion, 'missing', 'Field of study not specified in profile.');
+          break;
+        }
 
+        const fieldMatches = lowered.some(
+          f => f.includes(studentField) || studentField.includes(f)
+        );
         if (fieldMatches) {
-          evaluatedList.push({
-            criterion,
-            status: 'passed',
-            explanation: `Discipline aligns with scholarship scope (${profile.primaryField || 'STEM'}).`
-          });
-          if (criterion.isMandatory) mandatoryPassed++;
+          record(criterion, 'passed', `Discipline aligns with scholarship scope (${profile.primaryField}).`);
         } else {
-          evaluatedList.push({
+          // A stated field that does not match is a deterministic failure, not missing info.
+          record(
             criterion,
-            status: 'missing',
-            explanation: `Confirm your undergraduate degree specialization aligns with: ${scholarship.fieldsOfStudy.join(', ')}.`
-          });
-          missingInfo++;
+            'failed',
+            `Discipline does not match priority areas: ${fields.join(', ')}.`
+          );
         }
         break;
       }
 
       case 'language': {
-        if (profile.hasEnglishMediumInstruction) {
-          evaluatedList.push({
+        const acceptsWaiver = criterion.acceptsMediumOfInstructionWaiver ?? true;
+        if (profile.hasEnglishMediumInstruction && acceptsWaiver) {
+          record(
             criterion,
-            status: 'passed',
-            explanation: 'English language proficiency satisfied via Medium of Instruction verification.'
-          });
-          if (criterion.isMandatory) mandatoryPassed++;
-        } else if (profile.englishTestType && profile.englishTestType !== 'none' && profile.englishScore) {
-          evaluatedList.push({
+            'passed',
+            'English language proficiency satisfied via Medium of Instruction verification.'
+          );
+          break;
+        }
+
+        const testType = (profile.englishTestType || 'none').toLowerCase();
+        const rawScore = (profile.englishScore ?? '').trim();
+        if (testType === 'none' || rawScore === '') {
+          record(
             criterion,
-            status: 'passed',
-            explanation: `Valid test score submitted (${profile.englishTestType.toUpperCase()}: ${profile.englishScore}).`
-          });
-          if (criterion.isMandatory) mandatoryPassed++;
+            'missing',
+            'Official English proficiency test score or institutional waiver documentation pending upload.'
+          );
+          break;
+        }
+
+        // Strict numeric parse: reject trailing garbage instead of silently truncating.
+        const score = Number(rawScore);
+        if (Number.isNaN(score)) {
+          record(criterion, 'missing', `Could not parse language score value: '${rawScore}'.`);
+          break;
+        }
+
+        const minIelts = criterion.minIelts ?? 6.5;
+        if (testType === 'ielts' && score >= minIelts) {
+          record(criterion, 'passed', `IELTS score of ${score} meets the required ${minIelts}.`);
+        } else if (testType === 'toefl' && score >= 90) {
+          record(criterion, 'passed', `TOEFL score of ${score} satisfies the admission threshold.`);
+        } else if (testType === 'duolingo' && score >= 115) {
+          record(criterion, 'passed', `Duolingo score of ${score} satisfies the admission threshold.`);
         } else {
-          evaluatedList.push({
+          record(
             criterion,
-            status: 'missing',
-            explanation: 'Official English proficiency test score or institutional waiver documentation pending upload.'
-          });
-          missingInfo++;
+            'failed',
+            `Language score of ${score} is below the minimum prerequisite ${minIelts}.`
+          );
         }
         break;
       }
 
       case 'work_experience': {
-        const requiredYears = criterion.minWorkYears || 2;
-        if (profile.workExperienceYears !== undefined && profile.workExperienceYears !== null) {
-          if (profile.workExperienceYears >= requiredYears) {
-            evaluatedList.push({
-              criterion,
-              status: 'passed',
-              explanation: `${profile.workExperienceYears} years documented experience satisfies the ${requiredYears}+ years requirement.`
-            });
-            if (criterion.isMandatory) mandatoryPassed++;
-          } else {
-            evaluatedList.push({
-              criterion,
-              status: 'failed',
-              explanation: `Requires ${requiredYears}+ years of full-time professional or leadership experience (profile indicates ${profile.workExperienceYears} years).`
-            });
-            if (criterion.isMandatory) mandatoryFailed++;
-          }
-        } else {
-          evaluatedList.push({
+        const requiredYears = criterion.minWorkYears ?? 2;
+        if (profile.workExperienceYears === undefined || profile.workExperienceYears === null) {
+          record(
             criterion,
-            status: 'missing',
-            explanation: `Requires verification of ${requiredYears}+ years relevant work or community leadership experience.`
-          });
-          missingInfo++;
+            'missing',
+            `Requires verification of ${requiredYears}+ years relevant work or community leadership experience.`
+          );
+          break;
+        }
+
+        if (profile.workExperienceYears >= requiredYears) {
+          record(
+            criterion,
+            'passed',
+            `${profile.workExperienceYears} years documented experience satisfies the ${requiredYears}+ years requirement.`
+          );
+        } else {
+          record(
+            criterion,
+            'failed',
+            `Requires ${requiredYears}+ years of full-time professional or leadership experience (profile indicates ${profile.workExperienceYears} years).`
+          );
         }
         break;
       }
 
+      case 'manual_review':
+      case 'deadline':
       default: {
-        evaluatedList.push({
+        // Unknown, deadline, and discretionary rules are never auto-passed.
+        record(
           criterion,
-          status: 'passed',
-          explanation: 'Standard admissions criteria satisfied.'
-        });
-        if (criterion.isMandatory) mandatoryPassed++;
+          'needs_review',
+          `Criterion '${criterion.title}' requires manual verification against the provider's terms.`
+        );
         break;
       }
     }
   }
 
-  // Determine overall status
-  let status: 'likely_eligible' | 'more_info_needed' | 'ineligible' | 'needs_review' = 'likely_eligible';
-  let statusLabel = 'Likely eligible';
+  const missingCount = missingMandatory + missingOptional;
+
+  // Transparent weighted score: meets 1.0, manual review 0.5, info needed 0.25, fails 0.0.
+  const weightedScore = evaluatedList.reduce((sum, item) => {
+    if (item.status === 'passed') return sum + 1.0;
+    if (item.status === 'needs_review') return sum + 0.5;
+    if (item.status === 'missing') return sum + 0.25;
+    return sum;
+  }, 0);
+  const matchScore = totalCriteria > 0 ? roundHalfUp((weightedScore / totalCriteria) * 100) : 0;
+
+  // Outcome precedence: mandatory fail -> missing mandatory -> manual review -> likely.
+  let status: EligibilityEvaluationResult['status'];
+  let statusLabel: string;
 
   if (mandatoryFailed > 0) {
     status = 'ineligible';
     statusLabel = 'Does not meet a known mandatory criterion';
-  } else if (missingInfo > 0) {
+  } else if (missingMandatory > 0) {
     status = 'more_info_needed';
-    statusLabel = `Potential match — ${missingInfo} info needed`;
+    statusLabel = `Potential match — ${missingCount} info needed`;
+  } else if (manualReviewCount > 0) {
+    status = 'needs_review';
+    statusLabel = 'Needs manual review';
   } else {
     status = 'likely_eligible';
-    const percent = Math.round((mandatoryPassed / Math.max(1, totalMandatory)) * 100);
-    statusLabel = `Likely eligible (${percent}% match)`;
+    statusLabel = `Likely eligible (${matchScore}% match)`;
   }
-
-  const passedCount = evaluatedList.filter(e => e.status === 'passed').length;
-  const matchScore = totalCriteria > 0 ? Math.round((passedCount / totalCriteria) * 100) : 0;
 
   return {
     scholarshipId: scholarship.id,
@@ -332,10 +364,11 @@ export function evaluateEligibility(
     statusLabel,
     matchScore,
     evaluatedList,
-    matchedCount: passedCount,
+    matchedCount,
     totalMandatoryCount: totalMandatory,
     mandatoryFailedCount: mandatoryFailed,
-    missingCount: missingInfo,
+    missingCount,
+    manualReviewCount,
     lastVerified: scholarship.lastVerified,
   };
 }

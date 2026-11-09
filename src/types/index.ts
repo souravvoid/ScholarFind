@@ -47,7 +47,8 @@ export type CriterionRuleType =
   | 'academic_score'
   | 'language'
   | 'work_experience'
-  | 'deadline';
+  | 'deadline'
+  | 'manual_review';
 
 export interface EligibilityCriterion {
   id: string;
@@ -64,6 +65,8 @@ export interface EligibilityCriterion {
   minGpaNormalized?: number; // 0.0 - 100.0 scale
   minWorkYears?: number;
   requiresEnglishCert?: boolean;
+  acceptsMediumOfInstructionWaiver?: boolean;
+  minIelts?: number;
 }
 
 type EligibilityStatus = 
@@ -74,7 +77,7 @@ type EligibilityStatus =
 
 export interface EvaluatedCriterion {
   criterion: EligibilityCriterion;
-  status: 'passed' | 'missing' | 'failed';
+  status: 'passed' | 'missing' | 'failed' | 'needs_review';
   explanation: string;
 }
 
@@ -88,6 +91,7 @@ export interface EligibilityEvaluationResult {
   totalMandatoryCount: number;
   mandatoryFailedCount: number;
   missingCount: number;
+  manualReviewCount: number;
   lastVerified: string;
 }
 

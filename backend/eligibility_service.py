@@ -22,6 +22,7 @@ Supports:
 """
 
 import enum
+import math
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional, Set
 import re
@@ -125,6 +126,12 @@ class EligibilityEvaluation:
 # --- Deterministic Normalization Helpers ---
 
 
+def _round_half_up(value: float, digits: int = 0) -> float:
+    """Deterministic half-up rounding (Python's round() uses banker's rounding)."""
+    factor = 10 ** digits
+    return math.floor(value * factor + 0.5) / factor
+
+
 def standardize_gpa(
     gpa: Optional[float],
     scale: str = "gpa_4_0",
@@ -132,19 +139,22 @@ def standardize_gpa(
 ) -> Optional[float]:
     """
     Normalizes any institutional grading scale to a unified 0.0 - 100.0 index.
-    Returns None if gpa is None.
+    Returns None if gpa is None; zero is a valid raw score that normalizes to 0.0.
+
+    Canonical mapping is shared with ``src/utils/eligibilityEngine.ts`` and the
+    golden fixture in ``tests/fixtures/eligibility-parity.json``.
     """
     if gpa is None:
         return None
+    if gpa <= 0:
+        return 0.0
 
     scale_str = str(scale).lower()
 
-    if "5" in scale_str:
-        return min(100.0, max(0.0, (gpa / (max_gpa or 5.0)) * 100.0))
-    elif "uk" in scale_str:
-        # UK Honours classification representation
-        # gpa could be 1 (1st), 2.1, 2.2, 3 or raw percentage
-        if gpa <= 1.0 or gpa == 1:
+    if "uk" in scale_str:
+        # UK Honours classification representation.
+        # gpa may be a classification (1, 2.1, 2.2, 3) or a raw percentage.
+        if gpa <= 1.0:
             return 85.0
         elif 2.0 <= gpa <= 2.15:
             return 75.0
@@ -154,17 +164,22 @@ def standardize_gpa(
             return min(100.0, gpa)
         return 75.0
     elif "german" in scale_str:
-        # German scale: 1.0 (Very Good / 100%), 4.0 (Pass / 50%), 5.0 (Fail / 0%)
-        # Modified Bavarian Formula: ((Nmax - Nd) / (Nmax - Nmin)) * 100
+        # Modified Bavarian Formula: 1.0 => 100, 4.0 => 25, 5.0 => 0.
         clamped = min(5.0, max(1.0, gpa))
-        return round(((5.0 - clamped) / (5.0 - 1.0)) * 100.0, 1)
+        return _round_half_up(((5.0 - clamped) / (5.0 - 1.0)) * 100.0, 1)
     elif "ects" in scale_str:
-        # ECTS mapping
+        # ECTS grades are expressed on the same 0-100 numeric scale.
         return min(100.0, max(0.0, gpa))
     elif "percent" in scale_str:
         return min(100.0, max(0.0, gpa))
+    elif scale_str in ("gpa_5_0", "gpa_5", "5.0", "5"):
+        # Explicit 5.0 denominator; max_gpa must not override a known scale.
+        return min(100.0, max(0.0, (gpa / 5.0) * 100.0))
+    elif scale_str in ("gpa_4_0", "gpa_4", "4.0", "4"):
+        # Explicit 4.0 denominator.
+        return min(100.0, max(0.0, (gpa / 4.0) * 100.0))
     else:
-        # Standard 4.0 scale default
+        # Fallback for unknown scales only.
         effective_max = max_gpa if (max_gpa and max_gpa > 0) else 4.0
         return min(100.0, max(0.0, (gpa / effective_max) * 100.0))
 
@@ -211,7 +226,20 @@ def evaluate_citizenship(
 
     # Check whitelist if specified
     if allowed:
-        matches = any(a.strip().lower() == student_c for a in allowed)
+        normalized_allowed = [a.strip().lower() for a in allowed]
+        if any(a in ("*", "all") for a in normalized_allowed):
+            return EvaluatedCriterionResult(
+                rule_id=rule.rule_id,
+                rule_type=rule.rule_type,
+                title=rule.title,
+                status=CriterionStatus.MEETS,
+                is_mandatory=rule.is_mandatory,
+                explanation="Universal international eligibility confirmed.",
+                source_citation=rule.source_citation,
+                student_value=profile.citizenship,
+                required_value="Any nationality"
+            )
+        matches = student_c in normalized_allowed
         if matches:
             return EvaluatedCriterionResult(
                 rule_id=rule.rule_id,
@@ -276,6 +304,19 @@ def evaluate_degree_level(
             required_value=allowed_degrees or "Target Degree Level"
         )
 
+    if not allowed_degrees:
+        return EvaluatedCriterionResult(
+            rule_id=rule.rule_id,
+            rule_type=rule.rule_type,
+            title=rule.title,
+            status=CriterionStatus.MORE_INFO_NEEDED,
+            is_mandatory=rule.is_mandatory,
+            explanation="Study level requirement is not specified in the programme rules.",
+            source_citation=rule.source_citation,
+            student_value=profile.target_degree,
+            required_value="Target Degree Level"
+        )
+
     matched = False
     for req in allowed_degrees:
         if req in student_target or student_target in req:
@@ -317,7 +358,8 @@ def evaluate_academic_score(
     min_normalized = params.get("min_gpa_normalized", 70.0)
     uk_equiv = params.get("uk_equivalent", "2:1")
 
-    if profile.gpa is None:
+    # Zero/absent GPA means "not provided", never an automatic failure.
+    if profile.gpa is None or profile.gpa <= 0:
         return EvaluatedCriterionResult(
             rule_id=rule.rule_id,
             rule_type=rule.rule_type,
@@ -379,7 +421,8 @@ def evaluate_field_of_study(
     allowed_fields: List[str] = params.get("allowed_fields", [])
     student_field = (profile.primary_field or "").strip().lower()
 
-    if not allowed_fields or "all fields" in [f.lower() for f in allowed_fields]:
+    lowered_fields = [f.strip().lower() for f in allowed_fields]
+    if not allowed_fields or any(f in ("all", "all fields", "*") for f in lowered_fields):
         return EvaluatedCriterionResult(
             rule_id=rule.rule_id,
             rule_type=rule.rule_type,
@@ -406,7 +449,7 @@ def evaluate_field_of_study(
         )
 
     matched = any(
-        (f.lower() in student_field or student_field in f.lower())
+        (f.strip().lower() in student_field or student_field in f.strip().lower())
         for f in allowed_fields
     )
 
@@ -559,7 +602,21 @@ def evaluate_work_experience(
     """Evaluates professional and leadership work experience."""
     params = rule.parameters
     min_years = params.get("min_work_years", 2.0)
-    student_years = profile.work_experience_years or 0.0
+
+    if profile.work_experience_years is None:
+        return EvaluatedCriterionResult(
+            rule_id=rule.rule_id,
+            rule_type=rule.rule_type,
+            title=rule.title,
+            status=CriterionStatus.MORE_INFO_NEEDED,
+            is_mandatory=rule.is_mandatory,
+            explanation=f"Requires verification of {min_years:.1f}+ years relevant work or community leadership experience.",
+            source_citation=rule.source_citation,
+            student_value=None,
+            required_value=f"{min_years:.1f} years"
+        )
+
+    student_years = float(profile.work_experience_years)
 
     if student_years >= min_years:
         return EvaluatedCriterionResult(
@@ -690,7 +747,7 @@ class DeterministicEligibilityEngine:
             0.25 if r.status == CriterionStatus.MORE_INFO_NEEDED else 0.0
             for r in results
         )
-        match_percentage = int(round((weighted_score / total_rules) * 100))
+        match_percentage = int(_round_half_up((weighted_score / total_rules) * 100))
 
         # Deterministic 4-Outcome Resolution:
         # 1. Does not meet criterion: Any mandatory rule failed
