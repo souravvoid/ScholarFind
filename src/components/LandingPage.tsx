@@ -100,8 +100,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <section className="relative w-full overflow-hidden bg-arc-blue-textured text-white">
         <Container className="pt-16 pb-20 lg:pt-24 lg:pb-28">
           <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <h1 className="font-arc-display text-4xl leading-tight text-white sm:text-5xl md:text-6xl">
-              &ldquo;Your future deserves to be funded.&rdquo;
+            <p className="mb-5 font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-sentry-lime">
+              Scholarship intelligence for Indian students
+            </p>
+            <h1 className="font-arc-display text-4xl leading-[1.08] text-white sm:text-5xl md:text-6xl">
+              Your future deserves to be{' '}
+              <span className="sentry-highlight">funded</span>.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/85">
               One profile. Opportunities worldwide. A clearer path to apply. Discover curated, verified funding
@@ -109,7 +113,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-              <Button variant="primary" size="lg" onClick={onOpenProfileBuilder} className="bg-white text-royal hover:bg-white/90">
+              <Button variant="primary" size="lg" onClick={onOpenProfileBuilder} className="!bg-white !text-royal hover:!bg-white/90">
                 <Icon name="arrowRight" size={16} />
                 Get Started
               </Button>
@@ -117,7 +121,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 variant="secondary"
                 size="lg"
                 onClick={() => onNavigate('explore')}
-                className="border-white/35 bg-arc-indigo text-white hover:bg-[#141466]"
+                className="!border-white/35 !bg-arc-indigo !text-white hover:!bg-[#141466]"
               >
                 Explore Scholarships
               </Button>
@@ -160,12 +164,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* How it works */}
-      <section className="w-full bg-cream">
+      <section className="w-full border-y border-hairline bg-paper-sunken">
         <Container className="py-16 lg:py-24">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="font-data text-xs uppercase tracking-[0.14em] text-ink-muted">How it works</p>
-            <h2 className="mt-2 font-arc-display text-3xl text-arc-indigo md:text-4xl">
-              Three steps, no guesswork
+            <p className="font-data text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-muted">How it works</p>
+            <h2 className="mt-3 font-arc-display text-3xl text-ink md:text-4xl">
+              Three steps, no <span className="sentry-highlight">guesswork</span>
             </h2>
           </div>
           <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -200,7 +204,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               variant="secondary"
               size="md"
               onClick={() => onNavigate('explore')}
-              className="self-start border-white/35 bg-arc-indigo text-white hover:bg-[#141466] md:self-auto"
+              className="self-start !border-white/35 !bg-arc-indigo !text-white hover:!bg-[#141466] md:self-auto"
             >
               View all
               <Icon name="arrowRight" size={15} />
@@ -267,7 +271,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             Build your profile once. Get matched to verified scholarships worldwide.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button variant="primary" size="lg" onClick={onOpenProfileBuilder} className="bg-white text-royal hover:bg-white/90">
+            <Button variant="primary" size="lg" onClick={onOpenProfileBuilder} className="!bg-white !text-royal hover:!bg-white/90">
               <Icon name="arrowRight" size={16} />
               Get Started
             </Button>
@@ -275,7 +279,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               variant="secondary"
               size="lg"
               onClick={() => onNavigate('explore')}
-              className="border-white/35 bg-transparent text-white hover:bg-white/10"
+              className="!border-white/35 !bg-transparent !text-white hover:!bg-white/10"
             >
               Explore Scholarships
             </Button>

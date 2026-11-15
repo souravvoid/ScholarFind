@@ -5,7 +5,7 @@ type BadgeTone = 'neutral' | 'info' | 'ok' | 'warn' | 'bad';
 
 const TONES: Record<BadgeTone, string> = {
   neutral: 'bg-paper-sunken text-ink-muted border-hairline',
-  info: 'bg-[#EEF2FF] text-sapphire border-[#C7D2FE]',
+  info: 'bg-[#ECE7F7] text-[#422082] border-[#CFC4E6]',
   ok: 'bg-ok-surface text-ok-text border-ok-border',
   warn: 'bg-warn-surface text-warn-text border-warn-border',
   bad: 'bg-bad-surface text-bad-text border-bad-border',

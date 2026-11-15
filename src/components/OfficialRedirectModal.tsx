@@ -66,7 +66,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (prop
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-[#1a1a1e]/50 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-[#1f1633]/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
@@ -82,30 +82,30 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (prop
         {/* Close Button with 44px touch target */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 sm:top-5 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full text-ink-muted hover:text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors cursor-pointer"
+          className="absolute top-3 right-3 sm:top-5 sm:right-5 w-11 h-11 flex items-center justify-center rounded-full text-ink-muted hover:text-[#1f1633] hover:bg-[#F5F4F7] transition-colors cursor-pointer"
           aria-label="Close redirect confirmation"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
         </button>
 
         {/* Header Icon */}
-        <div className="w-12 h-12 rounded-xl bg-[#dce2f3] text-[#0037b0] flex items-center justify-center mb-5">
+        <div className="w-12 h-12 rounded-xl bg-[#ECE7F7] text-[#150f23] flex items-center justify-center mb-5">
           <span aria-hidden="true" className="material-symbols-outlined text-[26px]">open_in_new</span>
         </div>
 
-        <h3 id="redirect-dialog-title" className="font-headline-sm text-headline-sm text-[#1a1a1e] mb-2">
+        <h3 id="redirect-dialog-title" className="font-headline-sm text-headline-sm text-[#1f1633] mb-2">
           Leaving ScholarFind for the {destinationLabel}
         </h3>
 
         <p className="font-body-default text-[var(--color-ink-muted)] mb-5 leading-relaxed">
           You are about to continue to the verified {destinationLabel} for{' '}
-          <strong className="text-[#1a1a1e]">{title}</strong> hosted by{' '}
-          <strong className="text-[#1a1a1e]">{providerName}</strong>.
+          <strong className="text-[#1f1633]">{title}</strong> hosted by{' '}
+          <strong className="text-[#1f1633]">{providerName}</strong>.
         </p>
 
         {/* Destination Trust Notice Box */}
         <div className={`p-4 rounded-xl border mb-5 space-y-2 ${
-          gate === 'verified' ? 'bg-[#f3f4f3] border-[#e5e7eb]'
+          gate === 'verified' ? 'bg-[#F5F4F7] border-[#e5e7eb]'
           : gate === 'mismatch' || gate === 'unverified' ? 'bg-[#fffbeb] border-[#fde68a]'
           : 'bg-[#fff1f2] border-[#fecdd3]'
         }`}>
@@ -134,9 +134,9 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (prop
                     : 'cannot verify origin'}
             </span>
           </div>
-          <div className="flex items-center gap-2 font-mono text-sm text-[#1a1a1e] bg-white p-2 rounded-lg border border-[#e5e7eb] break-all">
+          <div className="flex items-center gap-2 font-mono text-sm text-[#1f1633] bg-white p-2 rounded-lg border border-[#e5e7eb] break-all">
             <span aria-hidden="true" className={`material-symbols-outlined text-[18px] ${
-              gate === 'verified' ? 'text-[#0037b0]' : gate === 'mismatch' || gate === 'unverified' ? 'text-[#b45309]' : 'text-[#be123c]'
+              gate === 'verified' ? 'text-[#150f23]' : gate === 'mismatch' || gate === 'unverified' ? 'text-[#b45309]' : 'text-[#be123c]'
             }`}>
               {gate === 'verified' ? 'verified' : gate === 'mismatch' ? 'help' : 'gpp_bad'}
             </span>
@@ -165,7 +165,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (prop
             type="checkbox"
             checked={hasAcknowledged}
             onChange={(e) => setHasAcknowledged(e.target.checked)}
-            className="mt-0.5 w-4 h-4 rounded text-[#0037b0] focus:ring-[#0037b0] accent-[#0037b0]"
+            className="mt-0.5 w-4 h-4 rounded text-[#150f23] focus:ring-[#150f23] accent-[#150f23]"
           />
           <span className="font-caption text-xs text-[#b45309] leading-relaxed">
             I understand that ScholarFind is an independent indexing platform. Final eligibility criteria, admissions, and financial award decisions are determined exclusively by the scholarship provider.
@@ -176,7 +176,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (prop
         <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 w-full min-w-0">
           <button
             onClick={onClose}
-            className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-lg border border-[#e5e7eb] font-caption-strong text-sm text-[#1a1a1e] hover:bg-[#f3f4f3] transition-colors flex items-center justify-center cursor-pointer"
+            className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-lg border border-[#e5e7eb] font-caption-strong text-sm text-[#1f1633] hover:bg-[#F5F4F7] transition-colors flex items-center justify-center cursor-pointer"
           >
             Stay on ScholarFind
           </button>
@@ -185,7 +185,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (prop
             disabled={!hasAcknowledged || gate === 'blocked'}
             className={`w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-body-strong text-sm transition-all shadow-sm ${
               hasAcknowledged && gate !== 'blocked'
-                ? 'bg-[#1d4ed8] hover:bg-[#2563eb] text-white active:scale-95 cursor-pointer'
+                ? 'bg-[#422082] hover:bg-[#6a5fc1] text-white active:scale-95 cursor-pointer'
                 : 'bg-[var(--color-surface-container-highest)] text-ink-muted cursor-not-allowed'
             }`}
           >

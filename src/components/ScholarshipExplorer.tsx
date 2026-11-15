@@ -21,6 +21,7 @@ import { Badge } from './ui/Badge';
 import { EmptyState } from './ui/EmptyState';
 import { SkeletonRows } from './ui/Skeleton';
 import { ErrorPanel } from './ui/ErrorPanel';
+import { ScholarshipImage } from './ui/ScholarshipImage';
 
 export const ScholarshipExplorer: React.FC<{
   onOpenProfileBuilder: () => void;
@@ -199,8 +200,10 @@ export const ScholarshipExplorer: React.FC<{
       })
       .sort((a, b) => {
         if (selectedSort === 'deadline') {
-          return (a.scholarship.daysRemaining ?? Number.POSITIVE_INFINITY) -
-            (b.scholarship.daysRemaining ?? Number.POSITIVE_INFINITY);
+          // Closed records sink to the bottom; "closes today" stays urgent.
+          const rank = (days: number | null) =>
+            days === null || days < 0 ? Number.MAX_SAFE_INTEGER : days;
+          return rank(a.scholarship.daysRemaining) - rank(b.scholarship.daysRemaining);
         }
         if (selectedSort === 'funding') return b.scholarship.estimatedUSDValue - a.scholarship.estimatedUSDValue;
         if (selectedSort === 'match') return b.evaluation.matchScore - a.evaluation.matchScore;
@@ -398,7 +401,7 @@ export const ScholarshipExplorer: React.FC<{
                 aria-pressed={isSelected}
                 className={`flex min-h-10 items-center justify-between rounded-control border px-3 text-left text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                   isSelected
-                    ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                    ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                     : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                 }`}
               >
@@ -447,7 +450,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -478,7 +481,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -523,7 +526,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center justify-between rounded-control border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -554,7 +557,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -584,7 +587,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`min-h-9 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -616,7 +619,7 @@ export const ScholarshipExplorer: React.FC<{
                 aria-pressed={isSelected}
                 className={`min-h-9 rounded-chip border px-3 text-xs font-semibold capitalize transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                   isSelected
-                    ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                    ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                     : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                 }`}
               >
@@ -822,7 +825,12 @@ export const ScholarshipExplorer: React.FC<{
                   return (
                     <li key={scholarship.id} className="py-5">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="min-w-0 flex-1">
+                        <div className="flex min-w-0 flex-1 gap-3 sm:gap-4">
+                          <ScholarshipImage
+                            src={scholarship.heroImage}
+                            className="h-20 w-24 shrink-0 rounded-control sm:h-24 sm:w-32"
+                          />
+                          <div className="min-w-0 flex-1">
                           <Link
                             to={`/scholarship/${scholarship.id}`}
                             className="font-ui-display text-lg font-semibold leading-snug text-ink hover:text-sapphire focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
@@ -893,6 +901,7 @@ export const ScholarshipExplorer: React.FC<{
                                 Match score {evaluation.matchScore}%
                               </span>
                             ) : null}
+                          </div>
                           </div>
                         </div>
 

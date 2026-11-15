@@ -50,6 +50,8 @@ interface ApiScholarship {
   fields_of_study: string[];
   total_award_value: string;
   award_details: string | null;
+  coverage_types?: string[];
+  funding_nature?: string[];
   estimated_usd_value: number;
   application_deadline: string | null;
   academic_year: string;
@@ -210,6 +212,14 @@ function parseScholarship(item: unknown, detail = false): Scholarship {
     fieldsOfStudy: item.fields_of_study.filter(isString),
     totalAwardValue: item.total_award_value,
     ...(isString(item.award_details) ? { awardDetails: item.award_details } : {}),
+    ...(Array.isArray(item.coverage_types)
+      ? {
+          coverageTypes: item.coverage_types.filter(isString) as Scholarship['coverageTypes'],
+        }
+      : {}),
+    ...(Array.isArray(item.funding_nature)
+      ? { fundingNature: item.funding_nature.filter(isString) as Scholarship['fundingNature'] }
+      : {}),
     estimatedUSDValue: item.estimated_usd_value,
     applicationDeadline: isString(item.application_deadline) ? item.application_deadline : null,
     daysRemaining: calculateDaysRemaining(isString(item.application_deadline) ? item.application_deadline : null),

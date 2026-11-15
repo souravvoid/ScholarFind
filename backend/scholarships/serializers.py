@@ -165,6 +165,8 @@ class ScholarshipSummarySerializer(serializers.ModelSerializer):
     destination_countries = serializers.SerializerMethodField()
     study_levels = serializers.SerializerMethodField()
     fields_of_study = serializers.SerializerMethodField()
+    coverage_types = serializers.SerializerMethodField()
+    funding_nature = serializers.SerializerMethodField()
     criteria = ScholarshipEligibilityRulePublicSerializer(
         source="eligibility_rules", many=True, read_only=True
     )
@@ -184,6 +186,8 @@ class ScholarshipSummarySerializer(serializers.ModelSerializer):
             "fields_of_study",
             "total_award_value",
             "award_details",
+            "coverage_types",
+            "funding_nature",
             "estimated_usd_value",
             "application_deadline",
             "academic_year",
@@ -207,6 +211,12 @@ class ScholarshipSummarySerializer(serializers.ModelSerializer):
 
     def get_fields_of_study(self, obj):
         return self._split(obj.fields_of_study)
+
+    def get_coverage_types(self, obj):
+        return self._split(obj.coverage_types)
+
+    def get_funding_nature(self, obj):
+        return self._split(obj.funding_nature)
 
 
 class ScholarshipDetailSerializer(ScholarshipSummarySerializer):
