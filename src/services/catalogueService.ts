@@ -14,7 +14,7 @@ const PAGE_SIZE = 50;
 
 type CatalogueErrorKind = 'network' | 'http' | 'invalid';
 
-export class CatalogueApiError extends Error {
+class CatalogueApiError extends Error {
   readonly kind: CatalogueErrorKind;
   readonly status?: number;
 

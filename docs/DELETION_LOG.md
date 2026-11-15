@@ -133,3 +133,28 @@ grepped for external references and confirmed to have no consumers before editin
 `src/components/ProfileBuilder.tsx` also contains unrelated local edits present before
 this session (citizenship/residence/institution defaults and a placeholder changed from
 Nigeria to India). They are not part of this cleanup and were left untouched.
+## [2026-11-15] Refactor Session - Dead Code Cleanup (firebase removal)
+
+### Unused Files Deleted
+- `src/firebase.ts` - Firebase client init + testConnection; zero importers after backend migration to Django auth; only file referencing firebase-applet-config.json
+
+### Unused Exports Removed (made internal)
+- `CatalogueApiError` class export from `src/services/catalogueService.ts:17` - only used internally via instanceof checks; removed `export` keyword
+
+### Unused Dependencies Removed from package.json
+- `firebase@^13.0.0` - only imported by deleted src/firebase.ts; auth now uses Django backend
+
+### Verified Still-In-Use (NOT removed)
+- `scripts/export-catalogue-bundle.ts` - flagged by knip as unused file but invoked via `npx tsx` by backend seed command; kept
+- `tailwindcss` devDependency - used via `@import "tailwindcss"` in src/index.css
+
+### Impact
+- Files deleted: 1
+- Dependencies removed: 1
+- Lines of code removed: ~19 (firebase.ts)
+
+### Testing
+- All frontend unit tests passing (51/51)
+- All backend tests passing (46/46)
+- Build succeeds
+- Lint: only pre-existing errors in 2 component test files (unrelated to this cleanup)

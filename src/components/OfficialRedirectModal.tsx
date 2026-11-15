@@ -57,6 +57,15 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (prop
   }
 
   const handleProceed = () => {
+    // Guard against bypass: only open if the URL passed the gate (https + host check)
+    if (gate === 'blocked') return;
+    let u: URL;
+    try {
+      u = new URL(destinationUrl);
+    } catch {
+      return;
+    }
+    if (u.protocol !== 'https:') return;
     // Open in secure new tab with noopener, noreferrer
     window.open(destinationUrl, '_blank', 'noopener,noreferrer');
     onClose();
