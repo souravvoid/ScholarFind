@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
+// @ts-ignore - screen and fireEvent are runtime exports but missing from v16 type defs
+import { screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ScholarshipExplorer } from './ScholarshipExplorer';
 
