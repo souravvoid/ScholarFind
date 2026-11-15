@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
-// @ts-ignore - screen is a runtime export but missing from v16 type defs
-import { screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Icon } from './Icon';
 
 describe('Icon', () => {
