@@ -15,3 +15,5 @@ playwright-report/
 __pycache__/
 *.pyc
 package-lock.json
+# Local academic documentation (excluded from Git)
+.local-docs/

@@ -12,17 +12,25 @@ portal, does not submit applications, and does not make official eligibility dec
 
 ## What is implemented
 
-- React + TypeScript + Vite web client with discovery, details, profile, tracker, sources,
-  and authentication pages.
-- Firebase Firestore catalogue/source reads with static fallback data.
-- Django REST Framework backend configured for PostgreSQL, including authentication,
-  scholarship, student, saved-item, tracker, eligibility, and ingestion APIs.
-- TypeScript and Python eligibility implementations.
-- Frontend unit/component tests, backend tests, Playwright smoke tests, and GitHub Actions CI.
+- React 19 + TypeScript + Vite 8 web client with routed discovery, scholarship detail,
+  profile wizard, tracker, sources, and login/signup pages (react-router 7, Tailwind v4,
+  lucide-react icons).
+- Catalogue and source reads from the Django REST API (`/api/v1/scholarships/`,
+  `/api/v1/scholarship-sources/`) with client-side response validation and a bundled
+  48-record offline fallback (`src/data/scholarshipsData.ts`).
+- Django 6 + Django REST Framework backend configured for PostgreSQL 16, covering token
+  authentication, scholarships, students, saved items, application tracking, eligibility,
+  and ingestion, plus Django admin.
+- A management command (`seed_catalogue_bundle`) imports the exported catalogue fixture so
+  the API and the offline fallback expose the same records.
+- TypeScript and Python eligibility implementations kept aligned by a shared fixture.
+- Frontend unit/component tests, backend unittest and pytest suites, Playwright smoke tests,
+  and GitHub Actions CI.
 
-The client and backend are not fully integrated end to end: the client reads catalogue data
-from Firestore, calls the backend for auth, and stores inspected profile/tracker state in
-browser storage. See the [system architecture](docs/SYSTEM_ARCHITECTURE.md).
+The client reads catalogue, source, and auth data from the Django API. Profile, saved, and
+tracker state is still held in browser storage rather than the corresponding authenticated
+APIs, so it does not sync across devices. See the
+[system architecture](docs/SYSTEM_ARCHITECTURE.md).
 
 ## Problem and approach
 
@@ -33,41 +41,48 @@ official providers.
 
 ## Current limitations
 
-- PostgreSQL-backed pytest runs need an available, migrated test database; the audit
-  environment's pytest run encountered database setup/connection errors.
-- Matching record ownership was corrected in the current worktree; the targeted regression
-  suite passes, while the updated PostgreSQL CI workflow still awaits a hosted run.
-- A Firestore-only catalogue entry may not resolve in the static-backed details page.
+- PostgreSQL-backed `pytest` runs need an available, migrated test database; CI provisions
+  PostgreSQL 16, but a reachable database is still required for local pytest runs.
+- When the API is unreachable, the offline fallback shows the bundled 48-record catalogue,
+  which may be stale; a slug absent from the bundle resolves to not-found.
+- Profile, saved, and tracker data live in browser storage, so accounts do not sync data
+  across devices despite the existence of authenticated APIs.
 - Income eligibility is not modeled; some catalogue income conditions are currently
   represented as academic-score rules and therefore do not verify income.
-- Some eligibility defaults and scale descriptions can misrepresent what has been verified.
-- Successful live Google OAuth, deployed Firestore rules, production deployment, backups,
-  monitoring, and performance have not been verified.
+- Profile defaults (institution, GPA, target term) are illustrative sample values; users can
+  mistake them for verified answers.
+- Successful live Google OAuth, the Render deployment, production PostgreSQL operations,
+  backups, monitoring, and performance have not been verified.
 - Indian scholarship coverage and reuse terms are not established for many candidate sources.
 - Eligibility output is advisory and must be confirmed with the official provider.
 
 ## Technology
 
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS, Firebase client SDK.
-- **Backend:** Python, Django, Django REST Framework, PostgreSQL.
+- **Frontend:** React 19, TypeScript, Vite 8, Tailwind CSS v4, react-router 7, lucide-react.
+- **Backend:** Python, Django 6, Django REST Framework, PostgreSQL (gunicorn + WhiteNoise in
+  production).
 - **Testing:** Node test runner/tsx, Vitest, Python unittest/pytest, Playwright.
-- **CI:** GitHub Actions.
+- **CI:** GitHub Actions (frontend job plus a PostgreSQL-backed Django job).
 
 ## Repository map
 
 ```text
 src/                  React client, services, tests
-backend/              Django apps, API, models, migrations, tests
+backend/              Django apps, API, models, migrations, fixtures, tests
+scripts/              dev.sh (API + client) and catalogue export tooling
 tests/e2e/            Playwright browser tests
 docs/                 Project, engineering, data, testing, security, and demo documentation
-firestore.rules       Checked-in Firestore access rules
+firestore.rules       Legacy Firebase rules; the client no longer bundles a Firebase SDK
 ```
+
+`backend/main.py`, `backend/models.py`, and `backend/schemas.py` are legacy FastAPI/SQLAlchemy
+artifacts kept for reference; the Django project does not import them.
 
 ## Prerequisites
 
-- Node.js 22 and Bun (lockfile version is recorded in the CI workflow).
-- Python compatible with `backend/requirements.txt`.
-- PostgreSQL for database-backed backend behavior/tests.
+- Node.js 22 and Bun 1.4.2 (matching the CI workflow).
+- Python compatible with `backend/requirements.txt` (CI uses 3.13).
+- PostgreSQL 16 for database-backed backend behavior and tests.
 - Chromium for Playwright.
 
 ## Local development
@@ -75,14 +90,14 @@ firestore.rules       Checked-in Firestore access rules
 ```bash
 bun install --frozen-lockfile
 python3 -m pip install -r backend/requirements.txt
-npm run dev
+npm run dev          # client only; shows the offline fallback without an API
 ```
 
 For an end-to-end local run (Django API + Vite client together), create `backend/.env` from
 `backend/.env.example`, point it at a disposable PostgreSQL database, then run:
 
 ```bash
-cp backend/.env.example backend/.env   # edit POSTGRES_* / DATABASE_URL
+cp backend/.env.example backend/.edit  # edit POSTGRES_* / DATABASE_URL
 ./scripts/dev.sh                       # or: npm run dev:all
 ```
 
@@ -90,6 +105,13 @@ The script checks PostgreSQL, applies migrations, imports the bundled catalogue
 (`seed_catalogue_bundle`), and starts the API on `:8000` plus the client on `:3000`. Override
 with `BACKEND_PORT`, `FRONTEND_PORT`, or `SEED=0`. Without the API the client still renders,
 but it shows the "Offline catalogue" banner because the proxy cannot reach `/api`.
+
+The bundled catalogue fixture is generated from the TypeScript source, never hand-edited:
+
+```bash
+npx tsx scripts/export-catalogue-bundle.ts
+cd backend && python3 manage.py seed_catalogue_bundle
+```
 
 See [development setup](docs/DEVELOPMENT_SETUP.md) for environment and backend caveats. Do not
 use production credentials or real student information in local demos.
@@ -103,8 +125,10 @@ npm run build
 npm run test:e2e
 ```
 
-`npm test` runs frontend unit, component, and backend unittest groups, and returns a failing
-status if any group fails. Playwright requires Chromium. Backend pytest paths that exercise
+`npm test` runs the frontend unit (`test:frontend`), Vitest component (`test:components`), and
+backend unittest (`test:backend`) groups, and returns a failing status if any group fails.
+Playwright requires Chromium; the landing spec intercepts `/api/v1/scholarships/**` with a
+fixture so smoke tests do not need a running API. Backend pytest paths that exercise
 PostgreSQL additionally require a disposable migrated test database.
 
 See the [testing strategy](docs/TESTING_STRATEGY.md) and dated
@@ -117,9 +141,9 @@ real scholarships or as verified funding information. Follow the [demo guide](do
 
 ## Future improvements
 
-Prioritized next steps include repairing the matching API ownership defect, catalogue/detail
-consistency, PostgreSQL-backed test setup, client/API persistence integration, and eligibility
-and data-quality coverage. See the [implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md).
+Prioritized next steps include moving profile/saved/tracker state onto the authenticated APIs,
+a reproducible PostgreSQL test setup, cohort and eligibility data-quality coverage, and
+verified deployment operations. See the [implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md).
 
 ## Documentation
 
@@ -129,32 +153,7 @@ Start at the [documentation index](docs/DOCUMENTATION_INDEX.md), including the
 [security review notes](docs/SECURITY_REVIEW.md), and
 [implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md).
 
-## Documentation
-
-Start at the [documentation index](docs/DOCUMENTATION_INDEX.md), including the
-[architecture](docs/SYSTEM_ARCHITECTURE.md), [API reference](docs/API_DOCUMENTATION.md),
-[database design](docs/DATABASE_DESIGN.md), [data and licensing notes](docs/DATA_SOURCES_AND_LICENSING.md),
-[security review notes](docs/SECURITY_REVIEW.md), and
-[implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md).
-
-Engineering audit (professor-ready):
-- [Repository audit](docs/engineering/REPOSITORY_AUDIT.md)
-- [High-level design](docs/system-design/HLD.md)
-- [Low-level design](docs/system-design/LLD.md)
-- [ER diagram](docs/database/ER_DIAGRAM.md)
-- [DBMS design](docs/database/DBMS_DESIGN.md)
-- [Normalization](docs/database/NORMALIZATION.md)
-- [OS concepts](docs/engineering/OPERATING_SYSTEM_CONCEPTS.md)
-- [Networking concepts](docs/engineering/NETWORKING_CONCEPTS.md)
-- [Test report](docs/testing/TEST_REPORT.md)
-- [Professor demo guide](docs/demo/PROFESSOR_DEMO_GUIDE.md)
-- [Viva questions](docs/demo/TECHNICAL_VIVA_QUESTIONS.md)
-- [Presentation outline](docs/demo/PRESENTATION_OUTLINE.md)
-
-## Screenshots">
-oldString">
-## Screenshots">
-path="/home/sourav/Goat/Backend engineering/incredible pbl 5 sem/ScholarFind/README.md
+## Screenshots
 
 No screenshots are included in this repository documentation pass; add only genuine captures
 from a reviewed local/staging build.
