@@ -1,5 +1,10 @@
 # ScholarFind — Project Context (verified)
 
+> **Historical snapshot:** This document reflects the pre-Django-migration state and is not
+> authoritative for the current implementation. Use [the current documentation index](DOCUMENTATION_INDEX.md)
+> and [project status](PROJECT_STATUS.md) for audited architecture, feature state, and test
+> results. Reconcile this snapshot before using its implementation claims.
+
 > Knowledge doc for AI/developer sessions. Everything below was verified against the code on
 > 2026-11-08 (commit `ce43c29`). Claims that could not be verified in code are marked
 > **UNVERIFIED-CLAIM**. Update this file when implementation changes.

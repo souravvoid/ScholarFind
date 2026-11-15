@@ -14,7 +14,6 @@ import { ScholarshipDetailPage } from './pages/ScholarshipDetailPage';
 import { AuthPage } from './pages/AuthPage';
 import { ProfileBuilder } from './components/ProfileBuilder';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { testConnection } from './firebase';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -27,11 +26,6 @@ function ScrollToTop() {
 function MainApp() {
   const [showProfileBuilder, setShowProfileBuilder] = useState(false);
   const navigate = useNavigate();
-
-  // Validate connection to Firestore on initial boot (read-only probe).
-  useEffect(() => {
-    testConnection();
-  }, []);
 
   useEffect(() => {
     const handler = () => setShowProfileBuilder(true);

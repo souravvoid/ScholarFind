@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Scholarship, DegreeLevel, CoverageType } from '../types';
-import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { evaluateEligibility } from '../utils/eligibilityEngine';
-import { getDeadlineDisplay, getScholarshipsFromDatabase } from '../services/databaseService';
+import { getDeadlineDisplay } from '../services/databaseService';
+import { getScholarshipsFromDatabase } from '../services/catalogueService';
 import {
   GEOGRAPHIC_REGIONS,
   isScholarshipInRegion,
@@ -29,9 +29,10 @@ export const ScholarshipExplorer: React.FC<{
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [scholarships, setScholarships] = useState<Scholarship[]>(SCHOLARSHIPS_DATA);
+  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const [loadingFromDB, setLoadingFromDB] = useState<boolean>(false);
   const [dbErrorMessage, setDbErrorMessage] = useState<string | null>(null);
+  const [isOfflineFallback, setIsOfflineFallback] = useState(false);
 
   // Filters state — defaults show full catalogue (decision 12)
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') ?? '');
@@ -69,7 +70,7 @@ export const ScholarshipExplorer: React.FC<{
   const [deadlineWindow, setDeadlineWindow] = useState<string>(searchParams.get('deadline') ?? 'all');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
 
-  // Load from database service with fallback
+  // Load from the canonical Django catalogue API.
   useEffect(() => {
     let isMounted = true;
     async function fetchFromDB() {
@@ -77,17 +78,13 @@ export const ScholarshipExplorer: React.FC<{
       try {
         const res = await getScholarshipsFromDatabase();
         if (isMounted) {
-          if (res.data && res.data.length > 0) {
-            setScholarships(res.data);
-          }
-          if (res.error && !res.fromDatabase) {
-            // Informational error state if catalogue unreachable
-            setDbErrorMessage(null);
-          }
+          setScholarships(res.data);
+          setDbErrorMessage(res.error ?? null);
+          setIsOfflineFallback(!res.fromDatabase && res.data.length > 0);
         }
       } catch (err) {
         if (isMounted) {
-          console.warn('Failed to fetch from Firestore catalogue:', err);
+          setDbErrorMessage(err instanceof Error ? err.message : 'Could not load catalogue.');
         }
       } finally {
         if (isMounted) {
@@ -178,7 +175,7 @@ export const ScholarshipExplorer: React.FC<{
 
         // Funding Type: Coverage Scope
         if (selectedCoverage.length > 0) {
-          const hasCoverage = selectedCoverage.some((cov) => scholarship.coverageTypes.includes(cov));
+          const hasCoverage = selectedCoverage.some((cov) => scholarship.coverageTypes?.includes(cov));
           if (!hasCoverage) return false;
         }
 
@@ -193,7 +190,7 @@ export const ScholarshipExplorer: React.FC<{
         // Deadline Proximity
         if (deadlineWindow !== 'all') {
           const proximityOpt = DEADLINE_PROXIMITY_OPTIONS.find((opt) => opt.id === deadlineWindow);
-          if (proximityOpt && !proximityOpt.match(scholarship.daysRemaining)) {
+          if (proximityOpt && !proximityOpt.match(scholarship.daysRemaining ?? Number.NaN)) {
             return false;
           }
         }
@@ -201,7 +198,10 @@ export const ScholarshipExplorer: React.FC<{
         return true;
       })
       .sort((a, b) => {
-        if (selectedSort === 'deadline') return a.scholarship.daysRemaining - b.scholarship.daysRemaining;
+        if (selectedSort === 'deadline') {
+          return (a.scholarship.daysRemaining ?? Number.POSITIVE_INFINITY) -
+            (b.scholarship.daysRemaining ?? Number.POSITIVE_INFINITY);
+        }
         if (selectedSort === 'funding') return b.scholarship.estimatedUSDValue - a.scholarship.estimatedUSDValue;
         if (selectedSort === 'match') return b.evaluation.matchScore - a.evaluation.matchScore;
         return 0;
@@ -316,7 +316,7 @@ export const ScholarshipExplorer: React.FC<{
   const deadlineCounts = useMemo(() => {
     const map: Record<string, number> = {};
     DEADLINE_PROXIMITY_OPTIONS.forEach((opt) => {
-      map[opt.id] = scholarships.filter((s) => opt.match(s.daysRemaining)).length;
+      map[opt.id] = scholarships.filter((s) => opt.match(s.daysRemaining ?? Number.NaN)).length;
     });
     return map;
   }, [scholarships]);
@@ -354,7 +354,7 @@ export const ScholarshipExplorer: React.FC<{
       health: 0,
     };
     COVERAGE_TYPE_OPTIONS.forEach((opt) => {
-      map[opt.id] = scholarships.filter((s) => s.coverageTypes.includes(opt.id)).length;
+      map[opt.id] = scholarships.filter((s) => s.coverageTypes?.includes(opt.id)).length;
     });
     return map;
   }, [scholarships]);
@@ -737,7 +737,11 @@ export const ScholarshipExplorer: React.FC<{
       {/* Main Content Area */}
       <Container className="py-8">
         {dbErrorMessage ? (
-          <ErrorPanel title="Catalogue unavailable" message={dbErrorMessage} className="mb-6" />
+          <ErrorPanel
+            title={isOfflineFallback ? 'Offline catalogue' : 'Catalogue unavailable'}
+            message={dbErrorMessage}
+            className="mb-6"
+          />
         ) : null}
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
@@ -797,8 +801,12 @@ export const ScholarshipExplorer: React.FC<{
             ) : filteredScholarships.length === 0 ? (
               <EmptyState
                 icon="filters"
-                title="No scholarships match these filters"
-                description="Try clearing or broadening your funding type, geographic location, or deadline filters."
+                title={scholarships.length === 0 ? 'No opportunities in the catalogue' : 'No scholarships match these filters'}
+                description={
+                  scholarships.length === 0
+                    ? 'The catalogue returned no records. Try again later or check your connection.'
+                    : 'Try clearing or broadening your funding type, geographic location, or deadline filters.'
+                }
                 action={
                   <Button variant="secondary" size="md" onClick={clearAllFilters}>
                     Clear all filters
@@ -832,12 +840,18 @@ export const ScholarshipExplorer: React.FC<{
                             <span className="font-data">{scholarship.totalAwardValue}</span>
                             <span aria-hidden="true">·</span>
                             <span className="capitalize text-ink-muted font-medium">
-                              {fundingNature.includes('need') ? 'Merit & Need-based' : 'Merit-based'}
+                              {fundingNature.includes('need')
+                                ? 'Merit & Need-based'
+                                : fundingNature.includes('merit')
+                                  ? 'Merit-based'
+                                  : 'Funding basis not specified'}
                             </span>
                             <span aria-hidden="true">·</span>
                             <span
                               className={`font-data font-medium ${
-                                deadline.isClosed
+                                deadline.daysRemaining === null
+                                  ? 'text-ink-muted'
+                                  : deadline.isClosed
                                   ? 'text-missing-text'
                                   : deadline.daysRemaining <= 14
                                     ? 'text-missing-text font-semibold'
@@ -846,7 +860,9 @@ export const ScholarshipExplorer: React.FC<{
                                       : 'text-ink-muted'
                               }`}
                             >
-                              {deadline.isClosed
+                              {deadline.daysRemaining === null
+                                ? 'Deadline not published'
+                                : deadline.isClosed
                                 ? 'Cycle closed'
                                 : deadline.daysRemaining === 0
                                   ? 'Closes today'

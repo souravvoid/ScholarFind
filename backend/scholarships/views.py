@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Count, Q
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -15,7 +15,9 @@ from .serializers import (
     IngestionJobSerializer,
     RequiredDocumentSerializer,
     ScholarshipEligibilityRuleSerializer,
+    ScholarshipDetailSerializer,
     ScholarshipProviderSerializer,
+    ScholarshipSummarySerializer,
     ScholarshipSerializer,
     ScholarshipSourceSerializer,
 )
@@ -35,23 +37,25 @@ class ScholarshipProviderViewSet(_CatalogueReadOnlyViewSet):
 
 
 class ScholarshipSourceViewSet(_CatalogueReadOnlyViewSet):
-    queryset = ScholarshipSource.objects.all()
+    queryset = ScholarshipSource.objects.annotate(scholarship_count=Count("scholarships"))
     serializer_class = ScholarshipSourceSerializer
-
-
-def _as_list(value):
-    if not value:
-        return []
-    return [item.strip() for item in str(value).split(",") if item.strip()]
 
 
 class ScholarshipViewSet(_CatalogueReadOnlyViewSet):
     queryset = (
         Scholarship.objects.select_related("provider", "source")
+        .prefetch_related("eligibility_rules", "required_documents")
         .filter(is_active=True)
         .order_by("title")
     )
-    serializer_class = ScholarshipSerializer
+    lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return ScholarshipDetailSerializer
+        if self.action == "list":
+            return ScholarshipSummarySerializer
+        return ScholarshipSerializer
 
     def list(self, request):
         """Preserve the FastAPI paginated search envelope."""
@@ -84,40 +88,12 @@ class ScholarshipViewSet(_CatalogueReadOnlyViewSet):
         paginator = Paginator(queryset, page_size)
         page_obj = paginator.get_page(page)
 
-        return Response(
-            {
-                "page": page_obj.number,
-                "page_size": page_size,
-                "total_count": paginator.count,
-                "results": [
-                    {
-                        "id": scholarship.slug,
-                        "slug": scholarship.slug,
-                        "title": scholarship.title,
-                        "provider_name": scholarship.provider.name,
-                        "provider_category": scholarship.provider.category,
-                        "destination_countries": _as_list(
-                            scholarship.destination_countries
-                        ),
-                        "study_levels": _as_list(scholarship.study_levels),
-                        "fields_of_study": _as_list(scholarship.fields_of_study),
-                        "total_award_value": scholarship.total_award_value,
-                        "estimated_usd_value": scholarship.estimated_usd_value,
-                        "application_deadline": (
-                            scholarship.application_deadline.isoformat()
-                            if scholarship.application_deadline
-                            else None
-                        ),
-                        "academic_year": scholarship.academic_year,
-                        "official_source_url": scholarship.official_source_url,
-                        "official_application_url": scholarship.official_application_url,
-                        "source_domain": scholarship.source_domain,
-                        "overview": scholarship.overview,
-                    }
-                    for scholarship in page_obj.object_list
-                ],
-            }
-        )
+        return Response({
+            "page": page_obj.number,
+            "page_size": page_size,
+            "total_count": paginator.count,
+            "results": self.get_serializer(page_obj.object_list, many=True).data,
+        })
 
 
 class ScholarshipEligibilityRuleViewSet(_CatalogueReadOnlyViewSet):

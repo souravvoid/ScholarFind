@@ -136,6 +136,7 @@ test('Modular Ingestion Pipeline Across 3 Distinct Public APIs', async (t) => {
     const rec = result.normalizedRecords[0];
     assert.equal(rec.destinationCountries[0], 'United Kingdom');
     assert.equal(rec.destinationFlag, '🇬🇧');
+    assert.ok(rec.provenance);
     assert.equal(rec.provenance.sourceId, 'src_csc_uk');
   });
 

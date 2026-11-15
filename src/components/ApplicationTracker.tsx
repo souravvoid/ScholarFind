@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { TrackerStatus } from '../types';
-import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
+import { Scholarship, TrackerStatus } from '../types';
+import { getScholarshipsFromDatabase } from '../services/catalogueService';
 import { OfficialRedirectModal } from './OfficialRedirectModal';
 import { getDeadlineDisplay } from '../services/databaseService';
 import { Container } from './ui/Container';
@@ -9,6 +9,7 @@ import { Button } from './ui/Button';
 import { Icon } from './ui/Icon';
 import { EmptyState } from './ui/EmptyState';
 import { Link } from 'react-router-dom';
+import { ErrorPanel } from './ui/ErrorPanel';
 
 const STAGES: { id: TrackerStatus; label: string }[] = [
   { id: 'interested', label: 'Interested' },
@@ -19,10 +20,25 @@ const STAGES: { id: TrackerStatus; label: string }[] = [
 
 export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
   const { savedScholarships, updateTrackerStatus, unsaveScholarship } = useAuth();
+  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
+  const [catalogueError, setCatalogueError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | TrackerStatus>('all');
-  const [redirectTarget, setRedirectTarget] = useState<(typeof SCHOLARSHIPS_DATA)[number] | null>(null);
+  const [redirectTarget, setRedirectTarget] = useState<Scholarship | null>(null);
   const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
   const [notesDraft, setNotesDraft] = useState<string>('');
+
+  useEffect(() => {
+    let active = true;
+    void getScholarshipsFromDatabase().then((result) => {
+      if (active) {
+        setScholarships(result.data);
+        setCatalogueError(result.error ?? null);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filteredItems = savedScholarships.filter((item) => activeTab === 'all' || item.status === activeTab);
 
@@ -33,7 +49,7 @@ export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExpl
 
   const dueSoon = savedScholarships.filter((i) => {
     const d = getDeadlineDisplay(i.deadline);
-    return !d.isClosed && d.daysRemaining <= 14;
+    return !d.isClosed && d.daysRemaining !== null && d.daysRemaining <= 14;
   }).length;
 
   if (savedScholarships.length === 0) {
@@ -115,9 +131,19 @@ export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExpl
       </div>
 
       <Container className="py-8">
+        {catalogueError ? (
+          <div className="mb-5">
+            <ErrorPanel
+              title={scholarships.length ? 'Offline catalogue' : 'Catalogue unavailable'}
+              message={catalogueError}
+            />
+          </div>
+        ) : null}
         <ul className="space-y-4">
           {filteredItems.map((item) => {
-            const fullRecord = SCHOLARSHIPS_DATA.find((s) => s.id === item.scholarshipId);
+            const fullRecord = scholarships.find(
+              (scholarship) => scholarship.slug === item.scholarshipId || scholarship.id === item.scholarshipId,
+            );
             const deadline = getDeadlineDisplay(item.deadline);
             const requiredDocs = fullRecord?.requiredDocuments ?? [];
             const isEditing = editingNotesId === item.scholarshipId;
@@ -139,7 +165,9 @@ export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExpl
                           {item.scholarshipTitle}
                         </p>
                         <p className="mt-1 text-xs text-warn-text">
-                          This record is no longer in the current catalogue. Only its saved details remain.
+                          {catalogueError
+                            ? 'The current catalogue could not confirm this record. Only its saved details remain.'
+                            : 'This record is no longer in the current catalogue. Only its saved details remain.'}
                         </p>
                       </div>
                     )}
@@ -150,16 +178,18 @@ export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExpl
                       <span className="font-data">{item.awardValue}</span>
                       <span aria-hidden>·</span>
                       <span
-                        className={`font-data ${deadline.isClosed ? 'text-ink-muted' : deadline.daysRemaining <= 14 ? 'text-warn-text' : 'text-ink-muted'}`}
+                        className={`font-data ${deadline.isClosed ? 'text-ink-muted' : deadline.daysRemaining !== null && deadline.daysRemaining <= 14 ? 'text-warn-text' : 'text-ink-muted'}`}
                       >
-                        {deadline.isClosed
+                        {deadline.daysRemaining === null
+                          ? 'Deadline not published'
+                          : deadline.isClosed
                           ? 'Cycle closed'
                           : deadline.daysRemaining === 0
                             ? 'Closes today'
                             : `${deadline.daysRemaining} days left`}
                       </span>
                       <span aria-hidden>·</span>
-                      <span className="font-data">{item.deadline}</span>
+                      <span className="font-data">{item.deadline || 'Not published'}</span>
                     </div>
                   </div>
 

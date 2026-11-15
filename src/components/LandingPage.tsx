@@ -1,11 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
+import type { Scholarship } from '../types';
+import { getScholarshipsFromDatabase } from '../services/catalogueService';
 import { getDeadlineDisplay } from '../services/databaseService';
 import { Container } from './ui/Container';
 import { Button } from './ui/Button';
 import { Icon } from './ui/Icon';
 import { Card } from './ui/Card';
+import { ErrorPanel } from './ui/ErrorPanel';
 
 interface LandingPageProps {
   onNavigate: (tab: string) => void;
@@ -35,18 +37,38 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onOpenProfileBuilder,
 }) => {
   const navigate = useNavigate();
+  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void getScholarshipsFromDatabase().then((result) => {
+      if (!active) return;
+      setScholarships(result.data);
+      setLoadError(result.error ?? null);
+      setLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const featuredScholarships = useMemo(() => {
-    return [...SCHOLARSHIPS_DATA]
-      .sort((a, b) => new Date(a.applicationDeadline).getTime() - new Date(b.applicationDeadline).getTime())
+    return [...scholarships]
+      .sort((a, b) => {
+        if (!a.applicationDeadline) return 1;
+        if (!b.applicationDeadline) return -1;
+        return new Date(a.applicationDeadline).getTime() - new Date(b.applicationDeadline).getTime();
+      })
       .slice(0, 3);
-  }, []);
+  }, [scholarships]);
 
   const counts = useMemo(() => {
-    const countries = new Set(SCHOLARSHIPS_DATA.flatMap((s) => s.destinationCountries));
-    const providers = new Set(SCHOLARSHIPS_DATA.map((s) => s.providerName));
-    return { records: SCHOLARSHIPS_DATA.length, countries: countries.size, providers: providers.size };
-  }, []);
+    const countries = new Set(scholarships.flatMap((s) => s.destinationCountries));
+    const providers = new Set(scholarships.map((s) => s.providerName));
+    return { records: scholarships.length, countries: countries.size, providers: providers.size };
+  }, [scholarships]);
 
   const handleHeroSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,7 +89,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <span className="font-data text-xs text-white/90">Curated verified catalogue</span>
           <span className="hidden text-white/70 sm:inline">—</span>
           <span className="hidden text-sm text-white/90 sm:inline">
-            {counts.records} opportunities across {counts.countries} countries, from {counts.providers} providers.
+            {loading
+              ? 'Loading the current catalogue…'
+              : `${counts.records} opportunities across ${counts.countries} countries, from ${counts.providers} providers.`}
           </span>
         </Container>
       </div>
@@ -161,6 +185,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Featured records */}
       <section className="w-full bg-arc-blue-textured text-white">
         <Container className="py-16 lg:py-24">
+          {loadError ? (
+            <ErrorPanel
+              title={scholarships.length ? 'Offline catalogue' : 'Catalogue unavailable'}
+              message={loadError}
+            />
+          ) : null}
           <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="font-data text-xs text-white/85">Featured</p>
@@ -188,12 +218,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   className="group flex flex-col overflow-hidden rounded-card border border-white/20 bg-white/10 text-left transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <div className="relative h-40 w-full overflow-hidden bg-white/5">
-                    <img
-                      src={scholarship.heroImage}
-                      alt={scholarship.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
+                    {scholarship.heroImage ? (
+                      <img
+                        src={scholarship.heroImage}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : null}
                     <div className="absolute inset-0 bg-gradient-to-t from-royal/60 via-transparent to-transparent" />
                   </div>
                   <div className="flex flex-1 flex-col p-5">
@@ -206,7 +238,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/85">{scholarship.overview}</p>
                     <div className="mt-auto flex items-center justify-between pt-4">
                       <span className="font-data text-xs text-white/85">
-                        {deadline.isClosed
+                        {deadline.daysRemaining === null
+                          ? 'Deadline not published'
+                          : deadline.isClosed
                           ? 'Cycle closed'
                           : deadline.daysRemaining === 0
                             ? 'Closes today'
@@ -219,6 +253,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               );
             })}
           </div>
+          {!loading && featuredScholarships.length === 0 ? (
+            <p className="text-sm text-white/85">No opportunities are currently listed.</p>
+          ) : null}
         </Container>
       </section>
 

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { IngestionSource } from '../types';
-import { INGESTION_SOURCES } from '../data/sourcesData';
-import { getSourcesFromDatabase } from '../services/databaseService';
+import { getSourcesFromDatabase } from '../services/catalogueService';
 import { Container } from './ui/Container';
 import { Icon } from './ui/Icon';
 import { Badge } from './ui/Badge';
+import { ErrorPanel } from './ui/ErrorPanel';
+import { OfficialRedirectModal } from './OfficialRedirectModal';
 
 export const SourceTransparency: React.FC = () => {
-  const [sources, setSources] = useState<IngestionSource[]>(INGESTION_SOURCES);
-  const [isDatabaseConnected, setIsDatabaseConnected] = useState<boolean>(true);
+  const [sources, setSources] = useState<IngestionSource[]>([]);
+  const [isDatabaseConnected, setIsDatabaseConnected] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [selectedSource, setSelectedSource] = useState<IngestionSource | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -19,6 +22,7 @@ export const SourceTransparency: React.FC = () => {
       if (isMounted) {
         setSources(res.data);
         setIsDatabaseConnected(res.fromDatabase);
+        setLoadError(res.error ?? null);
         setLoading(false);
       }
     })();
@@ -28,6 +32,16 @@ export const SourceTransparency: React.FC = () => {
   }, []);
 
   const totalRecords = sources.reduce((sum, s) => sum + (s.scholarshipCount ?? 0), 0);
+  const redirectDestination = selectedSource
+    ? {
+        title: selectedSource.name,
+        providerName: selectedSource.originAgency,
+        url: selectedSource.provenanceUrl,
+        sourceDomain: '',
+        sourceName: selectedSource.name,
+        lastVerified: selectedSource.lastIngested ?? undefined,
+      }
+    : null;
 
   return (
     <div className="w-full max-w-full">
@@ -38,12 +52,13 @@ export const SourceTransparency: React.FC = () => {
             Sources &amp; verification
           </h1>
           <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-muted">
-            ScholarFind is an independent index. Every record links to its official source and shows the date it
-            was last audited. Catalogue writes happen server-side; this client can only read.
+            This page lists source metadata returned by ScholarFind&apos;s catalogue API, including source URLs and
+            ingestion dates when available. It does not confirm a provider&apos;s current availability or grant
+            permission to reuse its content. Catalogue changes are managed server-side; this page is read-only.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <Badge tone={isDatabaseConnected ? 'ok' : 'warn'}>
-              {isDatabaseConnected ? 'Live registry' : 'Cached registry'}
+              {isDatabaseConnected ? 'Live registry' : 'Offline catalogue'}
             </Badge>
             <span className="text-xs text-ink-muted">
               {sources.length} sources · {totalRecords} indexed records
@@ -57,17 +72,21 @@ export const SourceTransparency: React.FC = () => {
           <p className="text-sm text-ink-muted">Loading sources…</p>
         ) : (
           <>
+            {loadError && !sources.length ? (
+              <ErrorPanel title="Source registry unavailable" message={loadError} />
+            ) : null}
+            {loadError && sources.length ? (
+              <ErrorPanel title="Offline source metadata" message={loadError} />
+            ) : null}
             <ul className="space-y-4">
               {sources.map((source) => (
                 <li key={source.id} className="rounded-card border border-hairline bg-paper-raised p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xl" aria-hidden>
-                          {source.flag}
-                        </span>
+                        {source.flag ? <span className="text-xl" aria-hidden>{source.flag}</span> : null}
                         <h2 className="font-ui-display text-base font-semibold text-ink">{source.name}</h2>
-                        <Badge tone="ok">{source.status}</Badge>
+                        <Badge tone={source.status === 'active' ? 'ok' : 'warn'}>{source.status}</Badge>
                       </div>
                       <p className="mt-1 text-xs text-ink-muted">
                         {source.originAgency} · {source.country}
@@ -79,24 +98,24 @@ export const SourceTransparency: React.FC = () => {
                         </div>
                         <div className="flex justify-between gap-2">
                           <dt className="shrink-0">Last audited</dt>
-                          <dd className="font-data text-ink">{source.lastIngested.slice(0, 10)}</dd>
+                          <dd className="font-data text-ink">
+                            {source.lastIngested?.slice(0, 10) ?? 'Not recorded'}
+                          </dd>
                         </div>
                         <div className="flex justify-between gap-2 sm:col-span-2">
                           <dt className="shrink-0">Access method</dt>
                           <dd className="truncate text-ink">{source.accessMethod}</dd>
                         </div>
                       </dl>
-                      <p className="mt-3 text-xs leading-relaxed text-ink-muted">{source.auditPrinciples}</p>
                     </div>
-                    <a
-                      href={source.provenanceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSource(source)}
                       className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-control border border-hairline bg-paper-raised px-3 text-xs font-semibold text-sapphire transition-colors hover:bg-paper-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire"
                     >
                       View origin source
                       <Icon name="external" size={14} />
-                    </a>
+                    </button>
                   </div>
                 </li>
               ))}
@@ -113,6 +132,14 @@ export const SourceTransparency: React.FC = () => {
           </>
         )}
       </Container>
+      {redirectDestination ? (
+        <OfficialRedirectModal
+          destination={redirectDestination}
+          destinationLabel="official source"
+          isOpen
+          onClose={() => setSelectedSource(null)}
+        />
+      ) : null}
     </div>
   );
 };

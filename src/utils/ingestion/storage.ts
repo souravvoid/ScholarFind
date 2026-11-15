@@ -4,8 +4,6 @@
  */
 
 import { Scholarship } from '../../types';
-import { db } from '../../firebase';
-import { doc, setDoc } from 'firebase/firestore';
 
 export class IngestionStorage {
   private inMemoryStore: Map<string, Scholarship> = new Map();
@@ -42,19 +40,6 @@ export class IngestionStorage {
   clear(): void {
     this.inMemoryStore.clear();
     this.checksumIndex.clear();
-  }
-
-  /**
-   * Optional Firestore persistence for seamless database integration.
-   */
-  async persistToFirestore(record: Scholarship): Promise<void> {
-    try {
-      const docRef = doc(db, 'scholarships', record.id);
-      await setDoc(docRef, record, { merge: true });
-    } catch (error) {
-      // Catch and log without crashing in-memory pipeline if offline
-      console.warn(`Firestore sync note for ${record.id}:`, error);
-    }
   }
 }
 

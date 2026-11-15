@@ -1,5 +1,9 @@
 # Test Strategy — ScholarFind (2026-11-08)
 
+> **Historical snapshot:** Current test commands, execution results, and remaining gaps are
+> documented in [the current testing strategy](../TESTING_STRATEGY.md) and
+> [test report](../TEST_REPORT.md).
+
 Current state verified by reading suites; nothing invented. Rusty corners labeled.
 
 ## What exists (assertions verified)

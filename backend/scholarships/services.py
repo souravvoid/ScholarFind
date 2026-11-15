@@ -106,11 +106,7 @@ def persist_normalized_record(record) -> Tuple[Scholarship, bool]:
     deadline = _parse_deadline(record.deadline_iso)
     overview = record.award_summary or ""
     if deadline is None:
-        # The schema requires a deadline. Keep the row but make the missing
-        # source data explicit instead of inventing a plausible date.
-        deadline = timezone.now()
-        overview = (overview + " Application deadline has not been published.").strip()
-        logger.warning("No parseable deadline for %s; storing ingestion time.", record.slug)
+        logger.info("No published deadline for %s; storing it as unknown.", record.slug)
 
     base_slug = slugify(record.slug or record.title)[:200]
     slug = base_slug
@@ -137,6 +133,7 @@ def persist_normalized_record(record) -> Tuple[Scholarship, bool]:
         "official_application_url": record.official_application_url,
         "source_domain": _truncate(record.source_domain, 255),
         "overview": overview or "See the official provider page for full details.",
+        "application_instructions": list(record.application_instructions or []),
         "is_active": True,
     }
     scholarship, created = Scholarship.objects.update_or_create(

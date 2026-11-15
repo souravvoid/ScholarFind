@@ -13,12 +13,14 @@ describe('ScholarFind Database Service & Date Standards', () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const days = calculateDaysRemaining(tomorrow.toISOString());
+    assert(typeof days === 'number');
     assert(days >= 1 && days <= 2);
 
     // Past date (yesterday)
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const pastDays = calculateDaysRemaining(yesterday.toISOString());
+    assert(typeof pastDays === 'number');
     assert(pastDays < 0);
   });
 
@@ -34,6 +36,7 @@ describe('ScholarFind Database Service & Date Standards', () => {
     futureDate.setDate(futureDate.getDate() + 20);
     const open = getDeadlineDisplay(futureDate.toISOString());
     assert.strictEqual(open.isClosed, false);
+    assert(typeof open.daysRemaining === 'number');
     assert(open.daysRemaining > 0);
     assert(open.statusLabel.includes('days remaining'));
   });
