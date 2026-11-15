@@ -6,6 +6,23 @@ from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
 
+try:
+    import dj_database_url
+except ImportError:  # pragma: no cover - optional in local dev
+    dj_database_url = None
+
+try:
+    import corsheaders  # noqa: F401
+    CORS_HEADERS_AVAILABLE = True
+except ImportError:  # pragma: no cover - optional in local dev
+    CORS_HEADERS_AVAILABLE = False
+
+try:
+    import whitenoise  # noqa: F401
+    WHITENOISE_AVAILABLE = True
+except ImportError:  # pragma: no cover - optional in local dev
+    WHITENOISE_AVAILABLE = False
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -58,6 +75,12 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+]
+if WHITENOISE_AVAILABLE:
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+if CORS_HEADERS_AVAILABLE:
+    MIDDLEWARE.append('corsheaders.middleware.CorsMiddleware')
+MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,21 +107,31 @@ TEMPLATES = [
 ROOT_URLCONF = 'config.urls'
 
 WSGI_APPLICATION = 'config.wsgi.application'
-ASGI_APPLICATION = 'config.asgi_application'
+ASGI_APPLICATION = 'config.asgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        # Dedicated database for the Django backend. The legacy `scholarfind`
-        # database on this host contains unrelated Prisma tables and is left
-        # untouched.
-        'NAME': os.environ.get('POSTGRES_DB', 'scholarfind_django'),
-        'USER': os.environ.get('POSTGRES_USER', 'scholarfind'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
-        'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and dj_database_url is not None:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=IS_PRODUCTION,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            # Dedicated database for the Django backend. The legacy `scholarfind`
+            # database on this host contains unrelated Prisma tables and is left
+            # untouched.
+            'NAME': os.environ.get('POSTGRES_DB', 'scholarfind_django'),
+            'USER': os.environ.get('POSTGRES_USER', 'scholarfind'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -205,6 +238,21 @@ LOGGING = {
         },
     },
 }
+
+# CORS (explicit origins only; never wildcard in production)
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+CORS_ALLOW_CREDENTIALS = True
+# WhiteNoise static files (optional in local dev)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+if WHITENOISE_AVAILABLE:
+    STORAGES = {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+    }
 
 # Google OAuth configuration
 GOOGLE_OAUTH_CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID', '')
