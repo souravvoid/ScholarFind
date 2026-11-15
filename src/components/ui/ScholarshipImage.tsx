@@ -15,13 +15,15 @@ interface ScholarshipImageProps {
  */
 export function ScholarshipImage({ src, alt = '', className = '' }: ScholarshipImageProps) {
   const [failed, setFailed] = useState(false);
-  const showImage = Boolean(src) && !failed;
+  // Only render images from https: URLs to prevent injection of javascript:/data: URIs
+  const safeSrc = src && /^https:\/\//i.test(src) ? src : undefined;
+  const showImage = Boolean(safeSrc) && !failed;
 
   return (
     <div className={`relative overflow-hidden bg-paper-sunken ${className}`}>
       {showImage ? (
         <img
-          src={src}
+          src={safeSrc}
           alt={alt}
           loading="lazy"
           decoding="async"
