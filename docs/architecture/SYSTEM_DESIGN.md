@@ -1,5 +1,9 @@
 # System Design — ScholarFind (as-is, 2026-11-08)
 
+> **Historical snapshot (commit `ce43c29`).** It describes the pre-migration Firebase/FastAPI
+> state and is kept for audit history. For current architecture use
+> [SYSTEM_ARCHITECTURE.md](../SYSTEM_ARCHITECTURE.md) and [PROJECT_STATUS.md](../PROJECT_STATUS.md).
+
 Documents the architecture that **actually exists** (commit `ce43c29`), then the intended target
 state. Recommendations are incremental; nothing here has been implemented yet beyond docs.
 

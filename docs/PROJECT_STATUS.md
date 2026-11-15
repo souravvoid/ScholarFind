@@ -8,10 +8,10 @@ The feature matrix includes the first approved implementation slice. Weighted to
 are the pre-implementation baseline, not a remeasurement of the current worktree.
 
 The project owner has approved the **full project polish** scope and selected
-Django/PostgreSQL as the target system of record for catalogue and user data. Initial
-catalogue and matching slices are implemented in the current worktree; authenticated user-data
-migration and production PostgreSQL verification remain outstanding. Live Google OAuth
-verification is deferred until credentials are configured securely. See
+Django/PostgreSQL as the target system of record for catalogue and user data. Catalogue, auth,
+and matching slices are implemented and committed; authenticated user-data migration and
+production PostgreSQL verification remain outstanding. Live Google OAuth verification is
+deferred until credentials are configured securely. See
 [architecture decisions](ARCHITECTURE_DECISIONS.md).
 
 ## Feature matrix
@@ -36,8 +36,8 @@ verification is deferred until credentials are configured securely. See
 | Backend logging | **NEEDS REVIEW** | Framework logging is present, but sensitive-data redaction and production log/alert configuration were not verified. |
 | API documentation | **PARTIALLY COMPLETE** | Catalogue summary/detail and rule payloads have SQLite-backed API tests; other response contracts and PostgreSQL runtime behavior remain unverified. |
 | Scholarship ingestion | **PARTIALLY COMPLETE** | Staff trigger and collectors exist; all sources/collectors and data reuse rights are not verified. |
-| PostgreSQL schema/migrations | **PARTIALLY COMPLETE** | Django models and migrations exist; a new migration aligns matching record relations to `StudentProfile`. The local pytest run still failed during database setup; the updated CI database job has not yet run. |
-| Firestore access control | **PARTIALLY COMPLETE** | Checked-in rules are default-deny and owner-scoped; deployed state and emulator tests are unverified. |
+| PostgreSQL schema/migrations | **PARTIALLY COMPLETE** | Django models and migrations exist, including the matching ownership migration. Local pytest requires a reachable migrated database; the CI database job has not been confirmed green. |
+| Client database access | **NOT APPLICABLE** | The client has no Firebase/Firestore SDK; catalogue and source reads go through the Django API with a bundled offline fallback. |
 | Test/CI coverage | **PARTIALLY COMPLETE** | Frontend service/unit, component, Django API, backend unittest, and landing/detail Playwright checks pass locally. Hosted PostgreSQL CI, live services, and several user workflows remain unverified. |
 | Deployment, backups, monitoring | **NOT IMPLEMENTED / NEEDS REVIEW** | No deployment target or operational evidence was found. |
 | Indian data coverage/licensing | **NEEDS REVIEW** | NSP pages are useful manual leads; open-data feeds and reuse terms remain unresolved. |
@@ -70,9 +70,9 @@ test/database work is shared between categories.
 | Category | Observed state | Remaining work / priority | Effort | Dependencies | Completion criteria |
 |---|---|---|---:|---|---|
 | Functional completeness | Main discovery/profile/tracker surfaces exist; some data paths differ. | Close the core journey defects. **High** | 3–5 | API/data ownership decision (approved) | Synthetic user completes discovery → details → match → save → tracker with expected states. |
-| Backend quality | APIs/models exist; matching defect and PostgreSQL test failures remain. | Fix relations and harden validation/permissions. **High** | 4–7 | Disposable PostgreSQL CI | CRUD, validation, and cross-user denial pass in database-backed tests. |
+| Backend quality | APIs/models exist; matching ownership is fixed; PostgreSQL-backed test execution is unverified. | Harden validation/permissions and confirm database-backed tests. **High** | 4–7 | Disposable PostgreSQL CI | CRUD, validation, and cross-user denial pass in database-backed tests. |
 | Frontend quality | Routed responsive UI and tests exist; some state is local-only. | Integrate API state and test errors/loading/empty states. **High** | 5–8 | Backend contracts | Reloaded synthetic account retains expected profile/saved/tracker state. |
-| Database | Models/migrations exist across PostgreSQL and Firestore. | Consolidate authoritative store; review constraints/indexes. **High** | 2–4 | PostgreSQL test environment | Fresh migrations work and selected schema constraints are covered by tests. |
+| Database | PostgreSQL models, migrations, and a seeded 48-record catalogue exist. | Verify migrations, constraints, indexes, and backup policy. **High** | 2–4 | PostgreSQL test environment | Fresh migrations work and selected schema constraints are covered by tests. |
 | Data quality | Some public sources exist; Indian coverage/licensing unresolved. | Verify sources/cycle/permissions; do not import without approval. **High** | 4–8 | Provider/source permission | Every published real record has evidence, freshness, reuse status, and manual review. |
 | Security | Source rules and API permissions exist; deployed state/negative tests unverified. | Emulator/API checks, OAuth/secret/CORS/log review. **High** | 3–6 | Staging/test credentials configured privately | Negative access tests pass; no production assumptions are made from source-only checks. |
 | Testing | Frontend/backend unittest and E2E pass; pytest persistence errors without DB. | Add reproducible PostgreSQL and contract test coverage. **High** | 4–7 | Disposable DB service | CI passes unit, API, migration, and browser suites from a clean checkout. |
@@ -89,15 +89,16 @@ or cloud account access.
 
 | Scope | Estimated effort | Main deliverables / dependencies |
 |---|---:|---|
-| **A — Minimum academic demo** | **5–8 person-days** | Fix detail/catalogue mismatch and profile defaults; curate clearly labelled synthetic scenarios; establish disposable local DB or mock-backed demo boundaries; add journey tests and demo runbook. Depends on choosing local-only versus API-backed demo. |
-| **B — Backend engineering depth** | **12–20 person-days** | Repair matching ownership defect; PostgreSQL test setup/CI; API request/response/permission coverage; integrate profile/save/tracker API paths; database constraints and ingestion validation/provenance. Depends on DB environment and API/data ownership decision. |
+| **A — Minimum academic demo** | **5–8 person-days** | Clarify profile defaults and local-persistence messaging; curate clearly labelled synthetic scenarios; establish disposable local DB or mock-backed demo boundaries; add journey tests and demo runbook. Depends on choosing local-only versus API-backed demo. |
+| **B — Backend engineering depth** | **12–20 person-days** | PostgreSQL test setup/CI verification; API request/response/permission coverage; integrate profile/save/tracker API paths; database constraints and ingestion validation/provenance. Depends on DB environment and API/data ownership decision. |
 | **C — Full project polish** | **25–40 person-days** | Scope B plus reviewed Indian source partnerships/licensing, controlled data refresh, parity/quality suite, accessible UX polish, staging deployment, secrets, backups, monitoring, security verification, full docs and demo packaging. Depends on hosting choice and permission to reuse public data. |
 
 ## Git and inspection boundary
 
-The implementation and documentation changes are local worktree changes. No commit, fetch,
-push, or remote publication was performed. Remote URL credentials are intentionally not
-reproduced. Online repository freshness was not independently checked.
+The implementation and documentation changes reviewed here are committed on `main` locally.
+No fetch, push, or remote publication was performed during this documentation pass, and hosted
+CI status was not independently checked. Remote URL credentials are intentionally not
+reproduced.
 
 ## Work not performed
 

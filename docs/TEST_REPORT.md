@@ -1,56 +1,55 @@
 # Test Report
 
-Execution date: 2026-11-15. Local run; no live deployment was tested.
+Execution date: 2026-11-15. Local run; no live deployment was tested. Commands were run from
+the repository root after the Django catalogue/auth work landed.
 
-## Baseline checks from the documentation audit
+## Current local results
 
 | Command | Result |
 |---|---|
-| `bun install --frozen-lockfile` | Passed after regenerating the previously stale `bun.lock` against `package.json`. |
-| `npm test` | Passed at that point: 45 frontend unit tests, 11 component tests, and 46 backend unittest tests. |
-| `npm run lint` | Passed (`tsc --noEmit`). |
-| `npm run build` | Passed. Vite emitted non-fatal config-loader and large-chunk warnings. |
-| `CI=true npm run test:e2e` | Passed at that point: 10 Playwright Chromium tests. |
+| `npm run lint` (`tsc --noEmit`) | Passed, no diagnostics. |
+| `npm run test:frontend` (tsx/node) | Passed: **51 tests**, 0 failures. |
+| `npm run test:components` (Vitest) | Passed: **11 tests** in 2 files. |
+| `npm run test:backend` (`unittest discover`) | Passed: **46 tests**, OK. |
+| `npm run test:e2e` (Playwright, Chromium) | Passed: **10 tests** in 8.3s. |
+| `npm run build` | Passed. Vite warns that the main JS chunk is 563 kB (>500 kB); non-fatal. |
+| `npm test` aggregator | Not re-run in this pass; it invokes the three suites above and returns non-zero if any fails. |
+
+Notes:
+
+- The landing E2E spec intercepts `/api/v1/scholarships/**` with a fixture, so browser smoke
+  tests do not require a running API or database.
+- The frontend unit suite is HTTP-mocked; it validates mapping, pagination, offline fallback,
+  and error/404 behavior rather than a live service.
+- The backend unittest suite runs app API tests under SQLite test settings and does not
+  exercise PostgreSQL-specific behavior.
+
+## Not run in this pass
+
+- `cd backend && python3 -m pytest -q` — requires a reachable, migrated PostgreSQL database.
+  CI provisions PostgreSQL 16 for this job, but no hosted run was confirmed here.
+- Live Google OAuth, the Render deployment, production database operations, backups, and
+  monitoring — no credentials or deployed services were used.
+
+An earlier audit run recorded `46 passed, 29 errors` for pytest because of PostgreSQL
+setup/connection failures. That result must not be conflated with the unittest suite above;
+the two runners use different settings.
+
+## Earlier baseline (documentation audit)
+
+| Command | Result |
+|---|---|
+| `bun install --frozen-lockfile` | Passed after regenerating the previously stale `bun.lock`. |
+| `npm run lint` | Passed. |
+| `npm run build` | Passed with config-loader and large-chunk warnings. |
+| `CI=true npm run test:e2e` | Passed: 10 Chromium tests. |
 | `git diff --check` | Passed. |
 
-The test aggregator was also exercised with a simulated failure for each child suite: it ran
-all three groups and retained a non-zero overall status.
-
-After the owner approved the full-polish scope, the focused matching API suite also passed:
-`cd backend && python3 manage.py test --settings=matching.test_settings matching` (**4
-tests**). The standard backend unittest suite passed again (**46 tests**) after the matching
-schema migration.
-
-## Current catalogue implementation validation
-
-| Command | Result |
-|---|---|
-| `npm test` | Passed: 50 frontend unit/service tests, component suite, and 46 backend unittest tests. |
-| `npm run lint` | Passed (`tsc --noEmit`). |
-| `npm run build` | Passed with the non-fatal Vite config-loader and large-chunk warnings above. |
-| `npx playwright test tests/e2e/landing.spec.ts` | Passed: 4 Chromium tests, using a mocked catalogue API response. |
-| `cd backend && python3 manage.py test --settings=matching.test_settings matching` | Passed: 4 owner-isolation tests using SQLite. |
-| `cd backend && python3 manage.py test --settings=scholarships.test_settings scholarships` | Passed: 5 catalogue API tests using SQLite. |
-| `git diff --check` | Passed on the current worktree. |
-
-The CI backend job has been updated to provision PostgreSQL and run pytest as well as
-unittest. That hosted workflow has not yet run; the local PostgreSQL-blocked pytest result
-below still applies to this machine.
-
-## Additional backend runner result
-
-An exploratory `cd backend && python3 -m pytest -q` run reported **46 passed, 29 errors,
-99 warnings, and 38 subtests passed**. The errors were PostgreSQL database setup/connection
-failures, so database-backed API paths were not verified by that run. This differs from
-`npm run test:backend`, which invokes unittest discovery and passed 46 tests; the two results
-must not be conflated.
+The aggregator was also exercised with a simulated failure per child suite; it ran all three
+groups and retained a non-zero overall status.
 
 ## Environment and limitations
 
-- The Playwright test server is local. The browser test run logged Firestore connection
-  failures while the client attempted to reach Cloud Firestore; tests still passed using
-  their test/demo paths. No Firestore data mutation was intended.
-- No production API, production database, deployed Firestore rules, or Google OAuth flow was
-  tested.
-- The build warnings are recorded rather than hidden; they did not fail compilation.
 - These results are point-in-time evidence, not a guarantee of later CI or deployment status.
+- No production API, production database, or Google OAuth flow was tested.
+- Build warnings are recorded rather than hidden; they did not fail compilation.

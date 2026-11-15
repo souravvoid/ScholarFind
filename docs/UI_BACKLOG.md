@@ -36,6 +36,6 @@ Rule: a defect moves to "Done" only after tests/build/verification evidence.
 
 | ID | Area | Fix | Commit/verification |
 |---|---|---|---|
-| D-01 | Security | Rules: catalogue/sources/logs/test read-only for clients | `firestore.rules` @ `afb0fe2` (deploy pending, owner) |
+| D-01 | Security | Catalogue writes are server-only; Firebase client removed | client is read-only via the Django API; `firestore.rules` is legacy |
 | D-02 | Security | Redirect gate https+domain trust states | `afb0fe2` · lint/build/e2e green |
 | D-03 | Honesty | Fake audit write removed; truthful copy | `afb0fe2` · e2e green |

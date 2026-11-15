@@ -1,169 +1,86 @@
-# Mobile Testing Documentation — ScholarFind
+# Mobile Testing Guide
 
-## Current Status (as of 2026-11-08)
+Last updated: 2026-11-15. Viewport results below are from the 2026-11-08 design audit and
+should be re-checked after UI changes.
 
-The ScholarFind frontend is a React 19 + Vite + Tailwind v4 application. The backend is a FastAPI service. This document describes how to test mobile compatibility on actual devices.
+## Stack
 
-## 1. Local Development Setup
+React 19 + Vite 8 + Tailwind v4 SPA, backed by a Django API on PostgreSQL. The client reads
+`/api/*` through the Vite proxy; auth uses Django token endpoints. There is no Firebase SDK.
 
-### Start the Development Server
+## 1. Local development on a phone
 
-```bash
-# From the project root
-npm run dev
-```
+`npm run dev` already binds to all interfaces:
 
-The server starts on `http://localhost:3000` by default.
-
-### Make the Server Accessible on the Local Network
-
-By default, Vite dev server listens on `localhost` only. To access from other devices on the same Wi-Fi network:
-
-```bash
-# Stop the current dev server (Ctrl+C)
-# Restart with network access
-npx vite --host 0.0.0.0 --port 3000
-```
-
-Or using the package script (if configured):
-```bash
-npm run dev -- --host
-```
-
-### Verify Network Access
-
-From another device on the same Wi-Fi network, open a browser and navigate to:
-
-```
-http://192.168.1.14:3000
-```
-
-Replace `192.168.1.14` with your computer's actual local IP address (run `hostname -I` to find it).
-
-## 2. Backend API Access
-
-The FastAPI backend runs internally and is not exposed over the network by default. For mobile API testing:
-
-### Option A: Keep Backend Local Only (Recommended)
-- The frontend communicates with the backend via relative paths during development
-- Firebase Auth handles authentication on the client side
-- No API calls from mobile needed unless specifically required
-
-### Option B: Expose Backend on Network
-```bash
-# From the backend directory
-cd backend
-python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-Then configure the frontend API base URL to `http://192.168.1.14:8000`.
-
-### Backend Health Check
-
-```bash
-curl http://192.168.1.14:8000/api/v1/health
-```
-
-Expected response:
 ```json
-{
-  "status": "healthy",
-  "service": "scholarfind-api",
-  "timestamp": "<ISO timestamp>",
-  "registered_sources": 10,
-  "stored_scholarships": <count>
-}
+"dev": "vite --port=3000 --host=0.0.0.0"
 ```
 
-## 3. Test Results by Viewport
+Start the client, find your machine's LAN IP (`hostname -I`), and open
+`http://<computer-IP>:3000` on a device on the same Wi-Fi.
 
-### Testing Methodology
+For the full API + client experience, start both with the local runner:
 
-1. **Physical device testing** (preferred) — Open the website on an actual Android phone on the same Wi-Fi network
-2. **Browser developer tools viewport emulation** — Secondary confirmation only
-3. **Chrome DevTools device toolbar** — Not a substitute for physical device testing
+```bash
+./scripts/dev.sh        # API :8000, client :3000, migrations + catalogue seed
+```
 
-### Tested Viewports (via Chrome DevTools + Physical Device)
+The phone only needs port `3000`: Vite proxies `/api` to the API on the dev machine
+(`VITE_API_PROXY_TARGET`, default `http://127.0.0.1:8000`), so the backend does not need to be
+exposed to the LAN. If you point the client directly at the API instead, set
+`VITE_API_BASE_URL=http://<computer-IP>:8000` and add that origin to
+`CORS_ALLOWED_ORIGINS` in `backend/.env`.
+
+## 2. Health check
+
+```bash
+curl http://127.0.0.1:8000/api/v1/health/
+```
+
+The Django endpoint returns a JSON health response; it does not require authentication.
+
+## 3. Viewport results (2026-11-08 audit)
+
+Method: Chrome DevTools viewport emulation plus one physical Android device.
 
 | Viewport | Status | Notes |
-|----------|--------|-------|
-| 320px (small mobile) | ✅ Pass | Single column layout, touch-friendly taps |
-| 360px (standard mobile) | ✅ Pass | App shell nav, drawer works |
-| 375px (common mobile) | ✅ Pass | Default test viewport |
-| 390px (modern mobile) | ✅ Pass | Wide mobile, all routes OK |
-| 430px (large mobile) | ✅ Pass | No horizontal overflow |
-| 768px (tablet) | ✅ Pass | 2-column grid begins |
-| 1024px (laptop/tablet landscape) | ✅ Pass | Full layout, no overflow |
-| 1440px (desktop) | ✅ Pass | Full layout, container centered |
+|---|---|---|
+| 320px | Pass | Single column, touch-friendly taps |
+| 360px | Pass | App shell nav, drawer works |
+| 375px | Pass | Default test viewport |
+| 390px | Pass | All routes OK |
+| 430px | Pass | No horizontal overflow |
+| 768px | Pass | Two-column grid begins |
+| 1024px | Pass | Full layout |
+| 1440px | Pass | Container centered |
 
-### Key Mobile Features Verified
+Verified then: mobile drawer (focus trap, Escape, backdrop, scroll lock), no horizontal
+overflow, touch targets ≥44px, and the routes below.
 
-- ✅ **AppShell** — sticky top nav (64px desktop / 56px mobile), paper background, hairline border
-- ✅ **Mobile drawer** — right-side drawer, 56px rows, focus trap, Escape, backdrop click, body scroll lock
-- ✅ **All 5 routes** — `/`, `/explore`, `/tracker`, `/sources`, `/scholarship/:id` work on mobile
-- ✅ **No horizontal overflow** at any viewport
-- ✅ **Touch targets** — all buttons ≥ 44px tall
-- ✅ **Navigation** — hamburger opens drawer, Escape closes, backdrop click closes
-- ✅ **Forms** — input fields fit, keyboard dismiss works
-- ✅ **Cards and lists** — no overflow, responsive padding
-- ✅ **Empty states** — render correctly on mobile
-- ✅ **Skeleton loaders** — match final row geometry
-- ✅ **Error panels** — render correctly
-- ✅ **Console errors** — none at any viewport
+| Route | Status |
+|---|---|
+| `/` | Pass |
+| `/explore` | Pass |
+| `/tracker` | Pass |
+| `/sources` | Pass |
+| `/scholarship/:id` | Pass (slug-based detail) |
+| unknown route | Pass (404 page) |
 
-### Routes Tested
-
-| Route | Mobile Status |
-|-------|--------------|
-| `/` (Landing) | ✅ Pass |
-| `/explore` (Explorer) | ✅ Pass |
-| `/tracker` (Tracker) | ✅ Pass |
-| `/sources` (Sources) | ✅ Pass |
-| `/scholarship/gates-cambridge` (Detail) | ✅ Pass |
-| `/nope` (404) | ✅ Pass |
-
-## 4. Known Mobile Limitations
+## 4. Known mobile limitations
 
 | Limitation | Workaround |
-|------------|------------|
-| **OAuth redirect URLs** use `http://localhost:3000` — cannot be mocked on mobile without local network config | Use `http://192.168.1.14:3000` when testing on local network |
-| **Backend API** not exposed on network by design | Keep backend local; Firebase Auth handles auth client-side |
-| **CORS** configured for `*` + credentials — works within origin | No cross-origin changes needed for local network testing |
-| **Fixed-position elements** — AppShell top nav covers ~56px on mobile | Content starts below nav, no important content obscured |
+|---|---|
+| Offline catalogue banner appears if the API is unreachable from the dev machine | Run `./scripts/dev.sh`; check `/api/v1/health/` |
+| Google OAuth is disabled without credentials (503) | Use email/password locally; OAuth redirect origins must be configured for a real host |
+| Profile/saved/tracker state is browser-local | Do not expect cross-device sync; clearing site data resets it |
+| Fixed top nav occupies ~56px on mobile | Content starts below the nav |
 
-## 5. Commands Summary
+## 5. Checklist
 
-```bash
-# Start dev server with network access
-npx vite --host 0.0.0.0 --port 3000
-
-# Or using npm (if configured)
-npm run dev -- --host
-
-# Start backend on network
-cd backend && python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
-
-# Check health
-curl http://192.168.1.14:8000/api/v1/health
-
-# View on phone (same Wi-Fi)
-http://192.168.1.14:3000
-```
-
-## 4. Testing Checklist (Print and Use)
-
-- [ ] Open website on phone at `http://<computer-IP>:3000`
-- [ ] Test all 5 routes: `/`, `/explore`, `/tracker`, `/sources`, `/scholarship/:id`
-- [ ] Verify hamburger menu opens drawer, Escape closes it
-- [ ] Touch targets — ensure buttons are easy to tap
-- [ ] Verify no horizontal scrolling at any viewport
-- [ ] Test forms — input fields fit, keyboards work
-- [ ] Check text readability — no zoomed-in issues
-- [ ] Test empty states, skeleton loaders, error panels
-- [ ] Verify drawer closes on backdrop click and Escape
-- [ ] Check navigation works across all routes
-- [ ] Verify app shell height is correct (56px mobile / 64px desktop)
-
----
-*Document generated as part of mobile compatibility audit.*
-*Last updated: 2026-11-08*
+- [ ] Open `http://<computer-IP>:3000` on a physical device
+- [ ] Check all routes, including a scholarship detail slug and an unknown route
+- [ ] Open the hamburger drawer; close with Escape and backdrop click
+- [ ] Confirm no horizontal scrolling at 320–430px
+- [ ] Confirm touch targets are tappable and forms fit
+- [ ] Check empty states, skeletons, and error panels
+- [ ] Confirm the offline banner appears only when the API is down

@@ -20,6 +20,7 @@ identified as such.
 - [API documentation](API_DOCUMENTATION.md).
 - [Eligibility matching](ELIGIBILITY_MATCHING.md).
 - [Data sources and licensing](DATA_SOURCES_AND_LICENSING.md).
+- [AI session work status](ai/WORK_STATUS.md) — current phase and verified local results.
 
 ## Running and validating
 
@@ -37,4 +38,5 @@ identified as such.
 The repository also contains existing product, design, architecture, audit, and work-status
 notes. Some predate the Django migration and current frontend behavior. For current
 implementation claims, prefer the documents linked above and their cited source files; treat
-older notes as historical until they are reconciled.
+older notes as historical until they are reconciled. `PROJECT_CONTEXT.md` is a pre-Django
+snapshot dated 2026-11-08 and is explicitly **not authoritative** for the current code.

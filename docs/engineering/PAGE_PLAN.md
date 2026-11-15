@@ -143,6 +143,7 @@ no horizontal scroll at 320 px; all status feedback announced.
   for approval; then they are deleted in Steps 4–6.
 - `tests/e2e/landing.spec.ts` asserts `Step 2 of 4`; it gets updated in Step 7 with the
   wizard fix, not before, so the guard stays meaningful.
-- Backend/FastAPI untouched. No Firestore collection or auth-provider changes.
+- Backend/FastAPI untouched at the time of this page plan; the later Django migration replaced
+  it (see `docs/SYSTEM_ARCHITECTURE.md`).
 - Open product decisions still pending (engine parity, backend keep/archive) are **not**
   required for these steps; the UI must surface verdicts honestly either way.

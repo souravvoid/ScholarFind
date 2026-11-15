@@ -6,11 +6,11 @@ Last audited: 2026-11-15.
 
 | Store | Role observed | Evidence |
 |---|---|---|
-| PostgreSQL via Django ORM | Backend account/profile, scholarship, saved, tracking, matching and ingestion persistence | [`backend/config/settings.py`](../backend/config/settings.py), [`backend/*/models.py`](../backend) |
-| Firebase Firestore | Browser catalogue/source reads and owner-scoped user data rules | [`src/services/databaseService.ts`](../src/services/databaseService.ts), [`firestore.rules`](../firestore.rules) |
-| Browser localStorage | Inspected SPA profile and saved/tracker state | [`src/context/AuthContext.tsx`](../src/context/AuthContext.tsx) |
+| PostgreSQL via Django ORM | The only server-side store: accounts, student profiles, scholarship catalogue, saved items, tracking, matching, and ingestion records | [`backend/config/settings.py`](../backend/config/settings.py), [`backend/*/models.py`](../backend) |
+| Browser localStorage | SPA profile and saved/tracker state (`scholarfind_profile`, `scholarfind_saved`) | [`src/context/AuthContext.tsx`](../src/context/AuthContext.tsx) |
 
-The audit did not establish catalogue synchronization between PostgreSQL and Firestore.
+The client has no database SDK. Catalogue and source reads go through the Django API with a
+bundled static fallback; the fallback is not a second persistent store.
 
 ## Relational schema
 
@@ -39,18 +39,34 @@ The audit did not inventory every database index or validate query plans; indexi
 transaction behavior remain **NEEDS REVIEW**. Use migrations and database-backed tests as the
 source of truth before proposing schema changes.
 
-## Firestore rules
+## Catalogue seeding
 
-[`firestore.rules`](../firestore.rules) has a global deny default, owner-scoped user profile
-and saved-scholarship writes, public catalogue/source/provenance reads, and denies client
-writes to catalogue/source/ingestion collections. This describes the checked-in rules only;
-live deployment was not verified. See [security review](SECURITY_REVIEW.md).
+The bundled catalogue fixture is generated from the TypeScript source so the API and the
+offline fallback expose the same records:
+
+```bash
+npx tsx scripts/export-catalogue-bundle.ts
+cd backend && python manage.py seed_catalogue_bundle
+```
+
+[`backend/scholarships/fixtures/bundled_catalogue.json`](../backend/scholarships/fixtures/bundled_catalogue.json)
+currently contains 48 scholarship records. The seed command is idempotent: it recognises an
+existing programme by title and copies missing presentation metadata instead of duplicating
+rows. Never hand-edit the fixture; regenerate it from `src/data/scholarshipsData.ts`.
+
+## Legacy Firebase artefacts
+
+[`firestore.rules`](../firestore.rules) and
+[`firebase-applet-config.json`](../firebase-applet-config.json) remain in the repository for
+historical reference. The React client has no Firebase dependency and performs no Firestore
+reads or writes; catalogue access is read-only through Django. Do not reintroduce a client
+database path.
 
 ## Gaps and next decisions
 
-- Verify both stores' actual deployed schemas and decide which system owns scholarship data.
+- Verify the deployed PostgreSQL schema and migration state before release.
 - Add database-backed integration coverage in a controlled local PostgreSQL test environment.
-- Decide whether profile/tracker client storage is intentionally demo-only or temporary.
+- Decide whether profile/tracker browser storage is intentionally demo-only or temporary.
 - Review database constraints for values that must remain valid under writes outside the
   serializer layer.
 - Document retention/backup policy before hosting personal student data.

@@ -19,14 +19,16 @@ decisions. Users must verify requirements and apply through the relevant provide
 
 - React, TypeScript, Vite client with routed discovery, detail, profile, tracker, sources, and
   authentication pages.
-- Client catalogue/source reads through Firebase Firestore with static data fallbacks.
-- Django REST Framework backend with PostgreSQL configuration, migrations, catalogue and
-  account-related APIs.
+- Client catalogue/source reads through the Django API, with a bundled 48-record offline
+  fallback when the API is unreachable.
+- Django REST Framework backend with PostgreSQL, migrations, catalogue, account, saved,
+  tracking, matching, and ingestion APIs.
 - TypeScript and Python eligibility logic, plus frontend, backend, and browser tests.
 
-The React client is not fully integrated with the Django data APIs: the inspected auth
-service calls the API, while profile and tracker persistence in the client is browser-local.
-See [architecture](SYSTEM_ARCHITECTURE.md) and [status](PROJECT_STATUS.md).
+Catalogue, source, and auth data now come from the Django API. Profile, saved, and tracker
+state in the client is still browser-local rather than written through the authenticated APIs,
+so it does not sync across devices. See [architecture](SYSTEM_ARCHITECTURE.md) and
+[status](PROJECT_STATUS.md).
 
 ## Current demonstration boundary
 

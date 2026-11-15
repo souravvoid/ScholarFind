@@ -1,5 +1,9 @@
 # UX Audit — ScholarFind (verified, 2026-11-08)
 
+> **Historical audit** at commit `ce43c29` (pre-Django migration). Several items have since been
+> fixed (mock counts, fake audit flow, dead ends). Verify each finding against current code
+> before acting; see [UI_BACKLOG.md](UI_BACKLOG.md) for status.
+
 Source: frontend/QA audit + discovery audit; every item verified in code (file:line) and
 confirmed by Technical Lead. Split per the product-agent protocol:
 **[J] = confirmed user-journey defect, [P] = verified causes for user pain (fix without asking),

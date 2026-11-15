@@ -24,7 +24,8 @@
 
 - Never commit `.env` values, tokens, private keys, or real student data.
 - Use synthetic identities with `.example` addresses for fixtures.
-- Do not add client writes to catalogue/source/ingestion Firestore collections.
+- Catalogue writes happen only through Django admin or `seed_catalogue_bundle`; do not add
+  client-side seeding or catalogue writes.
 - Do not republish scholarship information until source accuracy and reuse rights are checked.
 - Route external provider URLs through the application's confirmation and validation path.
 - Do not weaken/delete a failing test without an equivalent replacement assertion.

@@ -1,5 +1,10 @@
 # Roadmap — ScholarFind (implementation sequence, approved pending)
 
+> **Historical snapshot (2026-11-08).** Written before the Django migration implemented the
+> first milestones; its "keep the SPA+Firebase spine" premise no longer holds. For current work
+> use [IMPLEMENTATION_ROADMAP.md](../IMPLEMENTATION_ROADMAP.md) and
+> [WORK_STATUS.md](../ai/WORK_STATUS.md).
+
 Principles: keep the working SPA+Firebase product; no rewrites; delete before adding; every
 milestone is independently verifiable and ends with the DoD gates (`TEST_STRATEGY.md`).
 Sequencing: security → honesty → correctness → architecture decisions → debt → tests.

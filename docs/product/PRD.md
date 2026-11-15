@@ -3,6 +3,12 @@
 **Status:** initial PRD reconstructed from verified code (commit `ce43c29`, 2026-11-08).
 Every capability listed was traced in code. Marketing/fabricated numbers are excluded by design.
 
+> **Historical:** this PRD predates the Django catalogue/auth migration and the removal of the
+> Firebase client. Several rows below (Firestore reads, Google popup sign-in, guest demo
+> persona, client-side seeding) no longer describe the code. Use
+> [project status](../PROJECT_STATUS.md) and [system architecture](../SYSTEM_ARCHITECTURE.md) for
+> current behavior; treat this document as the original product intent.
+
 ## 1. Vision
 
 Let a student describe their academic profile **once** and see, explainably, which real

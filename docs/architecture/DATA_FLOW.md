@@ -1,5 +1,9 @@
 # Data Flow — ScholarFind (verified actuality, 2026-11-08)
 
+> **Historical snapshot (commit `ce43c29`).** Flows below describe the removed Firebase/FastAPI
+> client. For current flows (Django API + bundled fallback) use
+> [SYSTEM_ARCHITECTURE.md](../SYSTEM_ARCHITECTURE.md).
+
 All flows traced in code at commit `ce43c29`. Note these are the *real* flows, not the README's.
 
 ## Flow A — Boot

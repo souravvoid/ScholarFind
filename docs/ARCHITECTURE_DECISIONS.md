@@ -3,16 +3,18 @@
 Last audited: 2026-11-15. These are observed design choices, not claims that they were
 formally approved as ADRs.
 
-## AD-1: Separate browser and backend data stores
+## AD-1: Django catalogue with browser-local user state
 
-**Observed:** catalogue/source reads in the SPA use Firestore; Django APIs are configured for
-PostgreSQL. Profile and tracker state in the inspected SPA uses local storage.
+**Observed:** catalogue and source reads in the SPA use the Django API (with a bundled
+offline fallback); Django persists to PostgreSQL. Profile, saved, and tracker state in the
+inspected SPA uses local storage.
 
-**Trade-off:** each side can be developed independently, but current catalogue consistency
-between Firestore and PostgreSQL and cross-device user persistence are not established.
+**Trade-off:** the catalogue has one authoritative server path, but user state is not yet
+account-backed or cross-device.
 
-**Recommendation:** select one authoritative catalogue path and document a controlled
-synchronization contract before expanding data ingestion.
+**Recommendation:** migrate profile/saved/tracker persistence onto the existing
+authenticated APIs behind an explicit contract; do not reintroduce a browser database or a
+second catalogue store.
 
 ## AD-2: Client-side and server-side eligibility implementations
 
@@ -47,13 +49,12 @@ cross-user authorization tests before relying on backend persistence in a demo.
 ## AD-5: Approved direction for full polish — Django/PostgreSQL as system of record
 
 **Decision approved by project owner on 2026-11-15:** make Django/PostgreSQL the canonical
-catalogue and user-data store, and migrate SPA data reads/writes to backend APIs. Keep
-Firestore client catalogue access out of the target architecture; do not add client writes
-to catalogue collections.
+catalogue and user-data store, and migrate SPA data reads/writes to backend APIs.
 
-**Status:** approved direction, not yet implemented. Existing Firestore reads, rules, and
-fallbacks remain until each migration slice is tested. Preserve data provenance and avoid
-destructive migration or production data changes.
+**Status:** catalogue and auth slices implemented — the Firebase client was removed, the
+catalogue is served by Django and seeded from the exported TS fixture, and login/signup use
+Django token endpoints. Profile/saved/tracker persistence remains browser-local. Preserve
+data provenance and avoid destructive migration or production data changes.
 
 ## AD-6: Google OAuth live verification deferred
 

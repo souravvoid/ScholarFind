@@ -1,4 +1,10 @@
-# Design Brief — ScholarFind (approved 2026-11-08)
+# Design Brief — ScholarFind
+
+> **Status (2026-11-15):** the design decisions below remain in force, but the scope list in §9
+> predates the Django migration. Email/password auth, backend catalogue integration, the
+> 48-record seeded catalogue, and react-router pages now exist; Firestore rules are legacy.
+> Check [SITEMAP.md](SITEMAP.md), [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md), and
+> [ai/WORK_STATUS.md](ai/WORK_STATUS.md) for current state. (approved 2026-11-08)
 
 Approved by the product owner via a 3-batch questionnaire. This document is the source of
 truth for design intent. `docs/DESIGN_SYSTEM.md` holds the implementation tokens;
@@ -69,7 +75,8 @@ Assumptions that still need real-user validation are marked `[A]` in §8.
 3. Ingestion, sync, and audit language must match reality: a client-side local check is
    described as a local check.
 4. Guest persistence is "saved on this device". Only say "saved to your account" when the
-   write actually reached Firestore for a signed-in user.
+   write actually reached the account-backed API for a signed-in user; profile/saved state is
+   currently device-local.
 5. Eligibility verdicts always show the rule that produced them. Unknown/unsupported rule
    types are surfaced as "needs manual review", never silently passed.
 6. No invented testimonials, ratings, or user counts. If a section needs social proof and we
@@ -128,8 +135,9 @@ The result should read as an academic tool made by careful people — ArXiv-meet
 - Email/password or magic-link auth (decision 21).
 - `/dashboard` (decision 22), i18n, dark mode (revisit after tokens land).
 - Backend ingestion/API integration (M6 decision pending).
-- Rebuilding the catalogue beyond 9 records (needs a data-source decision).
-- Deploying Firestore rules (owner action; see `docs/ai/WORK_STATUS.md`).
+- Rebuilding the catalogue beyond the seeded 48 records and curated source set (needs a
+  data-source decision).
+- Deploying the legacy Firestore rules (no longer part of the architecture; safe to archive).
 
 ## 10. Change log
 

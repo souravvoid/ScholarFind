@@ -32,11 +32,11 @@ the inspected eligibility engine.
 
 ## Current constraints
 
-- The client uses Firestore for catalogue/source reads and browser storage for inspected
-  profile and tracker state. The Django API has separate PostgreSQL persistence.
+- The client uses the Django API for catalogue/source reads and auth, and browser storage for
+  inspected profile and tracker state. Django persists to PostgreSQL.
 - The client does not yet demonstrate complete end-to-end account-backed persistence across
   the inspected profile and tracker journeys.
-- A live Google OAuth flow, deployed Firestore rules, production database, deployment target,
+- A live Google OAuth flow, a running deployment, production database operations,
   backup/recovery, and operational monitoring were not verified.
 - Indian scholarship data coverage and bulk reuse rights are not established by this audit.
 

@@ -16,7 +16,7 @@ viewset's configured key (scholarships use their canonical slug; most others use
 | User and student profiles | `/api/v1/user-profiles/`, `/api/v1/student-profiles/` | `UserProfile`, `StudentProfile`; authenticated and user-scoped. |
 | Saved scholarships | `/api/v1/saved-scholarships/` | `SavedScholarship`; authenticated owner-scoped CRUD; duplicate user/scholarship pairs are rejected. |
 | Application tracking | `/api/v1/application-tracker-entries/` | `ApplicationTrackerEntry`; authenticated owner-scoped CRUD. |
-| Matching review/work experience | `/api/v1/manual-review-flags/`, `/api/v1/work-experience-records/` | `ManualReviewFlag`, `WorkExperienceRecord`; current model/view ownership mismatch makes these endpoints unusable as written; see [known issues](KNOWN_ISSUES.md). |
+| Matching review/work experience | `/api/v1/manual-review-flags/`, `/api/v1/work-experience-records/` | `ManualReviewFlag`, `WorkExperienceRecord`; authenticated and owner-scoped. `student`, review state, and verification fields are assigned server-side; requests need an existing `StudentProfile` (400 otherwise). |
 
 ## Explicit endpoints
 

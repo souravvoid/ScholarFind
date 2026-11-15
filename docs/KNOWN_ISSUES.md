@@ -7,15 +7,16 @@ Observed 2026-11-15. See source links for the implementation evidence.
 1. **Split persistence.** The SPA profile and saved/tracker state are browser-local while
    corresponding authenticated Django APIs exist. Cross-device/account persistence is not
    implemented in the inspected SPA path.
-2. **Catalogue/detail lookup mismatch.** Explorer can load Firestore catalogue entries, but
-   the detail page resolves against the static catalogue. Firestore-only records may not
-   resolve to a details page. See
-   [`src/components/ScholarshipExplorer.tsx`](../src/components/ScholarshipExplorer.tsx)
-   and [`src/pages/ScholarshipDetailPage.tsx`](../src/pages/ScholarshipDetailPage.tsx).
+2. **Offline fallback can be stale.** When the catalogue API is unreachable, the client shows
+   the bundled 48-record catalogue and 10 bundled sources. The bundle may lag the database, and
+   a slug that exists only in PostgreSQL resolves to not-found offline. See
+   [`src/services/catalogueService.ts`](../src/services/catalogueService.ts).
 3. **Eligibility profile linkage.** Backend evaluation accepts a profile in the request
    instead of loading the authenticated user's stored student profile.
-4. **Default profile values.** The profile builder starts with example values; users may
-   mistake them for their saved answers and receive misleading match results.
+4. **Illustrative profile defaults.** The profile builder starts with sample values
+   (University of Delhi, 3.82 GPA, Fall 2026). Identity and residence are intentionally pinned
+   to India, but the other defaults can be mistaken for saved answers. See
+   [`src/components/ProfileBuilder.tsx`](../src/components/ProfileBuilder.tsx).
 5. **Income requirements are not actually evaluated.** The profile and rule types have no
    income criterion, while some catalogue rules encode income as an academic-score rule.
    The matcher evaluates that as GPA, not income. See
@@ -27,31 +28,35 @@ Observed 2026-11-15. See source links for the implementation evidence.
    explicitly disables it. The ECTS UI/normalization and non-IELTS failure explanations also
    need review. Details: [eligibility matching](ELIGIBILITY_MATCHING.md).
 
-## Resolved in the current worktree
+## Resolved
 
-- **Matching record ownership:** aligned `ManualReviewFlag` and `WorkExperienceRecord`
-  foreign keys with the `StudentProfile` resolved by the view, added migration
-  `backend/matching/migrations/0002_alter_manualreviewflag_student_and_more.py`, and added
-  owner-isolation regression tests. The targeted Django suite passed 4 tests. The broader
-  PostgreSQL CI job has not yet run.
+- **Matching record ownership:** `ManualReviewFlag` and `WorkExperienceRecord` now relate to
+  `StudentProfile`, views assign the profile from `request.user`, serializers mark ownership
+  and verification fields read-only, and owner-isolation tests cover the behavior. Migration:
+  `backend/matching/migrations/0002_alter_manualreviewflag_student_and_more.py`.
+- **Firebase client removal:** the SPA no longer bundles a Firebase SDK or reads/writes
+  Firestore. Catalogue and source reads are API-first with a bundled offline fallback; there is
+  no client-side catalogue seeding.
+- **Catalogue/detail consistency:** the explorer and the detail page both read the Django
+  catalogue, detail lookup uses the canonical slug, and API empty results, HTTP errors, and
+  404s are no longer masked by static records.
 
 ## Blockers / not verified
 
-- PostgreSQL-backed Django tests errored in this environment due database setup/connection
-  failure; a reachable, migrated test database is required to verify persistence.
-- Google OAuth requires configured credentials and callback settings; a successful live
-  provider flow was not tested.
-- Firestore rules in source were reviewed, but deployed rules and emulator acceptance tests
-  were not verified.
-- No production deployment target, backup/recovery, monitoring, or alerting was verified.
+- PostgreSQL-backed `pytest` needs a reachable, migrated database. CI provisions PostgreSQL 16;
+  a green hosted run was not confirmed in this environment.
+- Google OAuth requires configured credentials; the endpoints return 503 without them and a
+  successful live provider flow was not tested.
+- [`render.yaml`](../render.yaml) describes Render + PostgreSQL hosting, but no deployment,
+  backup/recovery, monitoring, or alerting was verified.
 - Scholarship source licensing, structured feeds, data freshness, and Indian opportunity
   coverage remain unresolved for several official portals.
-- Current UI smoke tests do not cover the full successful auth, cross-device persistence,
-  save/tracker, and redirect flows.
+- E2E covers routing, landing, and local auth-form validation; it does not cover successful
+  live auth, cross-device persistence, save/tracker round-trips, or the full redirect flow.
 
 ## Documentation debt
 
-The root README and some architecture/status notes contained outdated claims about a
-FastAPI-only/disconnected backend and overstated production readiness. Use the current
-documents linked from [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md); legacy notes are
-identified there.
+Older notes under `docs/architecture/`, `docs/audit/`, and `docs/engineering/` predate the
+Django migration and still describe Firestore reads or a disconnected FastAPI backend. Use the
+documents linked from [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md); `docs/PROJECT_CONTEXT.md`
+is explicitly a historical snapshot.

@@ -8,10 +8,10 @@ command and coverage summary.
 
 | Layer | Command | Current role | Important gap |
 |---|---|---|---|
-| Frontend unit | `npm run test:frontend` | Node test runner for eligibility, services, and ingestion utilities. | Firestore/auth API behavior is mostly mocked; not a live-service test. |
+| Frontend unit | `npm run test:frontend` | Node test runner for eligibility, catalogue/auth services, and ingestion utilities. | Catalogue/auth HTTP behavior is mocked; not a live-service test. |
 | Frontend components | `npm run test:components` | Vitest + jsdom component behavior. | Does not establish live API or all user journeys. |
-| Backend unit/integration via unittest | `npm run test:backend` | `unittest discover -s backend/tests -v`. | Current passing run does not establish that PostgreSQL-backed paths are available in CI. |
-| Django/pytest | `cd backend && python3 -m pytest -q` | Alternative database-oriented backend suite. | In the audit environment, PostgreSQL connection/setup errors occurred; see [test report](TEST_REPORT.md). |
+| Backend unit/integration via unittest | `npm run test:backend` | `unittest discover -s backend/tests -v`; app API suites use SQLite test settings. | Does not exercise PostgreSQL-specific behavior. |
+| Django/pytest | `cd backend && python3 -m pytest -q` | PostgreSQL-oriented backend suite; CI provisions PostgreSQL 16. | Needs a reachable, migrated database locally; the hosted run is unconfirmed. |
 | Browser | `npm run test:e2e` | Playwright Chromium smoke tests for routes, auth form behavior, landing and mobile shell. | No full persisted save/tracker journey or successful live auth was verified. |
 | Static/type check | `npm run lint` | TypeScript check (`tsc --noEmit`). | Not a runtime test. |
 | Production build | `npm run build` | Vite production compilation. | Build success is not deployment readiness. |
@@ -20,12 +20,12 @@ command and coverage summary.
 
 - Cover registration/login validation, ownership and cross-user isolation.
 - Cover profile updates and persisted state across reloads when API integration is added.
-- Cover catalogue search/filter, detail lookup for Firestore-only records, save/unsave, and
-  tracker state changes.
+- Cover catalogue search/filter, detail lookup by slug, offline-fallback behavior, save/unsave,
+  and tracker state changes.
 - Keep shared TypeScript/Python eligibility fixtures and test explanations as well as outcomes.
 - Test migration consistency and relational constraints against a disposable local PostgreSQL
   instance.
-- Use Firestore emulator rules tests for owner access and denied catalogue writes.
+- Use Django API tests (owner-scoped viewsets) for owner access and denied cross-user writes.
 - Keep redirects constrained to approved HTTPS provider destinations and test negative cases.
 - Add API contract tests for validation, permissions, error responses, and duplicate handling.
 - Do not run destructive tests against production or real student data.

@@ -1,67 +1,82 @@
 # Work Status — ScholarFind
 
-Session log for the design/engineering agent. Read this first in a new session.
-Companion docs: `AGENTS.md`, `docs/DESIGN_BRIEF.md` (once approved),
-`docs/DESIGN_SYSTEM.md`, `docs/SITEMAP.md`, `docs/UX_AUDIT.md`, `docs/UI_BACKLOG.md`,
-`docs/engineering/ROADMAP.md`.
+Session log for design/engineering agents. Read this first in a new session.
+Companion docs: `AGENTS.md`, `docs/PROJECT_STATUS.md`, `docs/SYSTEM_ARCHITECTURE.md`,
+`docs/DESIGN_BRIEF.md`, `docs/DESIGN_SYSTEM.md`, `docs/SITEMAP.md`, `docs/UX_AUDIT.md`,
+`docs/UI_BACKLOG.md`, `docs/engineering/ROADMAP.md`.
 
 ## Current phase
 
-**Page plan complete (Steps 0–9). Django/DRF migration + security hardening pushed (`7a19f7a`).**
-Recent: 2026-11-09 Slice 1 eligibility parity committed (`d943ad2`). Auth slice implemented:
-Django register/login/logout/me endpoints + token-based React auth pages. Awaiting GATE 2 diff
-approval before committing auth.
-Next: GATE 2 review → commit auth slice; then M6 backend keep/archive decision, CI.
+**Page plan complete (Steps 0–9). Django/DRF migration, catalogue integration, and the
+Django-backed auth slice are committed on `main`.** Firebase was removed from the client:
+catalogue and source reads now go to `/api/v1/scholarships/` and
+`/api/v1/scholarship-sources/` with a bundled 48-record offline fallback, and auth uses
+Django token endpoints. Render + Neon deployment configuration and `scripts/dev.sh` are
+checked in.
 
-## Done
+Next: move profile/saved/tracker state from `localStorage` onto the authenticated APIs, then
+verify the PostgreSQL-backed pytest/CI run and a live deployment.
+
+## Recent work (committed)
 
 | When | What | Commit |
 |---|---|---|
-| 2026-11-08 | Arc-inspired landing/nav/footer redesign + Playwright e2e suite | `ce43c29` |
-| 2026-11-08 | Discovery deliverables (PRD, architecture, debt, security, test strategy, roadmap) | `55ab397` |
-| 2026-11-08 | **M1 catalogue integrity**: catalogue/sources/logs read-only rules, no client seeding, read-shape validation, honest audit flow, redirect gate verified/mismatch/blocked | `afb0fe2` |
-| 2026-11-08 | `docs/UX_AUDIT.md` (journey defects, file:line) + `docs/UI_BACKLOG.md` (B-01…B-24) | prior commit |
-| 2026-11-08 | Step 0 — router shell, tokens, ui primitives, lucide, self-hosted fonts; 8/8 e2e green | Step 0 commit |
-| 2026-11-08 | Step 1 — auth/state hardening (demo fallback removed, guarded storage, leak + stale writes fixed) | Step 1 commit |
-| 2026-11-08 | Step 2 — landing rebuilt on shared primitives; fake testimonials/stats removed; data-driven counts + featured | Step 2 commit |
-| 2026-11-08 | Step 3 — explorer dense rows, filters wired, URL params, empty state, save toggle | Step 3 commit |
-| 2026-11-08 | Step 4 — detail route + provenance + gate; details modal retired | Step 4 commit |
-| 2026-11-08 | Step 5 — tracker rebuilt; dead-ends/ghost/empty state fixed | Step 5 commit |
-| 2026-11-08 | Step 6 — sources informational provenance; fake audit removed | Step 6 commit |
-| 2026-11-08 | Step 7 — profile wizard step 1, honest copy, fake stats removed | Step 7 commit |
-| 2026-11-08 | Step 8 — a11y sweep: aria-hidden icons, aria-live, focus-visible rings | Step 8 commit |
-| 2026-11-08 | Step 9 — full verification: lint + 22 unit + backend 27 + build + 8 e2e green | Step 9 |
-| 2026-11-09 | **M2 eligibility parity**: canonical scale/status/outcome mapping, shared fixture `tests/fixtures/eligibility-parity.json`, weighted half-up score, `needs_review` UI | uncommitted (GATE 2) |
+| 2026-11-15 | Restore `@testing-library/dom`; align esbuild with Vite 8 | `86ae2a6` |
+| 2026-11-15 | Guard redirect `handleProceed`; validate image `src` protocol | `5b35b75` |
+| 2026-11-15 | Remove unused Firebase client and dead code; catalogue service is API-only | `db008d0` |
+| 2026-11-15 | One-command local run (`scripts/dev.sh`, `npm run dev:all`) | `453c01e` |
+| 2026-11-15 | Catalogue backed by PostgreSQL records and images; bundled seed command | `0e8df7d` |
+| 2026-11-15 | Pin profile identity and residence to India | `c2928d0` |
+| 2026-11-15 | Render + Neon deployment configuration | `461ef68` |
+| 2026-11-15 | Sentry-inspired design system applied | `d0aebc2` |
+| 2026-11-09 | Django token auth wired into login/signup UI | `c647837` |
+| 2026-11-08 | Arc-inspired landing/nav/footer + Playwright suite | `ce43c29` |
+| 2026-11-08 | **M1 catalogue integrity**: read-only catalogue rules, no client seeding, read-shape validation, honest audit flow, redirect gate | `afb0fe2` |
+| 2026-11-08 | Step 0 — router shell, tokens, ui primitives, lucide, self-hosted fonts | Step 0 commit |
+| 2026-11-08 | Steps 1–9 — auth/state hardening, landing, explorer, detail, tracker, sources, profile, a11y, full verification | Step commits |
+| 2026-11-09 | **M2 eligibility parity**: shared fixture `tests/fixtures/eligibility-parity.json`, weighted half-up score, `needs_review` UI | `d943ad2` |
 
-Verified after M1: `npm run lint` clean · unit 22/22 · build green · e2e 4/4 ·
-8/9 catalogue URLs gate `verified`, gates-cambridge `mismatch` (allied portal, warns).
+## Verified local state (2026-11-15)
+
+Re-run before quoting these; they are a point-in-time check, not a CI result.
+
+| Check | Result |
+|---|---|
+| `npm run lint` (`tsc --noEmit`) | clean |
+| `npm run test:frontend` (tsx/node) | 51 tests, 0 failures |
+| `npm run test:components` (Vitest) | 11 tests in 2 files, passed |
+| `npm run test:backend` (`unittest`) | 46 tests, OK |
+| `npm run build` | succeeded; warns that the main chunk is >500 kB |
+| `npm run test:e2e` | 10 Playwright tests passed (landing spec mocks `/api/v1/scholarships/**`) |
+
+PostgreSQL-backed `pytest` (`cd backend && python -m pytest -q`) needs a reachable, migrated
+database. CI provisions PostgreSQL 16 for it; the local environment may not.
 
 ## In progress
 
-1. **Design questionnaire (batch 1)** — structure, navigation model, Arc influence, icon
-   system, catalogue-honesty scope, rollout order. Answers → `docs/DESIGN_BRIEF.md`.
+1. **Profile/saved/tracker persistence integration** — the SPA still writes
+   `scholarfind_profile` and `scholarfind_saved` to `localStorage`; authenticated
+   `student-profiles`, `saved-scholarships`, and `application-tracker-entries` APIs exist.
+2. **Documentation reconciliation** — older notes under `docs/architecture/`,
+   `docs/audit/`, and `docs/engineering/` still describe the pre-Django/Firestore state.
+3. **PostgreSQL CI verification** — the workflow is checked in; confirm a green hosted run.
 
 ## Blocked / awaiting decisions
 
 | Item | Needs |
 |---|---|
-| Firestore rules deploy | Owner runs `firebase deploy --only firestore:rules` (needs `firebase.json`); live project still on old rules |
-| M2 engine parity (TS vs Python eligibility) | ✅ resolved 2026-11-09 via shared fixture; pending GATE 2 commit |
-| M6 backend keep vs archive | Product decision |
+| Live Google OAuth verification | Client ID/secret configured through a secret manager; endpoints return 503 without them |
+| Render deployment verification | Hosted service, `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, and database connection confirmed |
+| Catalogue licensing / Indian coverage | Provider permissions and reuse terms |
 | B-15 default explorer filters | Design decision (risk of empty first paint) |
-| B-16 URL routing (B-16) | Design decision |
-| Icon migration Material Symbols → Lucide | Design decision (user stated Lucide preferred) |
-| Remove sign-in demo-persona fallback | Removes existing behavior → needs approval |
-
-## Next after answers
-
-Write `docs/DESIGN_BRIEF.md`, `docs/DESIGN_SYSTEM.md`, `docs/SITEMAP.md` + page-by-page plan →
-approve → implement in milestone order: M4 honesty removals → M5 inert controls/dead-ends →
-M3 auth/state fixes → M8 a11y baseline → M7 token sweep.
+| B-16 URL routing | Shipped as react-router routes; confirm remaining backlog entries are closed |
 
 ## Rules reminder
 
-- DoD: `npm run lint`, `npm run test:frontend`, `npm run build`, `npx playwright test` green.
+- DoD: `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` green.
 - Never delete/weaken tests; never fabricate stats/metrics; no `dangerouslySetInnerHTML`;
   external links only through `OfficialRedirectModal`.
-- `tests/e2e/landing.spec.ts` asserts `Step 2 of 4` — update together with B-09.
+- Catalogue writes only via Django admin or `seed_catalogue_bundle`; the browser is read-only.
+- Regenerate the bundled fixture from TS (`npx tsx scripts/export-catalogue-bundle.ts`) rather
+  than editing `backend/scholarships/fixtures/bundled_catalogue.json` by hand.
+- `tests/e2e/landing.spec.ts` asserts the landing/profile flow — update together with B-09.
