@@ -15,8 +15,11 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
   const panelRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
   // Form states initialized from profile
-  const [citizenship, setCitizenship] = useState(profile?.citizenship || 'India');
-  const [residenceCountry, setResidenceCountry] = useState(profile?.residenceCountry || 'India');
+  // ScholarFind currently supports Indian students only. Keep both identity
+  // fields pinned to India so a saved profile can never disagree with the
+  // catalogue's nationality assumptions.
+  const [citizenship] = useState('India');
+  const [residenceCountry] = useState('India');
   const [educationLevel, setEducationLevel] = useState<DegreeLevel>(profile?.educationLevel || 'bachelors');
   const [institution, setInstitution] = useState(profile?.institution || 'University of Delhi (India)');
   const [gradingScale, setGradingScale] = useState<GradingScale>(profile?.gradingScale || 'gpa_4_0');
@@ -267,26 +270,15 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                   <select
                     id="profile-citizenship"
                     value={citizenship}
-                    onChange={(e) => setCitizenship(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-lg bg-[#F5F4F7] border border-[#e5e7eb] text-sm text-[#1f1633] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#422082]"
+                    disabled
+                    aria-describedby="profile-citizenship-note"
+                    className="w-full h-11 cursor-not-allowed px-3.5 rounded-lg bg-[#F5F4F7] border border-[#e5e7eb] text-sm text-[#1f1633] opacity-100"
                   >
-                    <option value="Nigeria">Nigeria</option>
-                    <option value="Ghana">Ghana</option>
-                    <option value="Kenya">Kenya</option>
                     <option value="India">India</option>
-                    <option value="Pakistan">Pakistan</option>
-                    <option value="Bangladesh">Bangladesh</option>
-                    <option value="South Africa">South Africa</option>
-                    <option value="Brazil">Brazil</option>
-                    <option value="Egypt">Egypt</option>
-                    <option value="Indonesia">Indonesia</option>
-                    <option value="Germany">Germany</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="United States">United States</option>
-                    <option value="Canada">Canada</option>
                   </select>
-                  <p className="font-caption text-xs text-ink-muted mt-1.5">
-                    Evaluated against bilateral government treaties (e.g. Commonwealth, DAAD, Fulbright quotas).
+                  <p id="profile-citizenship-note" className="font-caption text-xs text-ink-muted mt-1.5">
+                    ScholarFind is currently available to Indian students only. Evaluated against bilateral
+                    government treaties (e.g. Commonwealth, DAAD, Fulbright quotas).
                   </p>
                 </div>
 
@@ -298,12 +290,13 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     id="profile-residence-country"
                     type="text"
                     value={residenceCountry}
-                    onChange={(e) => setResidenceCountry(e.target.value)}
-                    className="w-full h-11 px-3.5 rounded-lg bg-[#F5F4F7] border border-[#e5e7eb] text-sm text-[#1f1633] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#422082]"
-                    placeholder="e.g. India, United Kingdom, etc."
+                    readOnly
+                    aria-describedby="profile-residence-note"
+                    className="w-full h-11 cursor-not-allowed px-3.5 rounded-lg bg-[#F5F4F7] border border-[#e5e7eb] text-sm text-[#1f1633]"
                   />
-                  <p className="font-caption text-xs text-ink-muted mt-1.5">
-                    Certain regional mobility grants require residency within specific territories for at least 12 months.
+                  <p id="profile-residence-note" className="font-caption text-xs text-ink-muted mt-1.5">
+                    Fixed to India for this release. Certain regional mobility grants require residency within
+                    specific territories for at least 12 months.
                   </p>
                 </div>
               </div>
