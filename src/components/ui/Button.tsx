@@ -1,7 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
-export type ButtonSize = 'md' | 'lg';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type ButtonSize = 'md' | 'lg';
 
 const BASE =
   'inline-flex items-center justify-center gap-2 font-ui font-semibold whitespace-nowrap rounded-control transition-colors duration-[120ms] ease-arc focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire disabled:cursor-not-allowed disabled:border-transparent disabled:bg-disabled-surface disabled:text-disabled-text disabled:active:scale-100';
@@ -33,7 +33,7 @@ export function buttonStyles({
   return [BASE, VARIANTS[variant], SIZES[size], className].join(' ');
 }
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
 }

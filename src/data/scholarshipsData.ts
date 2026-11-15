@@ -687,4 +687,2466 @@ export const SCHOLARSHIPS_DATA: Scholarship[] = [
       }
     ]
   }
+,
+  {
+    id: 'pmsss_csss',
+    slug: 'pm-usp-central-sector-college-university-scholarship',
+    title: 'PM-USP Central Sector Scheme Of Scholarship For College And University Students (CSSS)',
+    providerName: 'Department of Higher Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors', 'masters', 'phd'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 6 lakh per annum',
+    awardDetails: '12000 per annum at Graduation level for first three years; 20000 per annum at Post-Graduation level for first three years',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 72000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2027/2028',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/CSSS_GUIDLINES_07022024_updated.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Scheme of Scholarship for College and University Students (PM-USP CSSS) awarded by Ministry of Education on the basis of results of Higher Secondary / Class XII Board Examination. A maximum of 82000 fresh scholarships per annum are provided for pursuing graduate / postgraduate degree in colleges and universities and for professional courses, such as Medical, Engineering etc. Students with gross parental/family income upto 4.5 lakh per annum are eligible for scholarship under the scheme.',
+    requiredDocuments: [
+      'Official Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card',
+      'Category Certificate (if applicable)'
+    ],
+    applicationInstructions: [
+      'Submit admission application to the selected college/university.',
+      'Register on National Scholarship Portal (NSP) and apply for the scheme.',
+      'Upload required documents and verify institute-level before final selection.'
+    ],
+    provenance: {
+      sourceName: 'Ministry of Education, Government of India',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/CSSS_GUIDLINES_07022024_updated.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_india_gov'
+    },
+    criteria: [
+      {
+        id: 'pmsss_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'PM-USP CSSS Guidelines 2026-27, Clause 4.4',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmsss_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Students who are above 80th percentile in the relevant stream from the respective Board of Examination in Class XII of 10+2 pattern or equivalent.',
+        isMandatory: true,
+        sourceCitation: 'PM-USP CSSS Guidelines 2026-27, Clause 4.1',
+        minGpaNormalized: 80
+      }
+    ]
+  },
+  {
+    id: 'nmmss',
+    slug: 'national-means-cum-merit-scholarship',
+    title: 'National Means Cum Merit Scholarship (NMMS)',
+    providerName: 'Department of School Education & Literacy',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['secondary'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '12000 per annum',
+    awardDetails: '12000 per annum for students in classes IX and X',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 14400,
+    applicationDeadline: '2026-11-15',
+    daysRemaining: 25,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'National Means Cum Merit Scholarship scheme for meritorious students from economically weaker sections to arrest their drop out from secondary education. 100000 fresh scholarships per annum are awarded @ 12000 per annum. Scholarship is given for studying in classes IX and X subject to renewal in classes XI and XII.',
+    requiredDocuments: [
+      'Domicile Certificate',
+      'Income Certificate (below 3.5 lakh per annum)',
+      'Aadhaar Card',
+      'Recent Passport Size Photograph'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and economic criteria.'
+    ],
+    provenance: {
+      sourceName: 'Department of School Education & Literacy',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/NMMSSGuidelines.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_sed_gov'
+    },
+    criteria: [
+      {
+        id: 'nm_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'NMMS Guidelines 2026-27, Clause 2.1',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'nm_income',
+        ruleType: 'academic_score',
+        title: 'Economic Weaker Section',
+        description: 'Family income from all sources should not exceed Rs. 3.5 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'NMMS Guidelines 2026-27, Clause 3.1',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'ishan_uday',
+    slug: 'ishan-uday-special-scholarship-scheme',
+    title: 'Ishan Uday Special Scholarship Scheme For North Eastern Region',
+    providerName: 'University Grants Commission',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '5400 per month general; 7800 per month technical',
+    awardDetails: '5400 per month for general degree course and 7800 per month for technical/medical/professional/paramedical courses for 10 months in a year',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 52000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 45,
+    academicYear: '2027/2028',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/Guidelines_ISHAN_UDAY_2324.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'UGC\'s Ishan Uday Scholarship is an opportunity for eligible students from the North Eastern Region pursuing undergraduate studies. 10000 scholarships annually, with 5400/month for general degree and 7800 for technical/medical courses. Domicile of North Eastern Region required.',
+    requiredDocuments: [
+      'Domicile Certificate of North Eastern Region',
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Upload domicile certificate and required documents.',
+      'Selection based on merit and category-wise slot allocation.'
+    ],
+    provenance: {
+      sourceName: 'University Grants Commission',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/Guidelines_ISHAN_UDAY_2324.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_ugc_gov'
+    },
+    criteria: [
+      {
+        id: 'iu_cit',
+        ruleType: 'citizenship',
+        title: 'North Eastern Region Domicile',
+        description: 'Must be a domicile of the North Eastern Region of India.',
+        isMandatory: true,
+        sourceCitation: 'Ishan Uday Guidelines 2026-27, Clause 2.1',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'iu_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Students above 80th percentile in Class XII or equivalent.',
+        isMandatory: true,
+        sourceCitation: 'Ishan Uday Guidelines 2026-27, Clause 3.1',
+        minGpaNormalized: 80
+      }
+    ]
+  },
+  {
+    id: 'reliance_ug',
+    slug: 'reliance-foundation-undergraduate-scholarship',
+    title: 'Reliance Foundation Undergraduate Scholarship',
+    providerName: 'Reliance Foundation',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 2 lakh',
+    awardDetails: 'Up to 2 lakh for undergraduate students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 24000,
+    applicationDeadline: '2026-11-01',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.scholarships.reliancefoundation.org/UG_Scholarship',
+    officialApplicationUrl: 'https://www.scholarships.reliancefoundation.org/',
+    sourceDomain: 'scholarships.reliancefoundation.org',
+    overview: 'Reliance Foundation Undergraduate Scholarships support 5000 meritorious students every year through a merit-cum-means selection process, enabling deserving students from diverse socio-economic backgrounds to pursue higher education. Scholarship of up to Rs 2 lakhs for UG students.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card',
+      'Caste Certificate (if applicable)'
+    ],
+    applicationInstructions: [
+      'Apply online through Reliance Foundation scholarship portal.',
+      'Complete the eligibility questionnaire.',
+      'Submit required documents for verification.'
+    ],
+    provenance: {
+      sourceName: 'Reliance Foundation',
+      sourceRecordUrl: 'https://www.scholarships.reliancefoundation.org/UG_Scholarship',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_reliance_foundation'
+    },
+    criteria: [
+      {
+        id: 'rf_ug_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens residing in India.',
+        isMandatory: true,
+        sourceCitation: 'Reliance Foundation UG Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'rf_ug_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Passed 12th Class with minimum 60 per cent marks.',
+        isMandatory: true,
+        sourceCitation: 'Reliance Foundation UG Scholarship 2026-27',
+        minGpaNormalized: 60
+      }
+    ]
+  },
+  {
+    id: 'kotak_kanya',
+    slug: 'kotak-kanya-scholarship',
+    title: 'Kotak Kanya Scholarship',
+    providerName: 'Kotak Education Foundation',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'MBBS', 'Architecture', 'Design', 'Law'],
+    totalAwardValue: '1.5 lakh per year',
+    awardDetails: '1.5 lakh per year till completion of professional graduation course',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 18000,
+    applicationDeadline: '2026-09-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.kotakeducationfoundation.org/kotak-kanya-scholarship',
+    officialApplicationUrl: 'https://www.kotakeducationfoundation.org/kotak-kanya-scholarship',
+    sourceDomain: 'kotakeducationfoundation.org',
+    overview: 'Kotak Kanya Scholarship is a collaborative CSR Project on Education & Livelihood of Kotak Mahindra Group companies implemented along with Kotak Education Foundation. This scholarship aims to offer financial assistance to meritorious girl students who have passed Class 12 and aspire to pursue professional graduation courses (including Engineering, MBBS, Architecture, Design, integrated LLB, etc) from institutes of repute (NIRF/NAAC accredited). Applicant annual family income must be less than INR 6,00,000.',
+    requiredDocuments: [
+      'Class 12 Marksheet',
+      'Income Proof',
+      'Fee Structure',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through Kotak Kanya Scholarship portal.',
+      'Submit required documents.',
+      'Selection based on academic merit and financial background.'
+    ],
+    provenance: {
+      sourceName: 'Kotak Education Foundation',
+      sourceRecordUrl: 'https://www.kotakeducationfoundation.org/kotak-kanya-scholarship',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_kotak_foundation'
+    },
+    criteria: [
+      {
+        id: 'kk_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'Kotak Kanya Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'kk_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Applicants must have scored at least 75% or more marks or equivalent CGPA in Class 12 board examinations.',
+        isMandatory: true,
+        sourceCitation: 'Kotak Kanya Scholarship 2026-27',
+        minGpaNormalized: 75
+      }
+    ]
+  },
+  {
+    id: 'hdfc_ecss',
+    slug: 'hdfc-bank-parivartan-ecss',
+    title: 'HDFC Bank Parivartan Educational Crisis Scholarship Support (ECSS) Programme',
+    providerName: 'HDFC Bank',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['secondary', 'bachelors', 'masters'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 75000',
+    awardDetails: 'Up to INR 75,000 depending on course level',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 9000,
+    applicationDeadline: '2026-12-15',
+    daysRemaining: 45,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.parivartanecss.com/',
+    officialApplicationUrl: 'https://www.parivartanecss.com/',
+    sourceDomain: 'parivartanecss.com',
+    overview: 'Parivartan ECSS Programme provides scholarship support to meritorious students with limited financial means, with preference given to those facing personal or family crisis. Open to school students from Classes 1 to 12, as well as those pursuing diploma, ITI, polytechnic, UG, and PG (both general and professional) courses. Annual family income must be less than or equal to INR 2.5 Lakh. Applicants must have passed previous qualifying examination with at least 55% marks.',
+    requiredDocuments: [
+      'Previous year marksheets',
+      'Current year admission proof',
+      'Income Proof',
+      'Proof of family/personal crisis (if applicable)'
+    ],
+    applicationInstructions: [
+      'Apply online through Parivartan ECSS portal.',
+      'Submit required documents for verification.',
+      'Selection based on merit, financial need, and crisis situation.'
+    ],
+    provenance: {
+      sourceName: 'HDFC Bank',
+      sourceRecordUrl: 'https://www.parivartanecss.com/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_hdfc_bank'
+    },
+    criteria: [
+      {
+        id: 'ecss_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'Parivartan ECSS Programme 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'ecss_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Applicants must have passed the previous qualifying examination with at least 55% marks.',
+        isMandatory: true,
+        sourceCitation: 'Parivartan ECSS Programme 2026-27',
+        minGpaNormalized: 55
+      }
+    ]
+  },
+  {
+    id: 'ffe_scholarship',
+    slug: 'foundation-for-excellence-scholarship',
+    title: 'Foundation For Excellence (FFE) Scholarship',
+    providerName: 'Foundation For Excellence',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Medicine', 'Law'],
+    totalAwardValue: 'Up to 50000 per year',
+    awardDetails: 'Up to 50000 per year for B.Tech/MBBS/5-year LLB',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 6000,
+    applicationDeadline: '2026-08-31',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://ffe.org/scholarships/',
+    officialApplicationUrl: 'https://ffe.org/scholarships/',
+    sourceDomain: 'ffe.org',
+    overview: 'FFE finds bright and deserving students with financially constrained backgrounds who performed exceptionally well at state and national level entrance exams. Only Professional Degree Courses Eligible For Scholarships Are B.E./B.Tech, Integrated 5-Year Dual-Degree M.Tech, MBBS and LLB. Gross family income should be less than Rs 4.00 Lacs. Scholarship season begins Aug 1st.',
+    requiredDocuments: [
+      'Family Income Certificate',
+      'Fee Structure',
+      'Academic Transcripts',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through FFE website.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and financial need.'
+    ],
+    provenance: {
+      sourceName: 'Foundation For Excellence',
+      sourceRecordUrl: 'https://ffe.org/scholarships/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_ffe'
+    },
+    criteria: [
+      {
+        id: 'ffe_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'FFE Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'ffe_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Annual family income should be less than Rs 4.00 Lacs.',
+        isMandatory: true,
+        sourceCitation: 'FFE Scholarship 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'narotam_sekhsaria',
+    slug: 'narotam-sekhsaria-pg-scholarship',
+    title: 'Narotam Sekhsaria Foundation Postgraduate Scholarship',
+    providerName: 'Narotam Sekhsaria Foundation',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India', 'United Kingdom', 'United States', 'Germany'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['masters', 'phd'],
+    fieldsOfStudy: ['Pure Sciences', 'Applied Sciences', 'Social Sciences', 'Commerce', 'Law', 'Architecture', 'Medicine'],
+    totalAwardValue: 'Up to 20 lakh (interest-free loan)',
+    awardDetails: 'Up to INR 20 lakh interest-free loan scholarship',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 240000,
+    applicationDeadline: '2027-01-31',
+    daysRemaining: 30,
+    academicYear: '2027/2028',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://pg.nsfoundation.co.in/',
+    officialApplicationUrl: 'https://pg.nsfoundation.co.in/',
+    sourceDomain: 'pg.nsfoundation.co.in',
+    overview: 'The Narotam Sekhsaria Foundation awards merit-based, interest-free loan scholarships up to a maximum of Rs. 20 Lakhs to Indian students pursuing postgraduate studies at prestigious institutions in India and abroad. The Foundation aims at enabling meritorious students to pursue postgraduate studies at prestigious institutions in India and abroad.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Admission Letter',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through NSF scholarship portal.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and interview.'
+    ],
+    provenance: {
+      sourceName: 'Narotam Sekhsaria Foundation',
+      sourceRecordUrl: 'https://pg.nsfoundation.co.in/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_nsf'
+    },
+    criteria: [
+      {
+        id: 'ns_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens residing in India.',
+        isMandatory: true,
+        sourceCitation: 'Narotam Sekhsaria Foundation PG Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'ns_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Strong academic record required.',
+        isMandatory: true,
+        sourceCitation: 'Narotam Sekhsaria Foundation PG Scholarship 2026-27',
+        minGpaNormalized: 85
+      }
+    ]
+  },
+  {
+    id: 'jn_tata_endowment',
+    slug: 'jn-tata-endowment-loan-scholarship',
+    title: 'J N Tata Endowment Loan Scholarship',
+    providerName: 'J N Tata Endowment',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India', 'United Kingdom', 'United States', 'Germany'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['masters', 'phd'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 20 lakh (loan at 2% interest)',
+    awardDetails: 'Loan scholarship ranging from Rs 1 lakh to Rs 10 lakh at 2% simple annual interest',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 240000,
+    applicationDeadline: '2026-03-29',
+    daysRemaining: -30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://jntataendowment.org/',
+    officialApplicationUrl: 'https://jntataendowment.org/',
+    sourceDomain: 'jntataendowment.org',
+    overview: 'J N Tata Endowment has awarded loan scholarships to more than 5700 Indian students since 1892. The Endowment awards loan scholarships to Indian students for higher education abroad and in India. Applications are invited for Fall 2026-Spring 2027 academic year. Loan scholarship ranging from Rs 1 lakh to Rs 10 lakh at 2% simple annual interest.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Admission Letter',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through JN Tata Endowment website.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and interview.'
+    ],
+    provenance: {
+      sourceName: 'J N Tata Endowment',
+      sourceRecordUrl: 'https://jntataendowment.org/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_jn_tata'
+    },
+    criteria: [
+      {
+        id: 'jn_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'J N Tata Endowment Loan Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'jn_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Strong academic record required.',
+        isMandatory: true,
+        sourceCitation: 'J N Tata Endowment Loan Scholarship 2026-27',
+        minGpaNormalized: 80
+      }
+    ]
+  },
+  {
+    id: 'aditya_birla',
+    slug: 'aditya-birla-scholarship',
+    title: 'Aditya Birla Scholarship',
+    providerName: 'Aditya Birla Group',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Management', 'Law'],
+    totalAwardValue: '1.8 lakh per year',
+    awardDetails: 'INR 1,80,000 p.a. or fees at actuals, whichever is lower',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 21600,
+    applicationDeadline: '2026-09-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.adityabirlascholars.net/',
+    officialApplicationUrl: 'https://www.adityabirlascholars.net/',
+    sourceDomain: 'adityabirlascholars.net',
+    overview: 'The Aditya Birla Scholarship Programme, pegged on excellence, epitomises the philosophy of our legendary leader, the late Mr. Aditya Vikram Birla. Recognising outstanding students in the management, law and engineering streams. The scholarship covers a large part of academic fees as well as the hostel fees for the engineering stream and partly the tuition fee for the management and law streams.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply through Dean/Director of your institute.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and interview.'
+    ],
+    provenance: {
+      sourceName: 'Aditya Birla Group',
+      sourceRecordUrl: 'https://www.adityabirlascholars.net/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aditya_birla'
+    },
+    criteria: [
+      {
+        id: 'ab_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'Aditya Birla Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'ab_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Outstanding academic performance required.',
+        isMandatory: true,
+        sourceCitation: 'Aditya Birla Scholarship 2026-27',
+        minGpaNormalized: 85
+      }
+    ]
+  },
+  {
+    id: 'sitaram_jindal',
+    slug: 'sitaram-jindal-foundation-scholarship',
+    title: 'Sitaram Jindal Foundation Scholarship',
+    providerName: 'Sitaram Jindal Foundation',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['secondary', 'bachelors', 'masters'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 3200 per month',
+    awardDetails: 'Up to INR 3,200 per month depending on course level',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 3840,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.sitaramjindalfoundation.org/',
+    officialApplicationUrl: 'https://www.sitaramjindalfoundation.org/',
+    sourceDomain: 'sitaramjindalfoundation.org',
+    overview: 'Sitaram Jindal Foundation Scholarship Scheme provides scholarships for students studying from Class 11 to postgraduate level. The value of the scholarship is up to INR 3,200 per month. Students pursuing various General Degree courses, Medical, Engineering, ITI, and Diploma courses can apply. Hostellers in ITI/diploma/UG/PG courses receive INR 800 per month, while those pursuing UG/PG in engineering or medicine receive INR 1200 per month.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through Sitaram Jindal Foundation website.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and financial need.'
+    ],
+    provenance: {
+      sourceName: 'Sitaram Jindal Foundation',
+      sourceRecordUrl: 'https://www.sitaramjindalfoundation.org/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_sitaram_jindal'
+    },
+    criteria: [
+      {
+        id: 'sj_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'Sitaram Jindal Foundation Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'sj_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Good academic performance required.',
+        isMandatory: true,
+        sourceCitation: 'Sitaram Jindal Foundation Scholarship 2026-27',
+        minGpaNormalized: 60
+      }
+    ]
+  },
+  {
+    id: 'tata_capital_pankh',
+    slug: 'tata-capital-pankh-scholarship',
+    title: 'Tata Capital Pankh Scholarship',
+    providerName: 'Tata Capital',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['secondary', 'bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 80% of tuition fees',
+    awardDetails: 'Up to 80% of tuition/course fees, subject to category-wise caps',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 24000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.tatacapital.com/sustainability/education.html',
+    officialApplicationUrl: 'https://www.tatacapital.com/sustainability/education.html',
+    sourceDomain: 'tatacapital.com',
+    overview: 'Tata Capital Pankh Scholarship Programme was initiated in 2013 with an aim to financially support academically bright youth from economically challenged backgrounds. The scholarship covers up to 80% of tuition/course fees, subject to category-wise caps. Applicants must have secured at least 60% marks in the preceding academic year. Annual parental income from all sources must not exceed INR 4 lakh.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through Tata Capital Pankh scholarship portal.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and financial need.'
+    ],
+    provenance: {
+      sourceName: 'Tata Capital',
+      sourceRecordUrl: 'https://www.tatacapital.com/sustainability/education.html',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_tata_capital'
+    },
+    criteria: [
+      {
+        id: 'tcp_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'Tata Capital Pankh Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'tcp_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Applicants must have secured at least 60% marks in the preceding academic year.',
+        isMandatory: true,
+        sourceCitation: 'Tata Capital Pankh Scholarship 2026-27',
+        minGpaNormalized: 60
+      }
+    ]
+  },
+  {
+    id: 'nec_merit',
+    slug: 'nec-merit-scholarship',
+    title: 'NEC Merit Scholarship',
+    providerName: 'North Eastern Council',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors', 'masters', 'phd'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '22000 per annum (Degree), 25000 (PG), 30000 (M.Phil/PhD)',
+    awardDetails: 'Diploma: 20000, Degree: 22000, Post graduate: 25000, M.Phil/PhD: 30000 per annum',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 36000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/NEC_1234_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Financial Support To The Students Of NER For Higher Professional Courses (NEC Merit Scholarship). Income from all sources shall not exceed Rs 8.0 lakh. The NEC Merit Scholarship is for students from North Eastern Region pursuing diploma, degree, post graduate, M.Phil/PhD courses.',
+    requiredDocuments: [
+      'Domicile Certificate of North Eastern Region',
+      'Income Certificate',
+      'Academic Transcripts',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise slot allocation.'
+    ],
+    provenance: {
+      sourceName: 'North Eastern Council',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/NEC_1234_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_nec'
+    },
+    criteria: [
+      {
+        id: 'nec_cit',
+        ruleType: 'citizenship',
+        title: 'North Eastern Region Domicile',
+        description: 'Must be a domicile of the North Eastern Region of India.',
+        isMandatory: true,
+        sourceCitation: 'NEC Merit Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'nec_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources shall not exceed Rs 8.0 lakh.',
+        isMandatory: true,
+        sourceCitation: 'NEC Merit Scholarship 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'pmss_railways',
+    slug: 'pm-scholarship-scheme-ministry-railways',
+    title: 'Prime Minister Scholarship Scheme For Ministry Of Railways',
+    providerName: 'Ministry of Railways (Railway Board)',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '2500 per month (male), 3000 per month (female)',
+    awardDetails: '2500 per month for male students, 3000 per month for female students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 36000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/MORB_GL.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Prime Minister Scholarship Scheme for wards of Ministry of Railways employees. The amount of scholarship would be 2500 per month for male students and 3000 per month for female students. The scholarship amount under PMSS from the academic year 2017-18 onwards for Ministry of Railways is as above.',
+    requiredDocuments: [
+      'Service Certificate of parent/guardian',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Bank Account Details'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit service certificate and required documents.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Ministry of Railways (Railway Board)',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/MORB_GL.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_railways_gov'
+    },
+    criteria: [
+      {
+        id: 'pmr_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'PMSS Railways Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmr_deg',
+        ruleType: 'degree_level',
+        title: 'Undergraduate Degree Level',
+        description: 'Pursuing undergraduate degree course.',
+        isMandatory: true,
+        sourceCitation: 'PMSS Railways Guidelines 2026-27',
+        requiredDegrees: ['bachelors']
+      }
+    ]
+  },
+  {
+    id: 'pmss_capf',
+    slug: 'pm-scholarship-scheme-central-armed-police-forces',
+    title: 'Prime Minister Scholarship Scheme For Central Armed Police Forces And Assam Rifles',
+    providerName: 'Ministry of Home Affairs',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '2500 per month (male), 3000 per month (female)',
+    awardDetails: '2500 per month for male students, 3000 per month for female students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 36000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/warb/PMSS_Guidelines_1197_3001-2023-24.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Prime Minister Scholarship Scheme for wards of Central Armed Police Forces (CAPF) and Assam Rifles personnel. The amount of scholarship would be 2500 per month for male students and 3000 per month for female students. For wards of personnel martyred in terror/naxal attacks and other specified categories.',
+    requiredDocuments: [
+      'Service Certificate of parent/guardian',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Bank Account Details'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit service certificate and required documents.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Ministry of Home Affairs',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/warb/PMSS_Guidelines_1197_3001-2023-24.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_mha_gov'
+    },
+    criteria: [
+      {
+        id: 'pmc_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'PMSS CAPF Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmc_deg',
+        ruleType: 'degree_level',
+        title: 'Undergraduate Degree Level',
+        description: 'Pursuing undergraduate degree course.',
+        isMandatory: true,
+        sourceCitation: 'PMSS CAPF Guidelines 2026-27',
+        requiredDegrees: ['bachelors']
+      }
+    ]
+  },
+  {
+    id: 'pmss_police_martyrs',
+    slug: 'pm-scholarship-scheme-wards-states-uts-police',
+    title: 'Prime Minister Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks',
+    providerName: 'Ministry of Home Affairs',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '2500 per month (male), 3000 per month (female)',
+    awardDetails: '2500 per month for male students, 3000 per month for female students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 36000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/warb/PMSS_Guidelines_1197_3001-2023-24.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Prime Minister Scholarship Scheme for wards of States/UTs Police Personnel Martyred During Terror/Naxal Attacks. The amount of scholarship would be 2500 per month for male students and 3000 per month for female students.',
+    requiredDocuments: [
+      'Service Certificate of parent/guardian',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Bank Account Details'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit service certificate and required documents.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Ministry of Home Affairs',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/warb/PMSS_Guidelines_1197_3001-2023-24.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_mha_gov'
+    },
+    criteria: [
+      {
+        id: 'pmp_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'PMSS Police Martyrs Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmp_deg',
+        ruleType: 'degree_level',
+        title: 'Undergraduate Degree Level',
+        description: 'Pursuing undergraduate degree course.',
+        isMandatory: true,
+        sourceCitation: 'PMSS Police Martyrs Guidelines 2026-27',
+        requiredDegrees: ['bachelors']
+      }
+    ]
+  },
+  {
+    id: 'pmsss_jkl',
+    slug: 'pm-usp-special-scholarship-scheme-jk-ladakh',
+    title: 'PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 1.25 lakh academic fee + maintenance',
+    awardDetails: 'General Degree: 30000 academic fee + maintenance; Architecture/Engineering: 1.25 lakh academic fee + maintenance; Medical: 3 lakh academic fee + maintenance',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 150000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/PM_USPY(SSSJKL)SchemeSpecifications.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme). 5000 fresh scholarships per annum available. Out of these, 2070 scholarships are for General Degree, 2830 for Engineering/Architecture, 100 for Medical. Academic fee and maintenance allowance provided.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Domicile Certificate of J&K/Ladakh',
+      'Income Certificate',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/PM_USPY(SSSJKL)SchemeSpecifications.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'pmj_cit',
+        ruleType: 'citizenship',
+        title: 'J&K/Ladakh Domicile',
+        description: 'Must be a domicile of Jammu & Kashmir or Ladakh.',
+        isMandatory: true,
+        sourceCitation: 'PMSSS J&K/Ladakh Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmj_deg',
+        ruleType: 'degree_level',
+        title: 'Undergraduate Degree Level',
+        description: 'Pursuing undergraduate degree course.',
+        isMandatory: true,
+        sourceCitation: 'PMSSS J&K/Ladakh Guidelines 2026-27',
+        requiredDegrees: ['bachelors']
+      }
+    ]
+  },
+  {
+    id: 'yasasvi_school',
+    slug: 'pm-yasasvi-top-class-education-schools-obc-ebc-dnt',
+    title: 'PM YASASVI Central Sector Scheme Of Top Class Education In Schools For OBC, EBC And DNT Students',
+    providerName: 'Department of Social Justice & Empowerment (Backward Classes)',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['secondary'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 1.25 lakh per annum',
+    awardDetails: 'Up to Rs. 75,000 per annum for class 9-10; Rs. 1,25,000 per annum for class 11-12',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 150000,
+    applicationDeadline: '2026-11-15',
+    daysRemaining: 25,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/3061_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'PM YASASVI Central Sector Scheme Of Top Class Education In Schools For OBC, EBC And DNT Students. Household annual income of less than Rs. 2.5 lakhs. At least 30% of scholarships reserved for girls. Scheme open for students from OBC, EBC, DNT categories.',
+    requiredDocuments: [
+      'Caste Certificate (OBC/EBC/DNT)',
+      'Income Certificate (below 2.5 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Social Justice & Empowerment (Backward Classes)',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/3061_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_sje_gov'
+    },
+    criteria: [
+      {
+        id: 'ys_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'PM YASASVI School Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'ys_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Household annual income of less than Rs. 2.5 lakhs.',
+        isMandatory: true,
+        sourceCitation: 'PM YASASVI School Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'yasasvi_college',
+    slug: 'pm-yasasvi-top-class-education-college-obc-ebc-dnt',
+    title: 'PM YASASVI Central Sector Scheme Of Top Class Education In College For OBC, EBC And DNT Students',
+    providerName: 'Department of Social Justice & Empowerment (Backward Classes)',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 2 lakh tuition + 3000 per month living',
+    awardDetails: 'Tuition fee ceiling of Rs. 2.00 lakh per annum (private) / Rs. 3.72 lakh (government); living expenses Rs. 3000 per month; books Rs. 5000 per annum; one-time Rs. 45000',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 240000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/ApprovedmodifieddraftofTopClassCollege.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'PM YASASVI Central Sector Scheme Of Top Class Education In College For OBC, EBC And DNT Students. Sources up to Rs. 2.50 lakh and having secured admission in a full-time prescribed course in any of the notified institutions. The scholarship, once awarded, will continue till the completion of the course.',
+    requiredDocuments: [
+      'Caste Certificate (OBC/EBC/DNT)',
+      'Income Certificate (below 2.5 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Social Justice & Empowerment (Backward Classes)',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/ApprovedmodifieddraftofTopClassCollege.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_sje_gov'
+    },
+    criteria: [
+      {
+        id: 'yc_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'PM YASASVI College Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'yc_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Household annual income of less than Rs. 2.50 lakh.',
+        isMandatory: true,
+        sourceCitation: 'PM YASASVI College Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'sc_top_class',
+    slug: 'central-sector-scholarship-top-class-education-sc',
+    title: 'Central Sector Scholarship Of Top Class Education For SC Students',
+    providerName: 'Department of Social Justice & Empowerment',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors', 'masters'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 2 lakh tuition + 86000/41000 allowance',
+    awardDetails: 'Tuition fee ceiling of Rs. 2.00 lakh per annum for private sector institutions; Academic allowance of Rs. 86,000 in first year and Rs. 41,000 in subsequent years',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 240000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/Top_Class_Education_Scheme_2018.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Central Sector Scholarship Of Top Class Education For SC Students. Those SC students having total annual family income from all sources up to Rs. 8.00 lakh are eligible. Tuition fee ceiling of Rs. 2.00 lakh per annum for private sector institutions. Academic allowance of Rs. 86,000 in the first year of study and Rs. 41,000 in every subsequent year.',
+    requiredDocuments: [
+      'Caste Certificate (SC)',
+      'Income Certificate (below 8 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Social Justice & Empowerment',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/Top_Class_Education_Scheme_2018.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_sje_gov'
+    },
+    criteria: [
+      {
+        id: 'sct_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship (SC Category)',
+        description: 'Open to SC category Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'SC Top Class Education Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'sct_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Total annual family income from all sources up to Rs. 8.00 lakh.',
+        isMandatory: true,
+        sourceCitation: 'SC Top Class Education Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'st_top_class',
+    slug: 'national-fellowship-scholarship-st-students',
+    title: 'National Fellowship And Scholarship For Higher Education Of ST Students - Scholarship',
+    providerName: 'Ministry of Tribal Affairs',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors', 'masters'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Up to 2.5 lakh tuition + 3000 per month + 45000 one-time',
+    awardDetails: 'Tuition fee Rs. 2.50 lakhs per annum per student; stipend @ Rs. 3000 per month; books & stationery Rs. 5000 per annum; computer & accessories Rs. 45000 one-time',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 300000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipguideline.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'National Fellowship And Scholarship For Higher Education Of ST Students - Scholarship (Formally Top Class Education For Schedule Tribe Students). Family income from all sources should not exceed Rs. 6.0 lakh per annum. Tuition fee Rs. 2.50 lakhs per annum per student for private sector institutions; stipend @ Rs. 3000 per month; books & stationery Rs. 5000 per annum; computer & accessories Rs. 45000 one-time.',
+    requiredDocuments: [
+      'Caste Certificate (ST)',
+      'Income Certificate (below 6 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Ministry of Tribal Affairs',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipguideline.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_tribal_gov'
+    },
+    criteria: [
+      {
+        id: 'stt_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship (ST Category)',
+        description: 'Open to ST category Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'ST Top Class Education Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'stt_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources should not exceed Rs. 6.0 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'ST Top Class Education Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'post_matric_disabilities',
+    slug: 'post-matric-scholarship-students-disabilities',
+    title: 'Post Matric Scholarship For Students With Disabilities',
+    providerName: 'Department of Empowerment of Persons with Disabilities',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors', 'masters'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Maintenance 800/500 per month + book grant',
+    awardDetails: 'Maintenance: Rs.800 per month for hostellers, Rs. 500 per month for day scholars; Book grant and other allowances as per guidelines',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 9600,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/DEPDGuidelines_1.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Post Matric Scholarship For Students With Disabilities. Maintenance: Rs.800 per month for hostellers, Rs. 500 per month for day scholars. Book grant and other allowances as per guidelines. Family income should be less than or equal to Rs. 2.5 lakh per annum.',
+    requiredDocuments: [
+      'Disability Certificate (UDID)',
+      'Income Certificate (below 2.5 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Empowerment of Persons with Disabilities',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/DEPDGuidelines_1.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_depd_gov'
+    },
+    criteria: [
+      {
+        id: 'pmd_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens with disabilities.',
+        isMandatory: true,
+        sourceCitation: 'Post Matric Disabilities Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmd_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income should be less than or equal to Rs. 2.5 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'Post Matric Disabilities Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'top_class_disabilities',
+    slug: 'top-class-education-students-disabilities',
+    title: 'Scholarship For Top Class Education For Students With Disabilities',
+    providerName: 'Department of Empowerment of Persons with Disabilities',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors', 'masters'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Full tuition + maintenance + book grant',
+    awardDetails: 'Full tuition fee, maintenance allowance, book grant, and other allowances as per guidelines',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 240000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/DEPDGuidelines_1.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Scholarship For Top Class Education For Students With Disabilities. Family income should be less than or equal to Rs. 8 lakh per annum. Full tuition fee, maintenance allowance, book grant, and other allowances provided as per guidelines.',
+    requiredDocuments: [
+      'Disability Certificate (UDID)',
+      'Income Certificate (below 8 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Empowerment of Persons with Disabilities',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/DEPDGuidelines_1.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_depd_gov'
+    },
+    criteria: [
+      {
+        id: 'tcd_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens with disabilities.',
+        isMandatory: true,
+        sourceCitation: 'Top Class Disabilities Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'tcd_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income should be less than or equal to Rs. 8 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'Top Class Disabilities Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'pre_matric_disabilities',
+    slug: 'pre-matric-scholarship-students-disabilities',
+    title: 'Pre Matric Scholarship For Students With Disabilities',
+    providerName: 'Department of Empowerment of Persons with Disabilities',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['secondary'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '25000 per annum for 10000 students',
+    awardDetails: 'Scholarship amounts as per DEPD guidelines for pre-matric students with disabilities',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 30000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/DEPDGuidelines_1.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Pre Matric Scholarship For Students With Disabilities. For students in classes IX and X. Family income should be less than or equal to Rs. 2.5 lakh per annum. Maintenance allowance and book grant provided as per guidelines.',
+    requiredDocuments: [
+      'Disability Certificate (UDID)',
+      'Income Certificate (below 2.5 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Empowerment of Persons with Disabilities',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/DEPDGuidelines_1.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_depd_gov'
+    },
+    criteria: [
+      {
+        id: 'pmd_pre_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens with disabilities.',
+        isMandatory: true,
+        sourceCitation: 'Pre Matric Disabilities Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmd_pre_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income should be less than or equal to Rs. 2.5 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'Pre Matric Disabilities Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'aicte_pragati_degree',
+    slug: 'aicte-pragati-scholarship-girl-students-degree',
+    title: 'AICTE - Pragati Scholarship Scheme For Girl Students (Technical Degree)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '50000 per annum',
+    awardDetails: 'Rs. 50,000 per annum for every year of study i.e. maximum 4 years for first year admitted students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 60000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2010_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'AICTE - Pragati Scholarship Scheme For Girl Students (Technical Degree). Scheme aimed at providing assistance for advancement of Girls pursuing technical education. The girl candidate should be admitted to First year of Degree level course OR Second year of Degree level course through lateral entry in any of the AICTE approved Institution. Maximum two girl child per family are eligible. Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year. A total of 5,000 scholarships are earmarked per annum.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate (below 8 lakh per annum)',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit of qualifying examination.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2010_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'apg_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Pragati Degree Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'apg_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources should not be more than Rs. 8 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Pragati Degree Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'aicte_saksham_degree',
+    slug: 'aicte-saksham-scholarship-specially-abled-degree',
+    title: 'AICTE - Saksham Scholarship Scheme For Specially Abled Student (Technical Degree)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '50000 per annum',
+    awardDetails: 'Rs. 50,000 per annum for every year of study i.e. maximum 4 years for first year admitted students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 60000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2012_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'AICTE - Saksham Scholarship Scheme For Specially Abled Student (Technical Degree). Scheme aimed at providing assistance to specially-abled children to pursue technical education. The candidate should be admitted to First year of Degree level course OR Second year of Degree level course through lateral entry in any of the AICTE approved Institution. Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year.',
+    requiredDocuments: [
+      'Disability Certificate (UDID)',
+      'Income Certificate (below 8 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit of qualifying examination.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2012_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'ask_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Saksham Degree Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'ask_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources should not be more than Rs. 8 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Saksham Degree Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'aicte_swanath_degree',
+    slug: 'aicte-swanath-scholarship-degree',
+    title: 'AICTE - Swanath Scholarship Scheme (Technical Degree)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '50000 per annum',
+    awardDetails: 'Rs. 50,000 per annum for every year of study i.e. maximum 4 years for first year admitted students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 60000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_3039_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'AICTE - Swanath Scholarship Scheme (Technical Degree) for students who are orphaned or wards of armed forces/police personnel martyred in action. Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year. The candidate should be currently studying in the AICTE Approved institutions and courses at Degree level.',
+    requiredDocuments: [
+      'Death Certificate of parent (if applicable)',
+      'Income Certificate (below 8 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit of qualifying examination.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_3039_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'asw_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Swanath Degree Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'asw_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources should not be more than Rs. 8 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Swanath Degree Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'aicte_pragati_diploma',
+    slug: 'aicte-pragati-scholarship-girl-students-diploma',
+    title: 'AICTE - Pragati Scholarship Scheme For Girl Students (Technical Diploma)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '50000 per annum',
+    awardDetails: 'Rs. 50,000 per annum for every year of study i.e. maximum 3 years for first year admitted students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 60000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'AICTE - Pragati Scholarship Scheme For Girl Students (Technical Diploma). The girl candidate should be admitted to First year of Diploma level course OR Second year of Diploma level course through lateral entry in any of the AICTE approved Institution. Maximum two girl child per family are eligible. Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate (below 8 lakh per annum)',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit of qualifying examination.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'apd_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Pragati Diploma Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'apd_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources should not be more than Rs. 8 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Pragati Diploma Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'aicte_saksham_diploma',
+    slug: 'aicte-saksham-scholarship-specially-abled-diploma',
+    title: 'AICTE - Saksham Scholarship Scheme For Specially Abled Student (Technical Diploma)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '50000 per annum',
+    awardDetails: 'Rs. 50,000 per annum for every year of study i.e. maximum 3 years for first year admitted students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 60000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2013_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'AICTE - Saksham Scholarship Scheme For Specially Abled Student (Technical Diploma). The candidate should be admitted to First year of Diploma level course OR Second year of Diploma level course through lateral entry in any of the AICTE approved Institution. Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year.',
+    requiredDocuments: [
+      'Disability Certificate (UDID)',
+      'Income Certificate (below 8 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit of qualifying examination.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2013_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'askd_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Saksham Diploma Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'askd_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources should not be more than Rs. 8 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Saksham Diploma Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'aicte_swanath_diploma',
+    slug: 'aicte-swanath-scholarship-diploma',
+    title: 'AICTE - Swanath Scholarship Scheme (Technical Diploma)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '50000 per annum',
+    awardDetails: 'Rs. 50,000 per annum for every year of study i.e. maximum 3 years for first year admitted students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 60000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_3038_G.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'AICTE - Swanath Scholarship Scheme (Technical Diploma) for students who are orphaned or wards of armed forces/police personnel martyred in action. Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year. The candidate should be currently studying in the AICTE Approved institutions and courses at Diploma level.',
+    requiredDocuments: [
+      'Death Certificate of parent (if applicable)',
+      'Income Certificate (below 8 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit of qualifying examination.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_3038_G.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'aswd_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Swanath Diploma Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'aswd_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Family income from all sources should not be more than Rs. 8 lakh per annum.',
+        isMandatory: true,
+        sourceCitation: 'AICTE Swanath Diploma Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'aicte_pg_scholarship',
+    slug: 'aicte-post-graduate-scholarship',
+    title: 'AICTE Post Graduate Scholarship',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['masters'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '12400 per month',
+    awardDetails: 'Rs. 12,400 per month to full-time GATE/CEED qualified students pursuing postgraduate studies',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 148800,
+    applicationDeadline: '2026-12-31',
+    daysRemaining: 60,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://fellowship.aicte.gov.in/',
+    officialApplicationUrl: 'https://fellowship.aicte.gov.in/',
+    sourceDomain: 'aicte.gov.in',
+    overview: 'AICTE awards Post Graduate Scholarship of Rs. 12,400 per month to full-time GATE/CEED qualified students pursuing postgraduate studies in AICTE-approved institutions. The scholarship is for students who have qualified GATE/CEED examination.',
+    requiredDocuments: [
+      'GATE/CEED Scorecard',
+      'Academic Transcripts',
+      'Admission Letter',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through AICTE fellowship portal.',
+      'Submit GATE/CEED scorecard and required documents.',
+      'Selection based on GATE/CEED score and merit.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://fellowship.aicte.gov.in/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'apg2_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE PG Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'apg2_deg',
+        ruleType: 'degree_level',
+        title: 'Masters Degree Level',
+        description: 'Pursuing postgraduate studies in AICTE-approved institutions.',
+        isMandatory: true,
+        sourceCitation: 'AICTE PG Scholarship 2026-27',
+        requiredDegrees: ['masters']
+      }
+    ]
+  },
+  {
+    id: 'nfsc',
+    slug: 'national-fellowship-sc-students',
+    title: 'National Fellowship For Scheduled Caste Students (NFSC)',
+    providerName: 'University Grants Commission',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['phd'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '28000 per month JRF, 31000 SRF + contingency',
+    awardDetails: 'Fellowship: Rs. 28,000 per month for JRF (first 2 years), Rs. 31,000 for SRF (remaining 3 years); Contingency: Rs. 10,000-20,500 per year',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 336000,
+    applicationDeadline: '2026-12-31',
+    daysRemaining: 60,
+    academicYear: '2027/2028',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.ugc.gov.in/pdfnews/6590506_NFSC-Revised-Guidelines.pdf',
+    officialApplicationUrl: 'https://www.ugc.gov.in/',
+    sourceDomain: 'ugc.gov.in',
+    overview: 'National Fellowship For Scheduled Caste Students (NFSC) provides financial support to SC students pursuing M.Phil/PhD. 2000 new fellowships every year. Fellowship: Rs. 28,000 per month for JRF (first 2 years), Rs. 31,000 for SRF (remaining 3 years). Contingency: Rs. 10,000-20,500 per year. HRA as per norms.',
+    requiredDocuments: [
+      'Caste Certificate (SC)',
+      'Academic Transcripts',
+      'Research Proposal',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through UGC portal.',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'University Grants Commission',
+      sourceRecordUrl: 'https://www.ugc.gov.in/pdfnews/6590506_NFSC-Revised-Guidelines.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_ugc_gov'
+    },
+    criteria: [
+      {
+        id: 'nfsc_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship (SC Category)',
+        description: 'Open to SC category Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'NFSC Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'nfsc_deg',
+        ruleType: 'degree_level',
+        title: 'PhD Degree Level',
+        description: 'Pursuing M.Phil/PhD.',
+        isMandatory: true,
+        sourceCitation: 'NFSC Guidelines 2026-27',
+        requiredDegrees: ['phd']
+      }
+    ]
+  },
+  {
+    id: 'national_pg_scholarship',
+    slug: 'national-scholarship-post-graduate-studies',
+    title: 'National Scholarship For Post Graduate Studies',
+    providerName: 'Department of Higher Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['masters'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '15000 per month for 10 months',
+    awardDetails: 'Rs. 15,000 per month for 10 months in a year, for a period of two years',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 180000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.myscheme.gov.in/schemes/nsfpgs',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'National Scholarship For Post Graduate Studies provides financial assistance to Indian students leading to award of Postgraduate Degree. Scholarships of Rs. 15,000 per month for 10 months in a year. Eligibility: Applicant must be pursuing first postgraduate degree. 30% of scholarships reserved for female candidates.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card',
+      'Admission Letter'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Higher Education',
+      sourceRecordUrl: 'https://www.myscheme.gov.in/schemes/nsfpgs',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_dhe_gov'
+    },
+    criteria: [
+      {
+        id: 'npg_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'National Scholarship for PG Studies 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'npg_deg',
+        ruleType: 'degree_level',
+        title: 'Postgraduate Degree Level',
+        description: 'Pursuing first postgraduate degree.',
+        isMandatory: true,
+        sourceCitation: 'National Scholarship for PG Studies 2026-27',
+        requiredDegrees: ['masters']
+      }
+    ]
+  },
+  {
+    id: 'pmrf',
+    slug: 'prime-ministers-research-fellowship',
+    title: 'Prime Minister Research Fellowship (PMRF)',
+    providerName: 'Ministry of Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['phd'],
+    fieldsOfStudy: ['Science', 'Technology', 'Engineering', 'Mathematics'],
+    totalAwardValue: '70000-80000 per month + 2 lakh research grant per year',
+    awardDetails: 'Fellowship of Rs. 70000 per month for first two years, Rs. 75000 for third year, Rs. 80000 for fourth and fifth years; research grant of Rs. 2 lakh per year',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 960000,
+    applicationDeadline: '2026-12-31',
+    daysRemaining: 60,
+    academicYear: '2027/2028',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.pmrf.in/',
+    officialApplicationUrl: 'https://www.pmrf.in/',
+    sourceDomain: 'pmrf.in',
+    overview: 'Prime Minister Research Fellowship (PMRF) provides fellowship for PhD students in science and technology fields. Selected candidates are offered admission to Ph.D. program in one of IITs/IISc with a fellowship of Rs. 70000 p.m. for initial 2 yrs, Rs. 75000 p.m. for 3rd yr, Rs. 80000 p.m. for 4th and 5th yr. Research grant of Rs. 2 lakh per year for 5 years.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Research Proposal',
+      'Letters of Recommendation',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through PMRF portal.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and research potential.'
+    ],
+    provenance: {
+      sourceName: 'Ministry of Education',
+      sourceRecordUrl: 'https://www.pmrf.in/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_pmrf_gov'
+    },
+    criteria: [
+      {
+        id: 'pmrf_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'PMRF Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'pmrf_deg',
+        ruleType: 'degree_level',
+        title: 'PhD Degree Level',
+        description: 'Pursuing PhD in science/technology fields.',
+        isMandatory: true,
+        sourceCitation: 'PMRF Guidelines 2026-27',
+        requiredDegrees: ['phd']
+      }
+    ]
+  },
+  {
+    id: 'aicte_ndf',
+    slug: 'aicte-national-doctoral-fellowship',
+    title: 'AICTE National Doctoral Fellowship (NDF)',
+    providerName: 'All India Council For Technical Education',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['phd'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Architecture', 'Pharmacy', 'Management'],
+    totalAwardValue: '37000 per month for 2 years, 42000 for 3rd year',
+    awardDetails: 'Rs. 37,000 per month for first 2 years, Rs. 42,000 per month for 3rd year + HRA + Rs. 15,000 per annum contingency',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 444000,
+    applicationDeadline: '2026-12-31',
+    daysRemaining: 60,
+    academicYear: '2027/2028',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.aicte.gov.in/sites/default/files/sdc/AICTE_NDF_guidelines_updated.pdf',
+    officialApplicationUrl: 'https://fellowship.aicte.gov.in/',
+    sourceDomain: 'aicte.gov.in',
+    overview: 'AICTE National Doctoral Fellowship Scheme (NDF) provides financial support to research scholars admitted in research institutes of AICTE. Fellowship of Rs. 37,000 per month for first 2 years, Rs. 42,000 per month for 3rd year + HRA + Rs. 15,000 per annum contingency grant.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Research Proposal',
+      'Letters of Recommendation',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through AICTE fellowship portal.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and research potential.'
+    ],
+    provenance: {
+      sourceName: 'All India Council For Technical Education',
+      sourceRecordUrl: 'https://www.aicte.gov.in/sites/default/files/sdc/AICTE_NDF_guidelines_updated.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_aicte_gov'
+    },
+    criteria: [
+      {
+        id: 'and_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'AICTE NDF Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'and_deg',
+        ruleType: 'degree_level',
+        title: 'PhD Degree Level',
+        description: 'Pursuing PhD in technical fields.',
+        isMandatory: true,
+        sourceCitation: 'AICTE NDF Guidelines 2026-27',
+        requiredDegrees: ['phd']
+      }
+    ]
+  },
+  {
+    id: 'free_coaching_sc_obc',
+    slug: 'free-coaching-scs-obcs-pm-cares',
+    title: 'Free Coaching For SCs OBCs And Beneficiaries Of PM Cares Children Scheme',
+    providerName: 'Department of Social Justice & Empowerment',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors', 'masters'],
+    fieldsOfStudy: ['Civil Services', 'Engineering', 'Medical', 'Law', 'Management'],
+    totalAwardValue: 'Stipend 4000 per month + 15000 incentive',
+    awardDetails: 'Stipend @ Rs. 4000 per month for full duration of the course not exceeding 12 months; Rs. 15,000 as incentive to successful students for coaching for competitive examinations',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 48000,
+    applicationDeadline: '2026-11-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://scholarships.gov.in/public/schemeGuidelines/guid_3108.pdf',
+    officialApplicationUrl: 'https://scholarships.gov.in/',
+    sourceDomain: 'scholarships.gov.in',
+    overview: 'Free Coaching For SCs OBCs And Beneficiaries Of PM Cares Children Scheme. Students belonging to SCs and OBCs, having total family income of Rs. 8.00 lakh or less per annum from all sources will be eligible for benefits under the Scheme. Stipend @ Rs. 4000 per month for full duration of the course not exceeding 12 months; Rs. 15,000 as incentive to successful students for coaching for competitive examinations.',
+    requiredDocuments: [
+      'Caste Certificate (SC/OBC)',
+      'Income Certificate (below 8 lakh per annum)',
+      'Academic Transcripts',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through National Scholarship Portal (NSP).',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Department of Social Justice & Empowerment',
+      sourceRecordUrl: 'https://scholarships.gov.in/public/schemeGuidelines/guid_3108.pdf',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_sje_gov'
+    },
+    criteria: [
+      {
+        id: 'fcc_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens from SC/OBC categories.',
+        isMandatory: true,
+        sourceCitation: 'Free Coaching Guidelines 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'fcc_income',
+        ruleType: 'academic_score',
+        title: 'Family Income Criteria',
+        description: 'Total family income of Rs. 8.00 lakh or less per annum.',
+        isMandatory: true,
+        sourceCitation: 'Free Coaching Guidelines 2026-27',
+        minGpaNormalized: 0
+      }
+    ]
+  },
+  {
+    id: 'reliance_pg',
+    slug: 'reliance-foundation-postgraduate-scholarship',
+    title: 'Reliance Foundation Postgraduate Scholarship',
+    providerName: 'Reliance Foundation',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['masters', 'phd'],
+    fieldsOfStudy: ['Engineering', 'Technology', 'Energy', 'Life Sciences'],
+    totalAwardValue: 'Up to 6 lakh',
+    awardDetails: 'Up to 6 lakh for postgraduate students',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 72000,
+    applicationDeadline: '2026-11-01',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.scholarships.reliancefoundation.org/PG_Scholarship',
+    officialApplicationUrl: 'https://www.scholarships.reliancefoundation.org/',
+    sourceDomain: 'scholarships.reliancefoundation.org',
+    overview: 'Reliance Foundation Postgraduate Scholarships recognise 100 exceptional students annually, pursuing future-ready disciplines, including Engineering, Technology, Energy and Life Sciences. Awarded on the basis of academic merit, aptitude and other selection parameters. Scholarship of up to Rs 6 lakhs for PG students.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card',
+      'Research Proposal'
+    ],
+    applicationInstructions: [
+      'Apply online through Reliance Foundation scholarship portal.',
+      'Complete the eligibility questionnaire.',
+      'Submit required documents for verification.'
+    ],
+    provenance: {
+      sourceName: 'Reliance Foundation',
+      sourceRecordUrl: 'https://www.scholarships.reliancefoundation.org/PG_Scholarship',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_reliance_foundation'
+    },
+    criteria: [
+      {
+        id: 'rf_pg_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens residing in India.',
+        isMandatory: true,
+        sourceCitation: 'Reliance Foundation PG Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'rf_pg_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Exceptional academic merit required.',
+        isMandatory: true,
+        sourceCitation: 'Reliance Foundation PG Scholarship 2026-27',
+        minGpaNormalized: 80
+      }
+    ]
+  },
+  {
+    id: 'kotak_graduate',
+    slug: 'kotak-graduate-scholarship',
+    title: 'Kotak Graduate Scholarship',
+    providerName: 'Kotak Education Foundation',
+    providerCategory: 'Private Foundation',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['bachelors'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: 'Variable',
+    awardDetails: 'Financial assistance for graduate students from economically disadvantaged backgrounds',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 12000,
+    applicationDeadline: '2026-09-30',
+    daysRemaining: 30,
+    academicYear: '2026/2027',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://www.kotakeducationfoundation.org/',
+    officialApplicationUrl: 'https://www.kotakeducationfoundation.org/',
+    sourceDomain: 'kotakeducationfoundation.org',
+    overview: 'Kotak Graduate Scholarship provides financial assistance to meritorious students from economically disadvantaged backgrounds pursuing undergraduate studies. The scholarship covers tuition fees, hostel fees, and other academic expenses.',
+    requiredDocuments: [
+      'Academic Transcripts',
+      'Income Certificate',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through Kotak Education Foundation website.',
+      'Submit required documents for verification.',
+      'Selection based on academic merit and financial need.'
+    ],
+    provenance: {
+      sourceName: 'Kotak Education Foundation',
+      sourceRecordUrl: 'https://www.kotakeducationfoundation.org/',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_kotak_foundation'
+    },
+    criteria: [
+      {
+        id: 'kg_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship',
+        description: 'Open to Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'Kotak Graduate Scholarship 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'kg_gpa',
+        ruleType: 'academic_score',
+        title: 'Minimum Academic Performance',
+        description: 'Good academic performance required.',
+        isMandatory: true,
+        sourceCitation: 'Kotak Graduate Scholarship 2026-27',
+        minGpaNormalized: 60
+      }
+    ]
+  },
+  {
+    id: 'national_fellowship_obc',
+    slug: 'national-fellowship-obc-students',
+    title: 'National Fellowship For OBC Students',
+    providerName: 'Ministry of Social Justice & Empowerment',
+    providerCategory: 'Government Endowment',
+    heroImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCr9gJP6XM79yucTQ7z5hfYE3MZu-jKd48lS-QKTuIhWT7kJQwZNqaips5obn1sbiBqQM2mNgA3_o5MAhUm3_11e6VJmVEWsJwz8C1Ykq2OgnxEW5PPz5vupG8HF4DvzKFbdrNcW62hvgjh_hxRh5b1pRb1lmakPIdeLI0Xryj1Jv2AUuqzGPCd70aTtBp1h5ZTEGCXJoHHq6lEEcnqDsvKer1-3NYt_EexbcaUkd3_00qYqbPmbhcV',
+    destinationCountries: ['India'],
+    destinationFlag: '🇮🇳',
+    hostInstitutions: ['Recognized institutions in India'],
+    studyLevels: ['phd'],
+    fieldsOfStudy: ['All fields'],
+    totalAwardValue: '31000 per month JRF, 35000 SRF',
+    awardDetails: 'Fellowship: Rs. 31,000 per month for JRF (first 2 years), Rs. 35,000 for SRF (remaining 3 years); Contingency: Rs. 10,000-20,500 per year',
+    coverageTypes: ['full_tuition', 'stipend'],
+    fundingNature: ['merit'],
+    estimatedUSDValue: 372000,
+    applicationDeadline: '2026-12-31',
+    daysRemaining: 60,
+    academicYear: '2027/2028',
+    lastVerified: 'Nov 2026',
+    officialSourceUrl: 'https://nbcfdc.gov.in/nbcfdc/web/nfobc',
+    officialApplicationUrl: 'https://nbcfdc.gov.in/nbcfdc/web/nfobc',
+    sourceDomain: 'nbcfdc.gov.in',
+    overview: 'National Fellowship For OBC Students provides financial support to OBC students pursuing M.Phil/PhD. 1000 slots per year. Fellowship: Rs. 31,000 per month for JRF (first 2 years), Rs. 35,000 for SRF (remaining 3 years). Contingency: Rs. 10,000-20,500 per year. HRA as per norms.',
+    requiredDocuments: [
+      'Caste Certificate (OBC)',
+      'Academic Transcripts',
+      'Research Proposal',
+      'Aadhaar Card'
+    ],
+    applicationInstructions: [
+      'Apply online through NBCFDC portal.',
+      'Submit required documents for verification.',
+      'Selection based on merit and category-wise allocation.'
+    ],
+    provenance: {
+      sourceName: 'Ministry of Social Justice & Empowerment',
+      sourceRecordUrl: 'https://nbcfdc.gov.in/nbcfdc/web/nfobc',
+      collectedAt: '2026-11-15T10:00:00Z',
+      sourceId: 'src_msje_gov'
+    },
+    criteria: [
+      {
+        id: 'nfobc_cit',
+        ruleType: 'citizenship',
+        title: 'Indian Citizenship (OBC Category)',
+        description: 'Open to OBC category Indian citizens.',
+        isMandatory: true,
+        sourceCitation: 'National Fellowship for OBC Students 2026-27',
+        allowedCitizenships: ['India']
+      },
+      {
+        id: 'nfobc_deg',
+        ruleType: 'degree_level',
+        title: 'PhD Degree Level',
+        description: 'Pursuing M.Phil/PhD.',
+        isMandatory: true,
+        sourceCitation: 'National Fellowship for OBC Students 2026-27',
+        requiredDegrees: ['phd']
+      }
+    ]
+  }
 ];

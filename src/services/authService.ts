@@ -1,6 +1,6 @@
 import type { AuthUser } from '../types';
 
-export const AUTH_TOKEN_STORAGE_KEY = 'scholarfind_token';
+const AUTH_TOKEN_STORAGE_KEY = 'scholarfind_token';
 
 /** Django auth API response. Field names are snake_case on the wire. */
 interface ApiUser {
@@ -23,7 +23,7 @@ export interface AuthSession {
   user: AuthUser;
 }
 
-export interface RegisterInput {
+interface RegisterInput {
   email: string;
   password: string;
   passwordConfirm?: string;

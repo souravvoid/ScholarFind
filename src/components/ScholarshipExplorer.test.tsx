@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ScholarshipExplorer } from './ScholarshipExplorer';
-import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 
 vi.mock('../context/AuthContext', () => ({
   useAuth: () => ({

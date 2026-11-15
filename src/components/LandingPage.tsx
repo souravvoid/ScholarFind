@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scholarship } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { getDeadlineDisplay } from '../services/databaseService';
 import { Container } from './ui/Container';

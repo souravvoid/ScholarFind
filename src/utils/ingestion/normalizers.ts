@@ -7,7 +7,7 @@
 import { DegreeLevel, CriterionRuleType, EligibilityCriterion } from '../../types';
 import { RawApiScholarshipPayload } from './types';
 
-export const EXCHANGE_RATES_TO_USD: Record<string, number> = {
+const EXCHANGE_RATES_TO_USD: Record<string, number> = {
   USD: 1.0,
   GBP: 1.30,
   EUR: 1.08,
@@ -18,7 +18,7 @@ export const EXCHANGE_RATES_TO_USD: Record<string, number> = {
   CHF: 1.15
 };
 
-export const CANONICAL_COUNTRIES: Record<string, { name: string; flag: string }> = {
+const CANONICAL_COUNTRIES: Record<string, { name: string; flag: string }> = {
   'uk': { name: 'United Kingdom', flag: '🇬🇧' },
   'united kingdom': { name: 'United Kingdom', flag: '🇬🇧' },
   'great britain': { name: 'United Kingdom', flag: '🇬🇧' },

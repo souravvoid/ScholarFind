@@ -15,13 +15,13 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
   const panelRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
   // Form states initialized from profile
-  const [citizenship, setCitizenship] = useState(profile?.citizenship || 'Nigeria');
-  const [residenceCountry, setResidenceCountry] = useState(profile?.residenceCountry || 'Nigeria');
+  const [citizenship, setCitizenship] = useState(profile?.citizenship || 'India');
+  const [residenceCountry, setResidenceCountry] = useState(profile?.residenceCountry || 'India');
   const [educationLevel, setEducationLevel] = useState<DegreeLevel>(profile?.educationLevel || 'bachelors');
-  const [institution, setInstitution] = useState(profile?.institution || 'University of Ibadan (Nigeria)');
+  const [institution, setInstitution] = useState(profile?.institution || 'University of Delhi (India)');
   const [gradingScale, setGradingScale] = useState<GradingScale>(profile?.gradingScale || 'gpa_4_0');
   const [gpa, setGpa] = useState<number>(profile?.gpa || 3.82);
-  const [maxGpa, setMaxGpa] = useState<number>(profile?.maxGpa || 4.0);
+  const [maxGpa] = useState<number>(profile?.maxGpa || 4.0);
   const [graduationYear, setGraduationYear] = useState(profile?.graduationYear || '2026 (Expected)');
   
   const [primaryField, setPrimaryField] = useState(profile?.primaryField || 'Computer Science & Artificial Intelligence (STEM)');
@@ -42,7 +42,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
   const [targetCountries, setTargetCountries] = useState<string[]>(
     profile?.targetCountries || ['United Kingdom', 'Germany', 'Canada', 'United States', 'Netherlands']
   );
-  const [deliveryModality, setDeliveryModality] = useState<'on_campus' | 'hybrid' | 'online'>(
+  const [deliveryModality] = useState<'on_campus' | 'hybrid' | 'online'>(
     profile?.deliveryModality || 'on_campus'
   );
   const [intendedStartTerm, setIntendedStartTerm] = useState(profile?.intendedStartTerm || 'Fall 2026');
@@ -300,7 +300,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({ onClose, onFinis
                     value={residenceCountry}
                     onChange={(e) => setResidenceCountry(e.target.value)}
                     className="w-full h-11 px-3.5 rounded-lg bg-[#f3f4f3] border border-[#e5e7eb] text-sm text-[#1a1a1e] focus:bg-white focus:outline-none focus-visible:ring-2 focus:ring-[#1d4ed8]"
-                    placeholder="e.g. Nigeria, United Kingdom, etc."
+                    placeholder="e.g. India, United Kingdom, etc."
                   />
                   <p className="font-caption text-xs text-ink-muted mt-1.5">
                     Certain regional mobility grants require residency within specific territories for at least 12 months.

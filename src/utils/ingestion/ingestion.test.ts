@@ -13,7 +13,6 @@ import {
   normalizeCountries,
   normalizeStudyLevels,
   validateRawPayload,
-  validateNormalizedRecord,
   IngestionValidationError
 } from './index';
 

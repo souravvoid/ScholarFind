@@ -10,8 +10,3 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
     </div>
   );
 }
-
-/** One entry in a divided list (explorer results, tracker items). */
-function Row({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <li className={`border-b border-hairline last:border-b-0 ${className}`}>{children}</li>;
-}

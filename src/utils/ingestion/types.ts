@@ -3,7 +3,7 @@
  * Python-inspired modular data modeling for client-side statutory scholarship ingestion.
  */
 
-import { Scholarship, EligibilityCriterion, DegreeLevel } from '../../types';
+import { Scholarship } from '../../types';
 
 export interface RawApiScholarshipPayload {
   source_record_id: string;

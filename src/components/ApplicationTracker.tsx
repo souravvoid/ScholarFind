@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { TrackerStatus } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
@@ -8,7 +7,6 @@ import { getDeadlineDisplay } from '../services/databaseService';
 import { Container } from './ui/Container';
 import { Button } from './ui/Button';
 import { Icon } from './ui/Icon';
-import { Badge } from './ui/Badge';
 import { EmptyState } from './ui/EmptyState';
 import { Link } from 'react-router-dom';
 
@@ -20,7 +18,6 @@ const STAGES: { id: TrackerStatus; label: string }[] = [
 ];
 
 export const ApplicationTracker: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
-  const navigate = useNavigate();
   const { savedScholarships, updateTrackerStatus, unsaveScholarship } = useAuth();
   const [activeTab, setActiveTab] = useState<'all' | TrackerStatus>('all');
   const [redirectTarget, setRedirectTarget] = useState<(typeof SCHOLARSHIPS_DATA)[number] | null>(null);

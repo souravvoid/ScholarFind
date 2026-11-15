@@ -1,6 +1,6 @@
 import { Scholarship, CoverageType, FundingBasis } from '../types';
 
-export interface GeographicRegion {
+interface GeographicRegion {
   id: string;
   label: string;
   countries: string[];
@@ -25,7 +25,7 @@ export function isScholarshipInRegion(scholarship: Scholarship, regionId: string
 
 export type FundingBasisFilter = 'all' | 'merit' | 'need';
 
-export interface CoverageTypeOption {
+interface CoverageTypeOption {
   id: CoverageType;
   label: string;
 }
@@ -51,7 +51,7 @@ export function getScholarshipFundingNature(scholarship: Scholarship): FundingBa
   return isNeed ? ['merit', 'need'] : ['merit'];
 }
 
-export interface DeadlineProximityOption {
+interface DeadlineProximityOption {
   id: string;
   label: string;
   shortLabel: string;

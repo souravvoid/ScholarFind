@@ -1,0 +1,94 @@
+{
+  "instincts": [
+    {
+      "trigger": "Starting any code change in this repository",
+      "action": "Read docs/PROJECT_CONTEXT.md, docs/ai/WORK_STATUS.md, and AGENTS.md first, then make the smallest behavior-preserving change.",
+      "confidence": 0.95,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Writing a commit message",
+      "action": "Use conventional commits: type(scope): imperative summary (e.g. feat(explore): ..., fix(security): ...), and cite verification gates in the body when they ran.",
+      "confidence": 0.95,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Adding or changing a user-owned API resource (profiles, saved, tracking, matching)",
+      "action": "Require IsAuthenticated, scope get_queryset() to request.user, assign the owner in perform_create(), and mark ownership/moderation fields read_only in the serializer.",
+      "confidence": 0.95,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Tempted to write scholarships, scholarship_sources, or ingestion_logs from the React client",
+      "action": "Do not add the write. Route catalogue mutations through the staff-only ingestion endpoint or Django admin; the public catalogue stays read-only.",
+      "confidence": 0.98,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Populating or importing catalogue records",
+      "action": "Persist through backend/scholarships/services.py using update_or_create on a stable slug, replace child rules/documents, and keep repeated runs idempotent (created=0 updated=N).",
+      "confidence": 0.9,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Changing eligibility thresholds, scoring, or rule handling",
+      "action": "Update both engines together (Python eligibility_service.py and TS src/utils/eligibilityEngine.ts), keep explicit criterion statuses and explanations, and run the parity tests.",
+      "confidence": 0.9,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Building or restyling any user-facing UI",
+      "action": "Compose from src/components/ui/ primitives, import icons through Icon.tsx, and use semantic tokens from src/index.css instead of raw hex values.",
+      "confidence": 0.9,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "About to display counts, statistics, testimonials, or provenance claims",
+      "action": "Use real data or explicitly state the gap; never introduce fabricated stats, mock testimonials, or invented deadlines.",
+      "confidence": 0.95,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Consuming Firestore or API data in the frontend",
+      "action": "Validate the document shape with a type guard before use and fall back to the verified static catalogue while surfacing the fallback reason; a TypeScript cast is not validation.",
+      "confidence": 0.9,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Opening an external URL supplied by data",
+      "action": "Route it through OfficialRedirectModal; never bypass or weaken the redirect gate.",
+      "confidence": 0.95,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Rendering user or catalogue text in JSX",
+      "action": "Use plain JSX text so React escapes it; do not introduce dangerouslySetInnerHTML.",
+      "confidence": 0.95,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Configuring Django settings, auth, or an endpoint",
+      "action": "Keep DEBUG/SECRET_KEY/ALLOWED_HOSTS env-driven, keep CSRF enabled for state-changing session endpoints, compare OAuth state in constant time, and throttle expensive endpoints.",
+      "confidence": 0.9,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Finishing a feature or multi-step task",
+      "action": "Run the definition of done (npm run lint, relevant unit suites, npm run build, npx playwright test; backend: manage.py check + pytest) and record the outcome plus commit hash in docs/ai/WORK_STATUS.md.",
+      "confidence": 0.9,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "A test is failing or a build is blocked",
+      "action": "Fix the implementation instead of deleting or weakening the existing test; add regression coverage where relevant.",
+      "confidence": 0.95,
+      "source": "git-history-analysis"
+    },
+    {
+      "trigger": "Migrating or rewriting an API layer",
+      "action": "Preserve existing URLs, JSON field names, envelopes, and status codes; add a compatibility endpoint and contract tests before replacing behavior.",
+      "confidence": 0.9,
+      "source": "git-history-analysis"
+    }
+  ]
+}

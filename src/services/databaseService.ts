@@ -2,7 +2,7 @@ import {
   collection, 
   getDocs
 } from 'firebase/firestore';
-import { db, testConnection } from '../firebase';
+import { db } from '../firebase';
 import { Scholarship, IngestionSource } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { INGESTION_SOURCES } from '../data/sourcesData';

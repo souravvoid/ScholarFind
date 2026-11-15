@@ -18,7 +18,7 @@ import {
   normalizeStudyLevels, 
   normalizeCriteria 
 } from './normalizers';
-import { validateRawPayload, validateNormalizedRecord, IngestionValidationError } from './validators';
+import { validateRawPayload, validateNormalizedRecord } from './validators';
 import { IngestionStorage, SHARED_INGESTION_STORAGE } from './storage';
 
 export class IngestionPipeline {
@@ -104,8 +104,6 @@ export class IngestionPipeline {
     let dupesPreventedCount = 0;
 
     for (const raw of rawPayloads) {
-      const recordKey = `${sourceMeta.sourceId}:${raw.source_record_id}`;
-
       try {
         // Step 1: Pre-validation of raw payload
         validateRawPayload(raw);

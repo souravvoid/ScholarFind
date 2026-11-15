@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Scholarship } from '../types';
 import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { evaluateEligibility } from '../utils/eligibilityEngine';
 import { useAuth } from '../context/AuthContext';

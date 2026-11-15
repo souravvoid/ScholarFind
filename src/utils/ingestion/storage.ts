@@ -4,8 +4,8 @@
  */
 
 import { Scholarship } from '../../types';
-import { db, handleFirestoreError, OperationType } from '../../firebase';
-import { collection, doc, setDoc, getDocs, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 export class IngestionStorage {
   private inMemoryStore: Map<string, Scholarship> = new Map();
@@ -40,7 +40,6 @@ export class IngestionStorage {
   }
 
   clear(): void {
-    this.inMemoryStore.clear;
     this.inMemoryStore.clear();
     this.checksumIndex.clear();
   }
