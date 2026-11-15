@@ -6,7 +6,7 @@ class ScholarshipProvider(models.Model):
     name = models.CharField(max_length=255, unique=True)
     category = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
-    website_url = models.URLField()
+    website_url = models.URLField(max_length=500)
     verified = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -20,7 +20,7 @@ class ScholarshipSource(models.Model):
     country = models.CharField(max_length=100)
     adapter_module = models.CharField(max_length=255)
     access_method = models.CharField(max_length=100)
-    provenance_url = models.URLField()
+    provenance_url = models.URLField(max_length=500)
     is_active = models.BooleanField(default=True)
     last_ingested_at = models.DateTimeField(null=True, blank=True)
 
@@ -41,18 +41,20 @@ class Scholarship(models.Model):
         on_delete=models.CASCADE,
         related_name="scholarships"
     )
-    hero_image = models.URLField(blank=True, null=True)
+    hero_image = models.URLField(max_length=500, blank=True, null=True)
     destination_countries = models.TextField()
     host_institutions = models.TextField(blank=True, null=True)
     study_levels = models.TextField()  # Comma-separated
     fields_of_study = models.TextField()  # Comma-separated
     total_award_value = models.CharField(max_length=255)
     award_details = models.CharField(max_length=512, blank=True, null=True)
+    coverage_types = models.TextField(blank=True, default="")  # Comma-separated
+    funding_nature = models.TextField(blank=True, default="")  # Comma-separated merit/need
     estimated_usd_value = models.FloatField(default=0.0)
     application_deadline = models.DateTimeField(db_index=True, blank=True, null=True)
     academic_year = models.CharField(max_length=50)
-    official_source_url = models.URLField()
-    official_application_url = models.URLField()
+    official_source_url = models.URLField(max_length=500)
+    official_application_url = models.URLField(max_length=500)
     source_domain = models.CharField(max_length=255)
     overview = models.TextField()
     application_instructions = models.JSONField(default=list, blank=True)

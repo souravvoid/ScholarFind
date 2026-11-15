@@ -12,6 +12,7 @@ import { Icon } from '../components/ui/Icon';
 import { Badge } from '../components/ui/Badge';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorPanel } from '../components/ui/ErrorPanel';
+import { ScholarshipImage } from '../components/ui/ScholarshipImage';
 
 export function ScholarshipDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -152,6 +153,15 @@ export function ScholarshipDetailPage() {
           <p className="mt-1 text-base font-medium text-sapphire">{scholarship.providerName}</p>
         </Container>
       </div>
+
+      {scholarship.heroImage ? (
+        <Container className="pt-6">
+          <ScholarshipImage
+            src={scholarship.heroImage}
+            className="h-48 w-full rounded-panel sm:h-64 md:h-72"
+          />
+        </Container>
+      ) : null}
 
       <Container className="py-8 md:py-10">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">

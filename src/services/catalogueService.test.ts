@@ -78,6 +78,30 @@ describe('catalogue service', () => {
     });
   });
 
+  test('maps hero images, coverage types, and funding nature from the API', async () => {
+    await withFetch(async () =>
+      response({
+        page: 1,
+        page_size: 50,
+        total_count: 1,
+        results: [
+          {
+            ...summary('image-award'),
+            hero_image: 'https://img.example/award.jpg',
+            coverage_types: ['full_ride', 'stipend'],
+            funding_nature: ['need'],
+          },
+        ],
+      }),
+    async () => {
+      const result = await getScholarshipsFromDatabase();
+      assert.equal(result.fromDatabase, true);
+      assert.equal(result.data[0].heroImage, 'https://img.example/award.jpg');
+      assert.deepEqual(result.data[0].coverageTypes, ['full_ride', 'stipend']);
+      assert.deepEqual(result.data[0].fundingNature, ['need']);
+    });
+  });
+
   test('keeps API empty results empty rather than using bundled records', async () => {
     await withFetch(async () => response({
       page: 1,
