@@ -92,7 +92,7 @@ describe('catalogue service', () => {
     });
   });
 
-  test('uses bundled records only when the catalogue API is unreachable', async () => {
+  test('uses bundled records when the catalogue API is unreachable or returns a server error', async () => {
     await withFetch(async () => {
       throw new TypeError('network unavailable');
     }, async () => {
@@ -100,6 +100,19 @@ describe('catalogue service', () => {
       assert.equal(result.fromDatabase, false);
       assert.ok(result.data.length > 0);
       assert.equal(result.data[0].id, result.data[0].slug);
+      assert.match(result.error ?? '', /offline catalogue/i);
+    });
+    await withFetch(async () => response({ detail: 'not found' }, 404), async () => {
+      const result = await getScholarshipsFromDatabase();
+      assert.equal(result.fromDatabase, false);
+      assert.ok(result.data.length > 0);
+      assert.match(result.error ?? '', /offline catalogue/i);
+    });
+
+    await withFetch(async () => response({}, 503), async () => {
+      const result = await getScholarshipsFromDatabase();
+      assert.equal(result.fromDatabase, false);
+      assert.ok(result.data.length > 0);
       assert.match(result.error ?? '', /offline catalogue/i);
     });
   });

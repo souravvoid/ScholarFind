@@ -314,7 +314,7 @@ export async function getScholarshipsFromDatabase(): Promise<{
 
     return { data: records.map((item) => parseScholarship(item)), fromDatabase: true };
   } catch (error) {
-    if (error instanceof CatalogueApiError && error.kind === 'network') {
+    if (error instanceof CatalogueApiError && (error.kind === 'network' || error.kind === 'http' || error.kind === 'invalid')) {
       return {
         data: staticScholarships(),
         fromDatabase: false,
@@ -419,7 +419,7 @@ export async function getSourcesFromDatabase(): Promise<{
     }
     return { data: records.map(parseSource), fromDatabase: true };
   } catch (error) {
-    if (error instanceof CatalogueApiError && error.kind === 'network') {
+    if (error instanceof CatalogueApiError && (error.kind === 'network' || error.kind === 'http' || error.kind === 'invalid')) {
       return {
         data: INGESTION_SOURCES,
         fromDatabase: false,
