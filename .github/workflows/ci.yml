@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Install frontend dependencies
+        run: bun install --frozen-lockfile
+      - name: Type-check
+        id: typecheck
+        continue-on-error: true
+        run: npm run lint
+      - name: Run frontend unit tests
+        id: frontend-unit
+        continue-on-error: true
+        run: npm run test:frontend
+      - name: Run component tests
+        id: components
+        continue-on-error: true
+        run: npm run test:components
+      - name: Build production bundle
+        id: production-build
+        continue-on-error: true
+        run: npm run build
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run browser smoke tests
+        id: e2e
+        continue-on-error: true
+        run: npm run test:e2e
+      - name: Summarize frontend checks
+        if: always()
+        env:
+          TYPECHECK: ${{ steps.typecheck.outcome }}
+          FRONTEND_UNIT: ${{ steps.frontend-unit.outcome }}
+          COMPONENTS: ${{ steps.components.outcome }}
+          PRODUCTION_BUILD: ${{ steps.production-build.outcome }}
+          E2E: ${{ steps.e2e.outcome }}
+        run: |
+          failed=0
+          if [ "$TYPECHECK" != "success" ]; then echo "Type-check: $TYPECHECK"; failed=1; fi
+          if [ "$FRONTEND_UNIT" != "success" ]; then echo "Frontend unit tests: $FRONTEND_UNIT"; failed=1; fi
+          if [ "$COMPONENTS" != "success" ]; then echo "Component tests: $COMPONENTS"; failed=1; fi
+          if [ "$PRODUCTION_BUILD" != "success" ]; then echo "Production build: $PRODUCTION_BUILD"; failed=1; fi
+          if [ "$E2E" != "success" ]; then echo "Playwright tests: $E2E"; failed=1; fi
+          exit "$failed"
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Install backend dependencies
+        run: python -m pip install -r backend/requirements.txt
+      - name: Run backend tests
+        run: python -m unittest discover -s backend/tests -v

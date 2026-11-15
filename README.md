@@ -103,8 +103,8 @@ Aligned the TypeScript eligibility engine (`src/utils/eligibilityEngine.ts`) UK 
 ### Running the Application
 
 ```bash
-# 1. Install dependencies
-npm install
+# 1. Install dependencies from the checked-in lockfile
+bun install --frozen-lockfile
 
 # 2. Run the React + Vite frontend
 npm run dev
@@ -117,14 +117,26 @@ npm run lint
 ### Running the Complete Test Suite
 
 ```bash
-# Run both Frontend TypeScript & Python Backend test suites:
+# Install backend test dependencies once:
+python3 -m pip install -r backend/requirements.txt
+
+# Run frontend unit, component, and Python backend test suites:
 npm test
 
-# Run Frontend deterministic eligibility tests:
+# Run frontend unit tests:
 npm run test:frontend
 
-# Run Python Backend tests (Ingestion, Adapters, Pipeline, Deterministic Engine):
+# Run frontend component tests:
+npm run test:components
+
+# Run Python backend tests:
 npm run test:backend
-# Or directly with Python standard library:
-python3 -m unittest discover -s backend/tests -v
+
+# Run Chromium browser smoke tests:
+npm run test:e2e
 ```
+
+`npm test` runs every unit/component/backend group even when an earlier group fails, then
+returns a failing exit status if any group failed. GitHub Actions runs the frontend and
+backend checks separately and also gates on the Playwright smoke tests, type-check, and
+production build for pushes and pull requests.
