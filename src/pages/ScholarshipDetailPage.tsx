@@ -1,24 +1,77 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 import { evaluateEligibility } from '../utils/eligibilityEngine';
 import { useAuth } from '../context/AuthContext';
 import { OfficialRedirectModal } from '../components/OfficialRedirectModal';
 import { getDeadlineDisplay } from '../services/databaseService';
+import { getScholarshipBySlug } from '../services/catalogueService';
+import type { Scholarship } from '../types';
 import { Container } from '../components/ui/Container';
 import { Button, buttonStyles } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
 import { Badge } from '../components/ui/Badge';
 import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorPanel } from '../components/ui/ErrorPanel';
 
 export function ScholarshipDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { profile, isSaved, saveScholarship, unsaveScholarship } = useAuth();
   const [showRedirect, setShowRedirect] = useState(false);
+  const [showSourceRedirect, setShowSourceRedirect] = useState(false);
+  const [scholarship, setScholarship] = useState<Scholarship | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
+  const [offlineFallback, setOfflineFallback] = useState(false);
 
-  const scholarship = SCHOLARSHIPS_DATA.find((s) => s.id === id) ?? null;
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setScholarship(null);
+    setLoadError(null);
+    setNotFound(false);
+    setOfflineFallback(false);
+    if (!id) {
+      setLoading(false);
+      setNotFound(true);
+      return () => {
+        active = false;
+      };
+    }
+
+    void getScholarshipBySlug(id).then((result) => {
+      if (!active) return;
+      setScholarship(result.data);
+      setLoadError(result.error ?? null);
+      setNotFound(result.notFound);
+      setOfflineFallback(!result.fromDatabase && result.data !== null);
+      setLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Container className="py-16" aria-live="polite">
+        <p className="text-sm text-ink-muted">Loading scholarship details…</p>
+      </Container>
+    );
+  }
 
   if (!scholarship) {
+    if (loadError && !notFound) {
+      return (
+        <Container className="py-16">
+          <ErrorPanel title="Scholarship unavailable" message={loadError} />
+          <Link to="/explore" className={`${buttonStyles({ variant: 'primary' })} mt-5`}>
+            Back to catalogue
+          </Link>
+        </Container>
+      );
+    }
     return (
       <Container className="py-16">
         <EmptyState
@@ -64,6 +117,11 @@ export function ScholarshipDetailPage() {
 
   return (
     <div className="w-full max-w-full">
+      {offlineFallback && loadError ? (
+        <Container className="pt-4">
+          <ErrorPanel title="Offline cached record" message={loadError} />
+        </Container>
+      ) : null}
       <div className="border-b border-hairline bg-paper">
         <Container className="py-8 md:py-10">
           <Link
@@ -75,15 +133,16 @@ export function ScholarshipDetailPage() {
           </Link>
 
           <div className="mt-4 flex flex-wrap items-center gap-2.5">
-            <span className="text-xl" aria-hidden>
-              {scholarship.destinationFlag}
-            </span>
+            {scholarship.destinationFlag ? (
+              <span className="text-xl" aria-hidden>{scholarship.destinationFlag}</span>
+            ) : null}
             <span className="text-xs font-medium text-ink-muted">
               {scholarship.destinationCountries.join(', ')} · {scholarship.providerCategory}
             </span>
             <Badge tone={statusTone}>{statusLabel}</Badge>
             <span className="text-xs text-ink-muted">
-              Verified {scholarship.lastVerified} via {scholarship.sourceDomain}
+              {scholarship.lastVerified ? `Last verified ${scholarship.lastVerified.slice(0, 10)} · ` : ''}
+              {scholarship.sourceDomain}
             </span>
           </div>
 
@@ -102,13 +161,15 @@ export function ScholarshipDetailPage() {
               <div className="space-y-1">
                 <span className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted">Total award</span>
                 <span className="block font-ui-display text-xl font-bold text-ink">{scholarship.totalAwardValue}</span>
-                <span className="block text-xs text-ink-muted">{scholarship.awardDetails}</span>
+                {scholarship.awardDetails ? (
+                  <span className="block text-xs text-ink-muted">{scholarship.awardDetails}</span>
+                ) : null}
               </div>
               <div className="space-y-1">
                 <span className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted">Deadline</span>
-                <div className={`flex items-center gap-1.5 text-sm font-semibold ${deadline.isClosed ? 'text-ink-muted' : 'text-bad-text'}`}>
+                <div className={`flex items-center gap-1.5 text-sm font-semibold ${deadline.isClosed || deadline.daysRemaining === null ? 'text-ink-muted' : 'text-bad-text'}`}>
                   <Icon name="clock" size={16} />
-                  <span>{scholarship.applicationDeadline}</span>
+                  <span>{scholarship.applicationDeadline?.slice(0, 10) ?? 'Not published'}</span>
                 </div>
                 <span className="block text-xs text-ink-muted">{deadline.statusLabel}</span>
               </div>
@@ -186,16 +247,19 @@ export function ScholarshipDetailPage() {
 
             <section className="space-y-3">
               <h2 className="font-ui-display text-base font-semibold text-ink">Required documents</h2>
-              <ul className="space-y-2">
-                {scholarship.requiredDocuments.map((doc, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-sm text-ink-muted">
-                    <Icon name="document" size={16} className="mt-0.5 shrink-0 text-sapphire" />
-                    <span>{doc}</span>
-                  </li>
-                ))}
-              </ul>
+              {scholarship.requiredDocuments.length ? (
+                <ul className="space-y-2">
+                  {scholarship.requiredDocuments.map((doc, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5 text-sm text-ink-muted">
+                      <Icon name="document" size={16} className="mt-0.5 shrink-0 text-sapphire" />
+                      <span>{doc}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="text-sm text-ink-muted">No document list is published.</p>}
             </section>
 
+            {scholarship.applicationInstructions?.length ? (
             <section className="space-y-3">
               <h2 className="font-ui-display text-base font-semibold text-ink">Application instructions</h2>
               <ol className="list-decimal space-y-2 pl-5 text-sm text-ink-muted">
@@ -206,28 +270,33 @@ export function ScholarshipDetailPage() {
                 ))}
               </ol>
             </section>
+            ) : null}
 
+            {scholarship.provenance ? (
             <div className="rounded-card border border-hairline bg-paper-sunken p-4">
               <div className="flex items-start gap-3">
                 <Icon name="verified" size={20} className="shrink-0 text-sapphire" />
                 <div>
                   <p className="text-xs font-semibold text-ink">Authoritative indexing</p>
                   <p className="mt-1 text-xs leading-relaxed text-ink-muted">
-                    ScholarFind links directly to verified official host domains. Record collected:{' '}
-                    {scholarship.provenance.collectedAt.slice(0, 10)}. Source:{' '}
-                    <a
-                      href={scholarship.provenance.sourceRecordUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    ScholarFind associates this record with the listed source.{' '}
+                    {scholarship.provenance.collectedAt
+                      ? `Record last ingested ${scholarship.provenance.collectedAt.slice(0, 10)}. `
+                      : ''}
+                    Source:{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowSourceRedirect(true)}
                       className="font-semibold text-sapphire hover:underline"
                     >
                       {scholarship.provenance.sourceName}
-                    </a>
+                    </button>
                     .
                   </p>
                 </div>
               </div>
             </div>
+            ) : null}
           </div>
 
           <aside className="lg:col-span-4">
@@ -287,6 +356,15 @@ export function ScholarshipDetailPage() {
       </div>
 
       <OfficialRedirectModal scholarship={scholarship} isOpen={showRedirect} onClose={() => setShowRedirect(false)} />
+      {scholarship.provenance ? (
+        <OfficialRedirectModal
+          scholarship={scholarship}
+          destinationUrl={scholarship.provenance.sourceRecordUrl}
+          destinationLabel="official source record"
+          isOpen={showSourceRedirect}
+          onClose={() => setShowSourceRedirect(false)}
+        />
+      ) : null}
     </div>
   );
 }

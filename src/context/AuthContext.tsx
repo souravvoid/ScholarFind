@@ -11,6 +11,7 @@ import {
   type AuthSession,
 } from '../services/authService';
 import { AuthUser, StudentProfile, SavedScholarship, TrackerStatus } from '../types';
+import { SCHOLARSHIPS_DATA } from '../data/scholarshipsData';
 
 function safeParse<T>(raw: string | null): T | null {
   if (!raw) return null;
@@ -95,7 +96,7 @@ interface AuthContextType {
   updateProfile: (updates: Partial<StudentProfile>) => Promise<void>;
   saveScholarship: (
     scholarshipId: string,
-    metadata: { title: string; provider: string; destination: string; awardValue: string; deadline: string },
+    metadata: { title: string; provider: string; destination: string; awardValue: string; deadline: string | null },
   ) => Promise<void>;
   unsaveScholarship: (scholarshipId: string) => Promise<void>;
   updateTrackerStatus: (
@@ -116,7 +117,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
   const [savedScholarships, setSavedScholarships] = useState<SavedScholarship[]>(() => {
     const parsed = safeParse<SavedScholarship[]>(localStorage.getItem('scholarfind_saved'));
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((item) => {
+      const legacyRecord = SCHOLARSHIPS_DATA.find((scholarship) => scholarship.id === item.scholarshipId);
+      return legacyRecord ? { ...item, scholarshipId: legacyRecord.slug } : item;
+    });
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -259,7 +264,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const saveScholarship = async (
     scholarshipId: string,
-    metadata: { title: string; provider: string; destination: string; awardValue: string; deadline: string },
+    metadata: { title: string; provider: string; destination: string; awardValue: string; deadline: string | null },
   ) => {
     if (savedScholarships.some((s) => s.scholarshipId === scholarshipId)) return;
 

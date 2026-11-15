@@ -101,7 +101,7 @@ export interface EligibilityEvaluationResult {
   mandatoryFailedCount: number;
   missingCount: number;
   manualReviewCount: number;
-  lastVerified: string;
+  lastVerified?: string;
 }
 
 export type CoverageType = 'full_ride' | 'full_tuition' | 'stipend' | 'travel' | 'health';
@@ -112,33 +112,33 @@ export interface Scholarship {
   slug: string;
   title: string;
   providerName: string;
-  providerCategory: 'Official University Trust' | 'Government Endowment' | 'Private Foundation' | 'Multilateral Agency';
-  heroImage: string;
+  providerCategory: string;
+  heroImage?: string;
   destinationCountries: string[];
-  destinationFlag: string;
+  destinationFlag?: string;
   hostInstitutions: string[];
   studyLevels: DegreeLevel[];
   fieldsOfStudy: string[];
   totalAwardValue: string;
-  awardDetails: string;
-  coverageTypes: CoverageType[];
+  awardDetails?: string;
+  coverageTypes?: CoverageType[];
   fundingNature?: FundingBasis[];
   estimatedUSDValue: number;
-  applicationDeadline: string; // YYYY-MM-DD
-  daysRemaining: number;
+  applicationDeadline: string | null;
+  daysRemaining: number | null;
   academicYear: string;
-  lastVerified: string;
+  lastVerified?: string;
   officialSourceUrl: string;
   officialApplicationUrl: string;
   sourceDomain: string;
   requiredDocuments: string[];
-  applicationInstructions: string[];
+  applicationInstructions?: string[];
   overview: string;
   criteria: EligibilityCriterion[];
-  provenance: {
+  provenance?: {
     sourceName: string;
     sourceRecordUrl: string;
-    collectedAt: string;
+    collectedAt?: string;
     sourceId: string;
   };
 }
@@ -153,7 +153,7 @@ export interface SavedScholarship {
   provider: string;
   destination: string;
   awardValue: string;
-  deadline: string;
+  deadline: string | null;
   status: TrackerStatus;
   completedDocs: string[];
   notes: string;
@@ -167,12 +167,12 @@ export interface IngestionSource {
   name: string;
   originAgency: string;
   country: string;
-  flag: string;
+  flag?: string;
   adapterModule: string;
   accessMethod: string;
-  status: 'operational' | 'syncing' | 'verified';
+  status: 'operational' | 'syncing' | 'verified' | 'active' | 'inactive';
   scholarshipCount: number;
-  lastIngested: string;
+  lastIngested: string | null;
   provenanceUrl: string;
-  auditPrinciples: string;
+  auditPrinciples?: string;
 }

@@ -2,27 +2,46 @@ import React, { useState } from 'react';
 import { Scholarship } from '../types';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
-interface OfficialRedirectModalProps {
-  scholarship: Scholarship;
-  isOpen: boolean;
-  onClose: () => void;
+interface RedirectDestination {
+  title: string;
+  providerName: string;
+  url: string;
+  sourceDomain: string;
+  sourceName?: string;
+  lastVerified?: string;
 }
 
-export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
-  scholarship,
-  isOpen,
-  onClose
-}) => {
+type OfficialRedirectModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  destinationLabel?: string;
+} & (
+  | { scholarship: Scholarship; destinationUrl?: string; destination?: never }
+  | { destination: RedirectDestination; scholarship?: never; destinationUrl?: never }
+);
+
+export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = (props) => {
+  const { isOpen, onClose, destinationLabel = 'official application' } = props;
   const [hasAcknowledged, setHasAcknowledged] = useState(false);
   const panelRef = useFocusTrap<HTMLDivElement>(isOpen, onClose);
 
   if (!isOpen) return null;
 
+  const isScholarship = props.scholarship !== undefined;
+  const title = isScholarship ? props.scholarship.title : props.destination.title;
+  const providerName = isScholarship ? props.scholarship.providerName : props.destination.providerName;
+  const destinationUrl = isScholarship
+    ? props.destinationUrl || props.scholarship.officialApplicationUrl || props.scholarship.officialSourceUrl
+    : props.destination.url;
+  const auditedDomain = isScholarship ? props.scholarship.sourceDomain || '' : props.destination.sourceDomain;
+  const sourceName = isScholarship
+    ? props.scholarship.provenance?.sourceName
+    : props.destination.sourceName;
+  const lastVerified = isScholarship ? props.scholarship.lastVerified : props.destination.lastVerified;
+
   // Trust-boundary check: any non-https/unparseable URL is blocked; hosts are ranked
   // against the record's audited source domain (a legit allied portal shows a warning).
-  const destinationUrl = scholarship.officialApplicationUrl || scholarship.officialSourceUrl;
-  const auditedDomain = scholarship.sourceDomain || '';
-  type Gate = 'verified' | 'mismatch' | 'blocked';
+  type Gate = 'verified' | 'mismatch' | 'unverified' | 'blocked';
   let parsedHost = '';
   let gate: Gate = 'blocked';
   try {
@@ -31,7 +50,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
     const hostMatched = auditedDomain !== '' &&
       (parsedHost === auditedDomain || parsedHost.endsWith('.' + auditedDomain));
     if (urlObj.protocol === 'https:' && parsedHost !== '') {
-      gate = hostMatched ? 'verified' : 'mismatch';
+      gate = auditedDomain === '' ? 'unverified' : hostMatched ? 'verified' : 'mismatch';
     }
   } catch (e) {
     parsedHost = '';
@@ -75,35 +94,49 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
         </div>
 
         <h3 id="redirect-dialog-title" className="font-headline-sm text-headline-sm text-[#1a1a1e] mb-2">
-          Leaving ScholarFind to Official Portal
+          Leaving ScholarFind for the {destinationLabel}
         </h3>
 
         <p className="font-body-default text-[var(--color-ink-muted)] mb-5 leading-relaxed">
-          You are about to continue to the verified official application website for{' '}
-          <strong className="text-[#1a1a1e]">{scholarship.title}</strong> hosted by{' '}
-          <strong className="text-[#1a1a1e]">{scholarship.providerName}</strong>.
+          You are about to continue to the verified {destinationLabel} for{' '}
+          <strong className="text-[#1a1a1e]">{title}</strong> hosted by{' '}
+          <strong className="text-[#1a1a1e]">{providerName}</strong>.
         </p>
 
         {/* Destination Trust Notice Box */}
         <div className={`p-4 rounded-xl border mb-5 space-y-2 ${
           gate === 'verified' ? 'bg-[#f3f4f3] border-[#e5e7eb]'
-          : gate === 'mismatch' ? 'bg-[#fffbeb] border-[#fde68a]'
+          : gate === 'mismatch' || gate === 'unverified' ? 'bg-[#fffbeb] border-[#fde68a]'
           : 'bg-[#fff1f2] border-[#fecdd3]'
         }`}>
           <div className="flex items-center justify-between text-xs font-semibold text-ink-muted uppercase tracking-wider">
-            <span>{gate === 'verified' ? 'Verified Destination Host' : gate === 'mismatch' ? 'Unaudited origin' : 'Blocked Destination'}</span>
+            <span>
+              {gate === 'verified'
+                ? 'Verified Destination Host'
+                : gate === 'mismatch'
+                  ? 'Unaudited origin'
+                  : gate === 'unverified'
+                    ? 'Origin not independently verified'
+                    : 'Blocked Destination'}
+            </span>
             <span className={`inline-flex items-center gap-1 lowercase font-normal ${
-              gate === 'verified' ? 'text-[#047857]' : gate === 'mismatch' ? 'text-[#b45309]' : 'text-[#be123c]'
+              gate === 'verified' ? 'text-[#047857]' : gate === 'mismatch' || gate === 'unverified' ? 'text-[#b45309]' : 'text-[#be123c]'
             }`}>
               <span aria-hidden="true" className="material-symbols-outlined text-[14px]">
-                {gate === 'verified' ? 'lock' : gate === 'mismatch' ? 'warning' : 'gpp_bad'}
+                {gate === 'verified' ? 'lock' : gate === 'mismatch' || gate === 'unverified' ? 'warning' : 'gpp_bad'}
               </span>
-              {gate === 'verified' ? 'https verified' : gate === 'mismatch' ? 'https · origin differs' : 'cannot verify origin'}
+              {gate === 'verified'
+                ? 'https verified'
+                : gate === 'mismatch'
+                  ? 'https · origin differs'
+                  : gate === 'unverified'
+                    ? 'https · origin not independently verified'
+                    : 'cannot verify origin'}
             </span>
           </div>
           <div className="flex items-center gap-2 font-mono text-sm text-[#1a1a1e] bg-white p-2 rounded-lg border border-[#e5e7eb] break-all">
             <span aria-hidden="true" className={`material-symbols-outlined text-[18px] ${
-              gate === 'verified' ? 'text-[#0037b0]' : gate === 'mismatch' ? 'text-[#b45309]' : 'text-[#be123c]'
+              gate === 'verified' ? 'text-[#0037b0]' : gate === 'mismatch' || gate === 'unverified' ? 'text-[#b45309]' : 'text-[#be123c]'
             }`}>
               {gate === 'verified' ? 'verified' : gate === 'mismatch' ? 'help' : 'gpp_bad'}
             </span>
@@ -111,11 +144,14 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
           </div>
           <p className="font-caption text-xs text-ink-muted">
             {gate === 'verified' ? (
-              <>Audit Provenance: Verified via {scholarship.provenance.sourceName} on {scholarship.lastVerified}.</>
+              <>Audit Provenance: Verified via {sourceName || 'the listed source'}{lastVerified ? ` on ${lastVerified}` : ''}.</>
             ) : gate === 'mismatch' ? (
               <>This host differs from the record's audited source domain ({auditedDomain}). Providers
               sometimes use allied application portals — verify the URL matches the official program
               guidance before entering personal data.</>
+            ) : gate === 'unverified' ? (
+              <>This HTTPS URL has no separately audited host to compare against. Verify it against
+              the provider's official program guidance before entering personal data.</>
             ) : (
               <>This link is not HTTPS or cannot be parsed, so it has been blocked. Review the
               program's official guidance manually before applying.</>
@@ -153,7 +189,7 @@ export const OfficialRedirectModal: React.FC<OfficialRedirectModalProps> = ({
                 : 'bg-[var(--color-surface-container-highest)] text-ink-muted cursor-not-allowed'
             }`}
           >
-            <span>Continue to Official Application</span>
+            <span>Continue to {destinationLabel}</span>
             <span aria-hidden="true" className="material-symbols-outlined text-[16px]">arrow_forward</span>
           </button>
         </div>

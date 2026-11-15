@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator
 class ManualReviewFlag(models.Model):
     """Flags scholarship-profile pairs that require institutional committee review."""
     student = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        "students.StudentProfile",
         on_delete=models.CASCADE,
         related_name='manual_review_student'
     )
@@ -35,7 +35,7 @@ class ManualReviewFlag(models.Model):
 class WorkExperienceRecord(models.Model):
     """Tracks verified work experience for eligibility matching."""
     student = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        "students.StudentProfile",
         on_delete=models.CASCADE
     )
     years = models.FloatField(validators=[MinValueValidator(0.0)])

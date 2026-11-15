@@ -42,13 +42,7 @@ export function getScholarshipFundingNature(scholarship: Scholarship): FundingBa
   if (scholarship.fundingNature && scholarship.fundingNature.length > 0) {
     return scholarship.fundingNature;
   }
-  const isNeed = scholarship.criteria.some(
-    (c) =>
-      c.title.toLowerCase().includes('need') ||
-      c.description.toLowerCase().includes('afford') ||
-      c.description.toLowerCase().includes('financial'),
-  );
-  return isNeed ? ['merit', 'need'] : ['merit'];
+  return [];
 }
 
 interface DeadlineProximityOption {

@@ -20,11 +20,9 @@ vi.mock('../context/AuthContext', () => ({
   }),
 }));
 
-vi.mock('../services/databaseService', async () => {
+vi.mock('../services/catalogueService', async () => {
   const { SCHOLARSHIPS_DATA } = await import('../data/scholarshipsData');
-  const actual = await vi.importActual<typeof import('../services/databaseService')>('../services/databaseService');
   return {
-    ...actual,
     getScholarshipsFromDatabase: vi.fn().mockResolvedValue({
       data: SCHOLARSHIPS_DATA,
       fromDatabase: true,
