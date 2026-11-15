@@ -129,7 +129,32 @@ Start at the [documentation index](docs/DOCUMENTATION_INDEX.md), including the
 [security review notes](docs/SECURITY_REVIEW.md), and
 [implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md).
 
-## Screenshots
+## Documentation
+
+Start at the [documentation index](docs/DOCUMENTATION_INDEX.md), including the
+[architecture](docs/SYSTEM_ARCHITECTURE.md), [API reference](docs/API_DOCUMENTATION.md),
+[database design](docs/DATABASE_DESIGN.md), [data and licensing notes](docs/DATA_SOURCES_AND_LICENSING.md),
+[security review notes](docs/SECURITY_REVIEW.md), and
+[implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md).
+
+Engineering audit (professor-ready):
+- [Repository audit](docs/engineering/REPOSITORY_AUDIT.md)
+- [High-level design](docs/system-design/HLD.md)
+- [Low-level design](docs/system-design/LLD.md)
+- [ER diagram](docs/database/ER_DIAGRAM.md)
+- [DBMS design](docs/database/DBMS_DESIGN.md)
+- [Normalization](docs/database/NORMALIZATION.md)
+- [OS concepts](docs/engineering/OPERATING_SYSTEM_CONCEPTS.md)
+- [Networking concepts](docs/engineering/NETWORKING_CONCEPTS.md)
+- [Test report](docs/testing/TEST_REPORT.md)
+- [Professor demo guide](docs/demo/PROFESSOR_DEMO_GUIDE.md)
+- [Viva questions](docs/demo/TECHNICAL_VIVA_QUESTIONS.md)
+- [Presentation outline](docs/demo/PRESENTATION_OUTLINE.md)
+
+## Screenshots">
+oldString">
+## Screenshots">
+path="/home/sourav/Goat/Backend engineering/incredible pbl 5 sem/ScholarFind/README.md
 
 No screenshots are included in this repository documentation pass; add only genuine captures
 from a reviewed local/staging build.
