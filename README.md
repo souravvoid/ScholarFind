@@ -78,10 +78,20 @@ python3 -m pip install -r backend/requirements.txt
 npm run dev
 ```
 
-For Django API development, configure a disposable local PostgreSQL database, then from
-`backend/` run `python3 manage.py migrate` and `python3 manage.py runserver`. This database
-setup was not executed as part of this documentation pass. See
-[development setup](docs/DEVELOPMENT_SETUP.md) for environment and backend caveats. Do not
+For an end-to-end local run (Django API + Vite client together), create `backend/.env` from
+`backend/.env.example`, point it at a disposable PostgreSQL database, then run:
+
+```bash
+cp backend/.env.example backend/.env   # edit POSTGRES_* / DATABASE_URL
+./scripts/dev.sh                       # or: npm run dev:all
+```
+
+The script checks PostgreSQL, applies migrations, imports the bundled catalogue
+(`seed_catalogue_bundle`), and starts the API on `:8000` plus the client on `:3000`. Override
+with `BACKEND_PORT`, `FRONTEND_PORT`, or `SEED=0`. Without the API the client still renders,
+but it shows the "Offline catalogue" banner because the proxy cannot reach `/api`.
+
+See [development setup](docs/DEVELOPMENT_SETUP.md) for environment and backend caveats. Do not
 use production credentials or real student information in local demos.
 
 ## Testing
