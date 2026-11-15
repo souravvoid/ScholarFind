@@ -13,7 +13,7 @@ const REPOSITORY_URL = 'https://github.com/souravvoid/ScholarFind';
 /** Only working destinations are rendered here — no inert controls. */
 export function SiteFooter() {
   return (
-    <footer className="w-full bg-arc-blue-textured text-white">
+    <footer className="w-full border-t-4 border-sentry-lime bg-arc-blue-textured text-white">
       <Container className="pt-14 pb-8">
         <div className="grid grid-cols-1 gap-10 border-b border-white/15 pb-10 md:grid-cols-2">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">

@@ -398,7 +398,7 @@ export const ScholarshipExplorer: React.FC<{
                 aria-pressed={isSelected}
                 className={`flex min-h-10 items-center justify-between rounded-control border px-3 text-left text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                   isSelected
-                    ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                    ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                     : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                 }`}
               >
@@ -447,7 +447,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -478,7 +478,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -523,7 +523,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center justify-between rounded-control border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -554,7 +554,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`flex min-h-9 items-center gap-1.5 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -584,7 +584,7 @@ export const ScholarshipExplorer: React.FC<{
                   aria-pressed={isSelected}
                   className={`min-h-9 rounded-chip border px-3 text-xs font-semibold transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                     isSelected
-                      ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                      ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                       : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                   }`}
                 >
@@ -616,7 +616,7 @@ export const ScholarshipExplorer: React.FC<{
                 aria-pressed={isSelected}
                 className={`min-h-9 rounded-chip border px-3 text-xs font-semibold capitalize transition-colors duration-[120ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire ${
                   isSelected
-                    ? 'border-sapphire bg-[#DCE1FF] text-sapphire shadow-xs'
+                    ? 'border-sapphire bg-[#ECE7F7] text-sapphire shadow-xs'
                     : 'border-hairline bg-paper text-ink-muted hover:bg-paper-sunken hover:text-ink'
                 }`}
               >

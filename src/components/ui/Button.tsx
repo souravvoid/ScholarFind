@@ -4,7 +4,7 @@ type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type ButtonSize = 'md' | 'lg';
 
 const BASE =
-  'inline-flex items-center justify-center gap-2 font-ui font-semibold whitespace-nowrap rounded-control transition-colors duration-[120ms] ease-arc focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire disabled:cursor-not-allowed disabled:border-transparent disabled:bg-disabled-surface disabled:text-disabled-text disabled:active:scale-100';
+  'inline-flex items-center justify-center gap-2 font-ui text-[13px] font-bold uppercase tracking-[0.2px] whitespace-nowrap rounded-control transition-colors duration-[120ms] ease-arc focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sapphire disabled:cursor-not-allowed disabled:border-transparent disabled:bg-disabled-surface disabled:text-disabled-text disabled:active:scale-100';
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: 'border border-transparent bg-sapphire text-white hover:bg-sapphire-hover active:scale-[0.99]',

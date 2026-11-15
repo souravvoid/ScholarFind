@@ -54,11 +54,20 @@
   --font-caption-strong: "Inter Variable", sans-serif;
   --font-label-sm: "Inter Variable", sans-serif;
 
-  /* Arc design tokens */
-  --color-arc-blue: #3B3BFF;
-  --color-arc-indigo: #1A1A8C;
-  --color-arc-cream: #FFFEF0;
-  --color-arc-slate: #14141f;
+  /* Sentry-inspired design tokens */
+  --color-arc-blue: #422082;
+  --color-arc-indigo: #1f1633;
+  --color-arc-cream: #ffffff;
+  --color-arc-slate: #150f23;
+  --color-sentry-lime: #c2ef4e;
+  --color-sentry-pink: #fa7faa;
+  --color-sentry-violet: #6a5fc1;
+  --color-sentry-violet-deep: #422082;
+  --color-sentry-violet-mid: #79628c;
+  --color-sentry-night: #150f23;
+  --color-sentry-ink: #1f1633;
+  --color-sentry-hairline: #362d59;
+  --color-sentry-muted: #bdb8c0;
 
   --font-arc-display: "Space Grotesk Variable", sans-serif;
   --font-arc-mono: "JetBrains Mono Variable", monospace;
@@ -66,17 +75,17 @@
   /* ── ScholarFind design system v1 (docs/DESIGN_SYSTEM.md) ──────────────────
      Additive during migration; legacy M3/Arc tokens are removed in the final
      sweep once every page consumes the ui/ primitives. */
-  --color-paper: #FBFBFA;
+  --color-paper: #FFFFFF;
   --color-paper-raised: #FFFFFF;
-  --color-paper-sunken: #F3F4F3;
-  --color-ink: #14141F;
-  --color-ink-muted: #5A5A66;
-  --color-hairline: #E4E4E0;
-  --color-hairline-strong: #D2D2CC;
-  --color-sapphire: #0037B0;
-  --color-sapphire-hover: #1D4ED8;
-  --color-royal: #3B3BFF;
-  --color-cream: #FFFEF0;
+  --color-paper-sunken: #F0F0F0;
+  --color-ink: #1F1633;
+  --color-ink-muted: #5B5566;
+  --color-hairline: #E5E7EB;
+  --color-hairline-strong: #CFCFDB;
+  --color-sapphire: #150F23;
+  --color-sapphire-hover: #422082;
+  --color-royal: #422082;
+  --color-cream: #FFFFFF;
 
   --color-ok-text: #047857;
   --color-ok-surface: #ECFDF5;
@@ -314,13 +323,28 @@
 }
 
 .bg-arc-blue-textured {
-  background-color: #3B3BFF;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
+  background-color: #1f1633;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgb(194 239 78 / 0.10) 0 2px, transparent 2px),
+    radial-gradient(circle at 78% 12%, rgb(255 255 255 / 0.24) 0 1px, transparent 1px),
+    radial-gradient(circle at 45% 70%, rgb(250 127 170 / 0.16) 0 1.5px, transparent 1.5px),
+    radial-gradient(circle at 88% 82%, rgb(255 255 255 / 0.18) 0 1px, transparent 1px),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 220px 220px, 180px 180px, 260px 260px, 200px 200px, 200px 200px;
 }
 
 .bg-arc-cream {
-  background-color: #FFFEF0;
+  background-color: #ffffff;
+}
+
+/* Sentry-style lime keyword highlight used inside display headlines. */
+.sentry-highlight {
+  background-color: var(--color-sentry-lime);
+  color: var(--color-sentry-ink);
+  border-radius: 4px;
+  padding: 0 0.14em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 /* Wavy divider */
