@@ -49,16 +49,17 @@ Re-run before quoting these; they are a point-in-time check, not a CI result.
 | `npm run build` | succeeded; warns that the main chunk is >500 kB |
 | `npm run test:e2e` | 10 Playwright tests passed (landing spec mocks `/api/v1/scholarships/**`) |
 
-PostgreSQL-backed `pytest` (`cd backend && python -m pytest -q`) needs a reachable, migrated
-database. CI provisions PostgreSQL 16 for it; the local environment may not.
+PostgreSQL-backed `pytest` (`cd backend && python -m pytest -q`) passed locally: 78 tests and
+38 subtests. CI provisions PostgreSQL 16; this local result is not a hosted CI result.
 
 ## In progress
 
 1. **Profile/saved/tracker persistence integration** — the SPA still writes
    `scholarfind_profile` and `scholarfind_saved` to `localStorage`; authenticated
    `student-profiles`, `saved-scholarships`, and `application-tracker-entries` APIs exist.
-2. **Documentation reconciliation** — older notes under `docs/architecture/`,
-   `docs/audit/`, and `docs/engineering/` still describe the pre-Django/Firestore state.
+2. **Documentation separation** — current academic design, database, presentation, OS/network,
+   and audit notes are kept under the ignored `.local-docs/` pack; the public docs index links
+   only to the maintained developer documentation.
 3. **PostgreSQL CI verification** — the workflow is checked in; confirm a green hosted run.
 
 ## Blocked / awaiting decisions

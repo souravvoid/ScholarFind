@@ -67,7 +67,7 @@ backend/ FastAPI (uvicorn, not run by any script, never called by the SPA)
 | `src/data/sourcesData.ts` | 10 hardcoded source stats (mock counts) | verified |
 | `backend/*` | FastAPI + divergent engine + simulated adapters | verified |
 | `firestore.rules` | owner-scoped user data ✅; catalogue **world-writable** ✗ | verified |
-| `firebase-applet-config.json` | committed Firebase web config (public by design) | verified |
+| `firebase-applet-config.json` | historical Firebase web config, removed from current tree | verified |
 | `tests/e2e/landing.spec.ts` | 4 Chromium smoke tests, landing only | verified |
 
 ## Commands
@@ -97,7 +97,8 @@ it the module silently no-ops).
 
 1. **firestore.rules:44-67** — `scholarships`, `scholarship_sources`, `ingestion_logs`, `test`
    are publicly writable → the "verified" catalogue and official-application URLs can be forged
-   by anonymous clients. See `docs/engineering/SECURITY_AUDIT.md` C1.
+   by anonymous clients. This is a pre-Django historical claim, not a finding about the active
+   Django API; the old audit is not part of the maintained public documentation.
 2. **Client-side seeding** (`databaseService.ts:97-129`) writes the catalogue from any browser.
 3. **Engine divergence TS/PY** (`eligibilityEngine.ts:28-40` vs `eligibility.py:143-161`) —
    same applicant+rule-set yields different verdicts.

@@ -39,6 +39,27 @@ sources. ScholarFind aims to help students discover opportunities, compare crite
 track their own application work, while leaving verification and application decisions with
 official providers.
 
+## Architecture
+
+```mermaid
+flowchart LR
+  Browser[React SPA]
+  API[Django REST API]
+  DB[(PostgreSQL)]
+  Local[(Browser localStorage)]
+  Bundle[Bundled offline catalogue]
+
+  Browser -->|Catalogue and auth HTTP requests| API
+  API -->|Django ORM| DB
+  Browser -.->|Catalogue API unavailable| Bundle
+  Browser -->|Profile, saved and tracker state| Local
+```
+
+The UI currently computes eligibility in TypeScript. The backend has a separate Python
+evaluation endpoint and profile/saved/tracker APIs, but the SPA does not call those paths.
+See the concise [system architecture](docs/SYSTEM_ARCHITECTURE.md) and
+[API reference](docs/API_DOCUMENTATION.md).
+
 ## Current limitations
 
 - PostgreSQL-backed `pytest` runs need an available, migrated test database; CI provisions
@@ -149,9 +170,9 @@ verified deployment operations. See the [implementation roadmap](docs/IMPLEMENTA
 
 Start at the [documentation index](docs/DOCUMENTATION_INDEX.md), including the
 [architecture](docs/SYSTEM_ARCHITECTURE.md), [API reference](docs/API_DOCUMENTATION.md),
-[database design](docs/DATABASE_DESIGN.md), [data and licensing notes](docs/DATA_SOURCES_AND_LICENSING.md),
-[security review notes](docs/SECURITY_REVIEW.md), and
-[implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md).
+[data and licensing notes](docs/DATA_SOURCES_AND_LICENSING.md), and
+[implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md). Detailed academic and internal
+engineering notes are maintained locally and are not part of this public developer guide.
 
 ## Screenshots
 

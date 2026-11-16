@@ -56,7 +56,7 @@ Observed 2026-11-15. See source links for the implementation evidence.
 
 ## Documentation debt
 
-Older notes under `docs/architecture/`, `docs/audit/`, and `docs/engineering/` predate the
-Django migration and still describe Firestore reads or a disconnected FastAPI backend. Use the
-documents linked from [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md); `docs/PROJECT_CONTEXT.md`
-is explicitly a historical snapshot.
+Academic design, database, presentation, OS/network, and audit notes are maintained in the
+ignored local `.local-docs/` pack. `docs/PROJECT_CONTEXT.md` is an older, pre-Django historical
+snapshot; use the current documents linked from [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)
+for implementation claims.

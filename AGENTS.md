@@ -51,7 +51,8 @@ existing test to make a build pass.
    or writes. `firestore.rules` is a legacy artifact and the client no longer bundles Firebase.
 2. Never commit real secrets. `.env*` and `backend/.env` are gitignored except the
    `.env.example` placeholders; never put server secrets in `VITE_` variables.
-   `firebase-applet-config.json` is a legacy public Firebase web config.
+   The unused legacy public Firebase web config was removed from the current tree; historical
+   Git commits still contain it.
 3. Never open external URLs from data without the `OfficialRedirectModal` gate; do not weaken it
    further — it will get a `https:`-only + allowlist check.
 4. Do not widen CORS. `backend/config/settings.py` reads explicit `CORS_ALLOWED_ORIGINS`; keep

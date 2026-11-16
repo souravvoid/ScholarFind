@@ -11,6 +11,14 @@ playwright-report/
 
 .opencode/
 
+# Local academic report files
+/3rd phase Project Progress Temp-GEHU.docx
+/sourav_project_phase3.docx
+/Project Progress Temp-GEHU_COMPLETED.docx
+
+# Retired legacy Firebase config
+/firebase-applet-config.json
+
 # Python
 __pycache__/
 *.pyc

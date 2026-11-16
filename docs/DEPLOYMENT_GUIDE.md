@@ -46,6 +46,7 @@ change production configuration based solely on this document.
 
 ## Legacy Firebase artefacts
 
-`firestore.rules` and `firebase-applet-config.json` are retained for historical reference. The
-client no longer bundles Firebase and does not need Firestore deployed for the current
-architecture; do not add a Firebase dependency back without an explicit decision.
+`firestore.rules` is retained for historical reference; the unused legacy Firebase web config
+was removed from the current tree. The client no longer bundles Firebase and does not need
+Firestore deployed for the current architecture; do not add a Firebase dependency back without
+an explicit decision.

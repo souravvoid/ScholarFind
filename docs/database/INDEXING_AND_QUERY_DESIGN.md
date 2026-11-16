@@ -1,3 +1,0 @@
-# Indexing and Query Design
-
-Indexes: Scholarship.slug (unique, db_index), title (db_index), application_deadline (db_index). Profile PK on user. Unique constraints provide implicit indexes. Important queries: scholarship list filtering by title/slug; saved/tracker by user; eligibility rules by scholarship. Use select_related for provider/source when serializing. No additional composite indexes claimed.

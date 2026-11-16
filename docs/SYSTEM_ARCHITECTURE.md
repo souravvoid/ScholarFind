@@ -58,7 +58,8 @@ cd backend && python manage.py seed_catalogue_bundle
 ```
 
 `backend/main.py`, `backend/models.py`, and `backend/schemas.py` are legacy FastAPI/SQLAlchemy
-artifacts and are not imported by the Django project. See [database design](DATABASE_DESIGN.md).
+artifacts and are not imported by the Django project. Detailed schema notes are maintained in
+the local-only academic documentation pack rather than this public developer overview.
 
 ## External services and operational boundaries
 
@@ -67,8 +68,8 @@ artifacts and are not imported by the Django project. See [database design](DATA
 - The checked-in Render/Neon configuration is not evidence of a running deployment. A
   production database, CI result, monitoring service, and backup process were not verified.
   See [deployment readiness](DEPLOYMENT_GUIDE.md).
-- `firestore.rules` and `firebase-applet-config.json` remain in the repository as legacy
-  artifacts; the client has no Firebase SDK dependency.
+- `firestore.rules` remains as a legacy artifact; the unused legacy Firebase web config was
+  removed from the current tree. The client has no Firebase SDK dependency.
 
 ## Primary evidence
 
